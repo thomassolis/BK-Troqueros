@@ -1,30 +1,30 @@
 import { codificarToken } from "../JWT/code.js";
-import handleError from "../utils/HandleError.js";
-const user ={
-    id: 1,
-    nombre: "Juan Pérez",
-    edad: 30,
-    correo: "juan.perez@example.com",
-    pass: "123456",
-    telefono: "+507 1234-5678"
-};
+import { ValidateUser } from "../querys/Login/login.js";
+import { HandleError } from "../utils/HandleError.js";
 
-export const ctr_authentication = async (req, res)=>{
-    console.log(req.body)
-    const {email, pass} = req.body;
+export const ctrAuthentication = async (req, res) => {
+    try {
+        const { email, pass } = req.body;
 
-    if (!email || !pass){
-        console.log("estan vacias")
-    }
-    
-    if (email == user.correo && pass == user.pass){
-        console.log("Sesión Iniciada.");
+        if (!email || !pass) {
+            return res.json({ success: false, message: 'Los campos están vacíos.' });
+        }
 
-        const payload = user;
+        const dataUser = await ValidateUser(email, pass);
+        
+        if (!dataUser) {
+            return res.json({ success: false, message: 'Credenciales incorrectas' });
+        }
 
-        const token = codificarToken(payload);
+        // Codificando el token
+        const token = codificarToken(dataUser);
+        console.log(token);
 
-        //Enviar el token por las cookies
+        if (!token){
+            return res.json({ success: false, message: 'Error al generar el token.' });
+        }
+
+        // Enviar el token en las cookies
         res.cookie('token', token, {
             httpOnly: true,        // La cookie no puede ser accedida por JavaScript
             secure: true,          // La cookie solo se enviará a través de HTTPS
@@ -32,12 +32,10 @@ export const ctr_authentication = async (req, res)=>{
             maxAge: 3600000        // La cookie expirará en 1 hora
         });
 
-        return res.json({ success:true, message: 'Login exitoso, token almacenado en cookies'});
-
-    } else {
-        console.log("Sesión No Iniciada.");
-        handleError(message, "ctr_authentication")
-        return res.status(401).json({success:false, message: 'Correo o contraseña incorrectos' });
-        //req.resultado = "El correo o la contraseña son incorrectos.";
+        return res.json({ success: true, message: 'Login exitoso' });
+    } catch (error) {
+        console.log('Error en la autenticación:', error.message);
+        HandleError(error.message, 'AuthController', error, 'user');
+        return res.json({ success: false, message: 'Error interno del servidor. Inténtalo de nuevo más tarde.' });
     }
-}
+};

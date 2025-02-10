@@ -1,33 +1,45 @@
 import jwt from 'jsonwebtoken';
 import { decodificarToken } from '../JWT/decode.js';
 
-const secretKey = process.env.JWT_SECRET_KEY;
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 // Middleware para validar el token en las cookies
-const validarTokenMiddleware = (req, res, next) => {
-    // Leer el token desde las cookies
-    const token = req.cookies.token;
+const ValidateTokenMiddleware = (req, res, next) => {
+    try {
+        //Recibe el token por parte del Frontend
+        const tokenFt = req.headers['authorization']?.split(' ')[1];
 
-    // Si no existe el token, respondemos con un error
-    if (!token) {
-        console.log("Token no proporcionado");
-        //return res.status(401).json({ message: 'Token no proporcionado' });
-    }
+        // Leer el token desde las cookies
+        const token = req.cookies.token;
 
-    // Verificar el token
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            // Si el token es inválido o ha expirado
-            return res.status(401).json({ message: 'Token inválido o expirado' });
+        //Valida que el token exista
+        if (!tokenFt) {
+            console.log("Token no proporcionado");
+            return res.json({success: false, message: 'Token no proporcionado'});
         }
 
-        // Si el token es válido, decodificamos el payload y lo añadimos a la solicitud
-        //req.user = decodificarToken(token);
-        console.log(decodificarToken(token));
+        //Valida que el token no haya sido modificado
+        if (tokenFt != token){
+            console.log("Token modificado");
+            return res.json({success: false, message: 'El token ha sido modificado'});
+        }
 
-        // Llamamos al siguiente middleware o controlador
-        next();
-    });
+        // Verifica el token
+        jwt.verify(token, SECRET_KEY, (err) => {
+            if (err) {
+                // Si el token es inválido o ha expirado
+                return res.json({ message: 'Token inválido o expirado' });
+            }
+
+            const dataDecode = decodificarToken(tokenFt);
+
+            console.log(dataDecode);
+            req.session.user = dataDecode;
+            next();
+        });
+    } catch (error) {
+        console.log('akjdn');
+    }
 };
 
-export default validarTokenMiddleware;
+export default ValidateTokenMiddleware;
