@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { ValidateTokenMiddleware } from '../middlewares/auth.middleware.js';
-import { CtrVerifyPermission } from '../controllers/VerifyPermissionController.js';
+import { CtrVerifyPermission } from '../controllers/verifyPermissionController.js';
 import { AddParamersMiddleware } from '../middlewares/addParamers.middleware.js';
 
 dotenv.config();
