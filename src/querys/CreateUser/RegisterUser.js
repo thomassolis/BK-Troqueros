@@ -1,6 +1,7 @@
 import sql from 'mssql';
 import { pool, ConnectDB } from '../../db/db.js';
 import { HandleError } from '../../utils/HandleError.js';
+import { v1 } from 'uuid';
 
 export const CreateUser = async (data) => {
     try {
@@ -25,7 +26,8 @@ export const CreateUser = async (data) => {
 
         return insertedRole;
     } catch (error) {
-        HandleError(error.message, 'CreateUser', error, 'user');
+        HandleError(v1, error.message, 'CreateUser', error, 'user');
+        throw new Error('Error interno del servidor');
     }
 }
 
@@ -38,7 +40,8 @@ export const ValidateEmail = async (email) => {
         return result.recordset[0];
         
     } catch (error) {
-        HandleError(error.message, 'ValidateEmail', error, 'user');
+        HandleError(v1, error.message, 'ValidateEmail', error, 'user');
+        throw new Error('Error interno del servidor');
     }
 }
 
@@ -51,7 +54,7 @@ const InsertRolUser = async (idUsuario, idRol) => {
 
         return result.rowsAffected;
     } catch (error) {
-        console.log(error);
-        HandleError(error.message, 'InsertRolUser', error, 'user');
+        HandleError(v1, error.message, 'InsertRolUser', error, 'user');
+        throw new Error('Error interno del servidor');
     }
 }

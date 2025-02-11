@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import Auth from './routes/auth.route.js';
 import registerUser from './routes/CreateUser.route.js';
-import permissions from './routes/permissions.route.js';
 
 dotenv.config();
 
@@ -31,8 +30,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
 
-app.use(Auth);
-app.use(registerUser);
-app.use(permissions);
+app.use('/api', Auth);
+app.use('/api', registerUser);
 
 export default app;

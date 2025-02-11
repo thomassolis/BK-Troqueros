@@ -1,41 +1,13 @@
-//import fs from 'fs';
+import fs from 'fs/promises';
 import dotenv from 'dotenv';
 
 dotenv.config();
-/*
-// Función para manejar y registrar errores
-export const HandleError = (message, module, error, userData) => {
-    const LOG_FILE_PATH = process.env.LOG_FILE_PATH;
-    // Crear un objeto con los detalles del error
-    console.log('-------------------')
-    const logDetails = {
-        message: message || 'Error desconocido',
-        module: module || 'N/A',
-        errorDetails: error ? error.stack : 'Sin detalles del error',
-        user: userData || 'Usuario no autenticado',
-        date: formatDateTime(new Date(Date.now())),
-    };
 
-    // Convertir el objeto de log a una cadena JSON
-    const logString = JSON.stringify(logDetails, null, 2);
-
-    // Verificar si el archivo de log existe
-    if (!fs.existsSync(LOG_FILE_PATH)) {
-        console.log('creado');
-        // Si no existe, crearlo
-        fs.writeFileSync(LOG_FILE_PATH, '', 'utf8');
-    }
-
-    fs.appendFileSync(LOG_FILE_PATH, `${logString}\n`, 'utf8');
-    console.log('Mensaje agregado al archivo de log');
-};*/
-
-import fs from 'fs/promises';
-
-export const HandleError = async (message, module, error, userData) => {
+export const HandleError = async (id_log, message, module, error, userData) => {
     const LOG_FILE_PATH = process.env.LOG_FILE_PATH;
     
     const logDetails = {
+        id: id_log,
         message: message || 'Error desconocido',
         module: module || 'N/A',
         errorDetails: error ? error.stack : 'Sin detalles del error',
@@ -54,7 +26,6 @@ export const HandleError = async (message, module, error, userData) => {
 
         // Agregar el log al archivo
         await fs.appendFile(LOG_FILE_PATH, `${logString}\n`, 'utf8');
-        console.log('Mensaje agregado al archivo de log');
     } catch (err) {
         console.error('Error al escribir en el archivo de log:', err);
     }

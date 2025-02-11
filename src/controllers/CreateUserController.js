@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { CreateUser, ValidateEmail } from "../querys/CreateUser/RegisterUser.js";
 import { HandleError } from "../utils/HandleError.js"
+import { v1 } from 'uuid';
 
 export const CtrCreateUser = async (req, res) => {
     try {
@@ -33,8 +34,8 @@ export const CtrCreateUser = async (req, res) => {
         return res.json({ success: true, message: 'Usuario creado satisfactoriamente 😃' });
 
     } catch (error) {
-        console.log('Error...', error, error.message);
-        HandleError(error.message, 'CtrCreateUser', error, 'user');
+        HandleError(v1, error.message, 'CtrCreateUser', error, 'user');
+        return res.json({ success: false, message: 'Error interno del servidor' });
     }
 }
 

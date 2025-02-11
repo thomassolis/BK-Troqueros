@@ -17,5 +17,5 @@ const sslOptions = {
 
 // Iniciar servidor HTTPS
 https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`🚀 Secure Server running on https://localhost:${PORT}//api`);
+  console.log(`🚀 Secure Server running on https://localhost:${PORT}`);
 });
