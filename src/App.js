@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import Auth from './routes/auth.route.js';
 import registerUser from './routes/CreateUser.route.js';
+import client from './routes/clients.route.js';
 
 dotenv.config();
 
@@ -32,5 +33,6 @@ app.use(session(sessionConfig));
 
 app.use('/api', Auth);
 app.use('/api', registerUser);
+app.use('/api/clients', client);
 
 export default app;

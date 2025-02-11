@@ -7,7 +7,6 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
     try {
         // Leer el token desde las cookies
         const token = req.cookies.token;
-        console.log(token);
 
         //Valida que el token exista
         if (!token) {
