@@ -3,27 +3,13 @@ import session from 'express-session';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import Auth from './routes/auth.route.js';
 import registerUser from './routes/CreateUser.route.js';
 import client from './routes/clients.route.js';
-
-dotenv.config();
+import { corsOptions } from './security/configCors.js';
+import { sessionConfig } from './security/configExpressSession.js';
 
 const app = express();
-
-const corsOptions = {
-    origin: process.env.ALLOW_IP_FT,
-    credentials: true,
-};
-
-// Configuración de express-session
-const sessionConfig = {
-    secret: process.env.KEY, // 🔒 Clave para firmar la sesión
-    resave: false, // No guarda sesión si no hay cambios
-    saveUninitialized: false, // No crea sesiones vacías
-    cookie: { secure: false, maxAge: 1000 * 60 * 60 } // ⚠️ secure: true SOLO en HTTPS
-};
 
 app.use(morgan('dev'));
 app.use(express.json());
