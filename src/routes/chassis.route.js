@@ -5,12 +5,13 @@ import { AddParamersMiddleware } from '../middlewares/addParamers.middleware.js'
 import { VerifyPermissionMiddleware } from '../middlewares/verifyPermission.middleware.js';
 import { CtrInsertChassis } from '../controllers/chassis/insertChassisController.js';
 import { ValidateDataChassisMiddleware } from '../middlewares/insertChassis.middleware.js';
+import { CtrGetChassis } from '../controllers/chassis/getChassisController.js';
 
 dotenv.config();
 
 const router = express.Router();
 
-router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware);
+router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassis);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataChassisMiddleware, CtrInsertChassis);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), VerifyPermissionMiddleware);
 router.delete('/delete', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_DEL), VerifyPermissionMiddleware);

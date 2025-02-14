@@ -8,7 +8,6 @@ dotenv.config();
 
 export const VerifyPermission = async (module, action, rol) => {
     try {
-        console.log(action);
         const result = await pool.request()
             .input("Module", sql.VarChar, module)
             .input("Rol", sql.Char(3), rol)
