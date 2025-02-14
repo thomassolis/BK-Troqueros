@@ -1,5 +1,5 @@
 import { v1 } from 'uuid';
-import { HandleError } from '../utils/HandleError.js';
+import { HandleError } from '../../utils/HandleError.js';
 import Joi from 'joi';
 
 const userSchema = Joi.object({
@@ -23,7 +23,7 @@ export const ValidateDataChassisMiddleware = (req, res, next) => {
 
         next();
     } catch (error) {
-        HandleError(v1(), error.message, 'middlewares/insertChassis.middleware/ValidateDataChassisMiddleware', error, 'user');
+        HandleError(v1(), error.message, 'middlewares/chassis/insertChassis.middleware/ValidateDataChassisMiddleware', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 }
