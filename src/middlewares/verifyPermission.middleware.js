@@ -2,7 +2,7 @@ import { v1 } from 'uuid';
 import { VerifyPermission } from '../querys/VerifyPermission.js';
 import { HandleError } from '../utils/HandleError.js';
 
-export const CtrVerifyPermission = async (req, res) => {
+export const VerifyPermissionMiddleware = async (req, res, next) => {
     try {
         const rol = req.session.user.rol;
         const module = req.permission.module;
@@ -18,7 +18,7 @@ export const CtrVerifyPermission = async (req, res) => {
             return res.status(403).json({success: false, message: 'No tienes permiso para esta acción'});
         }
 
-        return res.status(200).json({success: false, message: 'Permiso concebido'});
+        next();
     } catch (error) {
         HandleError(v1, error.message, 'controllers/VerifyPermissionController/CtrVerifyPermission', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
