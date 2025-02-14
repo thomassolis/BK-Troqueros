@@ -12,6 +12,7 @@ const userSchema = Joi.object({
     foto: Joi.string().required(),
 });
 
+//Valida los datos enviados por el request body
 export const ValidateDataChassisMiddleware = (req, res, next) => {
     try {
         const { error, value } = userSchema.validate(req.body);

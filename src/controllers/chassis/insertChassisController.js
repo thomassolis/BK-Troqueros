@@ -2,16 +2,20 @@ import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { InsertChassis } from '../../querys/Chassis/insertChassis.js';
 
+//controlado para insertar chasis
 export const CtrInsertChassis = async (req, res) => {
     try {
+        //obtiene los datos del request body
         const chassis = req.body;
 
+        //valida que los datos no sean nulos
         if (!chassis){
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        const inserted = await InsertChassis(chassis);
+        const inserted = await InsertChassis(chassis); //inserta los datos
 
+        //valida que los datos se hayan insertados
         if (!inserted) {
             return res.status(400).json({success: false, message: 'No se pudo insertar el chasis.'});
         }
