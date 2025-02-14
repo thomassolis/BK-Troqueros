@@ -22,7 +22,7 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         req.session.user = dataDecode;
         next();
     } catch (error) {
-        HandleError(v1, error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error, 'user');
+        HandleError(v1(), error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 };

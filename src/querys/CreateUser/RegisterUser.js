@@ -40,7 +40,7 @@ export const ValidateEmail = async (email) => {
         return result.recordset[0];
         
     } catch (error) {
-        HandleError(v1, error.message, 'ValidateEmail', error, 'user');
+        HandleError(v1(), error.message, 'ValidateEmail', error, 'user');
         throw new Error('Error interno del servidor');
     }
 }
@@ -54,7 +54,7 @@ const InsertRolUser = async (idUsuario, idRol) => {
 
         return result.rowsAffected;
     } catch (error) {
-        HandleError(v1, error.message, 'InsertRolUser', error, 'user');
+        HandleError(v1(), error.message, 'InsertRolUser', error, 'user');
         throw new Error('Error interno del servidor');
     }
 }

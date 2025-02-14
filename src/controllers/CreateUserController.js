@@ -34,7 +34,7 @@ export const CtrCreateUser = async (req, res) => {
         return res.json({ success: true, message: 'Usuario creado satisfactoriamente 😃' });
 
     } catch (error) {
-        HandleError(v1, error.message, 'CtrCreateUser', error, 'user');
+        HandleError(v1(), error.message, 'CtrCreateUser', error, 'user');
         return res.json({ success: false, message: 'Error interno del servidor' });
     }
 }

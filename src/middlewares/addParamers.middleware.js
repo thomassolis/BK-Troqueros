@@ -9,6 +9,7 @@ export const AddParamersMiddleware = (module, action) => {
             next();
         };
     } catch (error) {
-        HandleError(v1, error.message, 'middleware/addParamers.middleware/AddParamersMiddleware', error, 'user');
+        HandleError(v1(), error.message, 'middleware/addParamers.middleware/AddParamersMiddleware', error, 'user');
+        return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 }

@@ -16,7 +16,8 @@ export const ctrAuthentication = async (req, res) => {
         if (!email || !pass) {
             return res.status(400).json({ success: false, message: 'Los campos están vacíos.' });
         }
-        //
+
+        //Obtiene los datos del usuario
         const user = await ValidateUser(email);
 
         //Valida que el usuario exista

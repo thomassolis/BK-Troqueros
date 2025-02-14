@@ -1,5 +1,6 @@
-import Joi from "joi";
-import { HandleError } from "../utils/HandleError.js";
+import Joi from 'joi';
+import { HandleError } from '../utils/HandleError.js';
+import { v1 } from 'uuid';
 
 
 const userSchema = Joi.object({
@@ -20,43 +21,8 @@ export const ValidateUserData = (req, res, next) => {
 
         next();
     } catch (error) {
-        console.log(error)
-        HandleError(error.message, 'RegisterUser.middleware', error, 'user');
+        HandleError(v1(), error.message, 'RegisterUser.middleware', error, 'user');
+        return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }    
 }
-
-export const CleanData = (req, res, next) => {
-    try {
-        const allowedFields = ['nombre', 'apellido', 'email'];
-        const cleanedData = {};
-
-        for (const key of allowedFields) {
-            if (req.body.hasOwnProperty(key)) {
-                cleanedData[key] = req.body[key];
-            }
-        }
-
-        // Sanitizar los valores de tipo string
-        for (const key in cleanedData) {
-            if (typeof cleanedData[key] === 'string') {
-                cleanedData[key] = cleanedData[key]
-                    .trim() // Eliminar espacios al inicio y final
-                    .replace(/</g, "&lt;") // Evitar etiquetas HTML < >
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;") // Evitar comillas dobles
-                    .replace(/'/g, "&#39;"); // Evitar comillas simples
-            }
-        }
-
-        if (req.body.hasOwnProperty('pass')) {
-            cleanedData.pass = req.body.pass;
-        }
-
-        req.body = cleanedData;
-        next();
-    } catch (error) {
-        console.log(error)
-        HandleError(error.message, 'middleware/CleanData', error, 'user');
-    }
-};
 

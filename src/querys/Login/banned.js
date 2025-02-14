@@ -35,7 +35,7 @@ export const UnBan = async (email) => {
                         WHERE 
                             [email] = @Email`);
     } catch (error) {
-        HandleError(v1, error.message, 'querys/login/banned/UnBan', error, 'user');
+        HandleError(v1(), error.message, 'querys/login/banned/UnBan', error, 'user');
         throw new Error('Error en la consulta de la base de datos');
     }
 }

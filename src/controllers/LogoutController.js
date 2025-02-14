@@ -13,6 +13,6 @@ export const CtrLogout = (req, res) => {
         res.status(200).json({ success: true, message: 'Logout exitoso' });
     } catch (error) {
         HandleError(v1(), error.message, 'controllers/LogoutController/CtrLogout', error, 'user');
-        res.status(500).json({success: false, message: 'Error interno del servidor'})
+        return res.status(500).json({success: false, message: 'Error interno del servidor'})
     }
 } 
