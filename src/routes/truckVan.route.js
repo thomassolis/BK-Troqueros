@@ -9,6 +9,7 @@ import { ValidateDataTruckVanMiddleware } from '../middlewares/TruckVan/insertTr
 import { CtrInsertTruckVan } from '../controllers/TruckVan/insertTruckVanController.js';
 import { ValidateUpdTruckVanDataMiddleware } from '../middlewares/TruckVan/validateUpdTruckVan.middleware.js';
 import { CtrUpdateTruckVan } from '../controllers/TruckVan/updateTruckVanController.js';
+import { CtrDeleteTruckVan } from '../controllers/TruckVan/deleteTruckVanController.js';
 
 dotenv.config();
 
@@ -18,5 +19,6 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetTruckVanId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataTruckVanMiddleware, CtrInsertTruckVan);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateUpdTruckVanDataMiddleware, CtrUpdateTruckVan);
+router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteTruckVan);
 
 export default router;
