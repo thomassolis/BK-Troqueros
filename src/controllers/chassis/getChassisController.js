@@ -1,13 +1,14 @@
-import { v1 } from 'uuid'
-import { HandleError } from '../../utils/HandleError.js'
-import { GetChassis } from '../../querys/Chassis/getChassis.js'
+import { v1 } from 'uuid';
+import { HandleError } from '../../utils/HandleError.js';
+import { GetChassis } from '../../querys/Chassis/getChassis.js';
 
+//Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassis = async (req, res) => {
     try {
-        const dataChassis = await GetChassis();
+        //obtiene toda la data del chasis y reduce el anidamiento
+        const chassis = (await GetChassis()).flat();
 
-        const chassis = dataChassis.flat();
-
+        //verifica que chasis no este nulo
         if (!chassis) {
             return res.status(404).json({success: false, message: 'No se pudo obtener los datos'});
         }

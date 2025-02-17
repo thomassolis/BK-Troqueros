@@ -9,12 +9,14 @@ import { CtrUpdateChassis } from '../controllers/chassis/updateChassisController
 import { ValidateDataChassisMiddleware } from '../middlewares/chassis/insertChassis.middleware.js';
 import { ValidateUpdChassisDataMiddleware } from '../middlewares/chassis/validateUpdChassis.middleware.js';
 import { CtrDeleteChassis } from '../controllers/chassis/deleteChassisController.js';
+import { CtrGetChassisId } from '../controllers/chassis/getChassisIdController.js';
 
 dotenv.config();
 
 const router = express.Router();
 
 router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassis);
+router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassisId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataChassisMiddleware, CtrInsertChassis);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateUpdChassisDataMiddleware, CtrUpdateChassis);
 router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteChassis);
