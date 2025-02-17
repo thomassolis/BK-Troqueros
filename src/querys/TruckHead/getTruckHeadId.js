@@ -3,7 +3,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 
-//obtiene un chasis en especifico
+//obtiene un cabezal en especifico
 export const GetTruckHeadId = async (idCabezal) => {
     try {
         const result = await pool.request()
@@ -23,7 +23,7 @@ export const GetTruckHeadId = async (idCabezal) => {
         
         return result.recordsets;
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/Chassis/getChassisId/GetTruckHeadId', error, 'user');
-        throw new Error('No se pudo obtener los chasis');
+        HandleError(v1(), error.message, 'querys/TruckHead/getTruckHeadId/GetTruckHeadId', error, 'user');
+        throw new Error('No se pudo obtener los cabezales');
     }
 }
