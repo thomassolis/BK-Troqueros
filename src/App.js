@@ -8,6 +8,7 @@ import registerUser from './routes/CreateUser.route.js';
 import client from './routes/clients.route.js';
 import chassis from './routes/chassis.route.js';
 import truckHead from './routes/truckHead.route.js';
+import truckVan from './routes/truckVan.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
 
@@ -24,5 +25,6 @@ app.use('/api', registerUser);
 app.use('/api/clients', client);
 app.use('/api/chassis', chassis);
 app.use('/api/truck_head', truckHead);
+app.use('/api/truck_van', truckVan);
 
 export default app;
