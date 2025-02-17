@@ -17,7 +17,7 @@ export const InsertChassis = async (chassis) => {
         
         return result.rowsAffected[0];  
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/Chassis/InsertChassis', error, 'user');
+        HandleError(v1(), error.message, 'querys/Chassis/insertChassis/InsertChassis', error, 'user');
         throw new Error('No se pudo insertar el chasis');
     }
 }

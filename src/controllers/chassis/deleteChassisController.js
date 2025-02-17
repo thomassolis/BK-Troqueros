@@ -1,5 +1,5 @@
-import { v1 } from 'uuid'
-import { HandleError } from '../../utils/HandleError.js'
+import { v1 } from 'uuid';
+import { HandleError } from '../../utils/HandleError.js';
 import { DeleteChassis } from '../../querys/Chassis/deleteChassis.js';
 
 export const CtrDeleteChassis = async (req, res) => {

@@ -14,7 +14,6 @@ export const CtrUpdateChassis = async (req, res) => {
 
         //Actualiza el chasis
         const updatedChassis = await UpdateChassis(dataChassis);
-        console.log(updatedChassis)
 
         //valida que el chasis se haya actualzido
         if (!updatedChassis) {
