@@ -21,7 +21,7 @@ export const GetTruckHeadId = async (idCabezal) => {
                                         FROM [Troqueros].[dbo].[Cabezal]
                                         WHERE id_cabezal = @IdCabezal`);
         
-        return result.recordsets;
+        return result.recordset[0];
     } catch (error) {
         HandleError(v1(), error.message, 'querys/TruckHead/getTruckHeadId/GetTruckHeadId', error, 'user');
         throw new Error('No se pudo obtener los cabezales');

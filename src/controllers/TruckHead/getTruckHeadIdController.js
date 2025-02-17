@@ -14,7 +14,7 @@ export const CtrGetTruckHeadId = async (req, res) => {
         }
 
         //obtiene la info del cabezal y reduce el anidamiento del array
-        const truckHead = (await GetTruckHeadId(idTruckHead)).flat();
+        const truckHead = (await GetTruckHeadId(idTruckHead));
 
         //verifica que chasis no este nulo
         if (!truckHead) {

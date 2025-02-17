@@ -8,6 +8,7 @@ import { ValidateUpdTruckHeadDataMiddleware } from '../middlewares/TruckHead/val
 import { CtrUpdateTruckHead } from '../controllers/TruckHead/updateTruckHeadController.js';
 import { CtrGetTruckHeadId } from '../controllers/TruckHead/getTruckHeadIdController.js';
 import { CtrInsertTruckHead } from '../controllers/TruckHead/insertTruckHeadController.js';
+import { CtrDeleteTruckHead } from '../controllers/TruckHead/deleteTruckHeadController.js';
 
 dotenv.config();
 
@@ -17,6 +18,6 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetTruckHeadId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_CREATE), VerifyPermissionMiddleware, CtrInsertTruckHead);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateUpdTruckHeadDataMiddleware, CtrUpdateTruckHead);
-router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_DEL), VerifyPermissionMiddleware);
+router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteTruckHead);
 
 export default router;

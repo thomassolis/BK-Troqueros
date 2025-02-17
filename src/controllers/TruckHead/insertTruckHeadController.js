@@ -1,6 +1,5 @@
 import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
-import { InsertChassis } from '../../querys/Chassis/insertChassis.js';
 import { InsertTruckHead } from '../../querys/TruckHead/insertTruckHead.js';
 
 //controlador para insertar cabezal
