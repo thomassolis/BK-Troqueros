@@ -25,7 +25,13 @@ export const InsertTruckVan = async (truckVan) => {
         
         return result.rowsAffected[0];  
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error, 'user');
-        throw new Error('No se pudo insertar el furgon');
+        let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
+
+        if (error.number === 2627) {
+            MyThrow.ErrorCode = 2627
+        }
+        
+        HandleError(v1(), error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error, 'user');  
+        throw MyThrow;
     }
 }

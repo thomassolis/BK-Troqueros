@@ -22,6 +22,10 @@ export const CtrInsertTruckVan = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Furgon insertado.'});
     } catch (error) {
+        if (error.ErrorCode === 2627) {
+            return res.status(500).json({success: false, message: 'La placa ya existe'});
+        }
+
         HandleError(v1(), error.message, 'controllers/TruckVan/insertTruckVanController/CtrInsertTruckVan', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
