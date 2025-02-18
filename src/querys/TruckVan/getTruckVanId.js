@@ -13,10 +13,10 @@ export const GetTruckVanId = async (idFurgon) => {
                                             placa,
                                             status,
                                             numero_poliza,
-                                            FORMAT(fecha_expedicion_poliza, 'dd:MM:yyyy') AS fecha_expedicion,
-                                            FORMAT(fecha_caducidad_poliza, 'dd:MM:yyyy') AS fecha_caducidad,
-                                            FORMAT(fecha_renovacion_revisado, 'dd:MM:yyyy') AS fecha_renovacion,
-                                            FORMAT(fecha_ultimo_revisado, 'dd:MM:yyyy') AS fecha_ultimo_revisado,
+                                            fecha_expedicion_poliza,
+                                            fecha_caducidad_poliza,
+                                            fecha_renovacion_revisado,
+                                            fecha_ultimo_revisado,
                                             foto_poliza
                                         FROM [Troqueros].[dbo].[Furgon]
                                         WHERE id_furgon = @IdFurgon`);
