@@ -9,6 +9,7 @@ import client from './routes/clients.route.js';
 import chassis from './routes/chassis.route.js';
 import truckHead from './routes/truckHead.route.js';
 import truckVan from './routes/truckVan.route.js';
+import supplier from './routes/suppliers.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
 
@@ -26,5 +27,6 @@ app.use('/api/clients', client);
 app.use('/api/chassis', chassis);
 app.use('/api/truck_head', truckHead);
 app.use('/api/truck_van', truckVan);
+app.use('/api/suppliers', supplier);
 
 export default app;
