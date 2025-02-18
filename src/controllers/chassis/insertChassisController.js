@@ -22,6 +22,11 @@ export const CtrInsertChassis = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Chasis insertado.'});
     } catch (error) {
+        //Valida si el error ocurrido sea por insertar una placa ya registrada
+        if (error.ErrorCode === 2627) {
+            return res.status(500).json({success: false, message: 'La placa ya existe'});
+        }
+
         HandleError(v1(), error.message, 'controllers/chassis/insertChassisController/CtrInsertChassis', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }

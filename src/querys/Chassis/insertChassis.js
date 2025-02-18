@@ -24,7 +24,13 @@ export const InsertChassis = async (chassis) => {
         
         return result.rowsAffected[0];  
     } catch (error) {
+        let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
+
+        if (error.number === 2627) {
+            MyThrow.ErrorCode = 2627;
+        }
+
         HandleError(v1(), error.message, 'querys/Chassis/insertChassis/InsertChassis', error, 'user');
-        throw new Error('No se pudo insertar el chasis');
+        throw MyThrow;
     }
 }

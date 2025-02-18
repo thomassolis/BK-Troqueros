@@ -14,7 +14,7 @@ export const CtrGetChassisId = async (req, res) => {
         }
 
         //obtiene la info del chasis y reduce el anidamiento del array
-        const chassis = (await GetChassisId(idChassis)).flat();
+        const chassis = (await GetChassisId(idChassis));
 
         //verifica que chasis no este nulo
         if (!chassis) {
