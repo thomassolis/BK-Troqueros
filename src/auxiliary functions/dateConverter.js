@@ -1,23 +1,33 @@
 import Joi from "joi";
 
-
-
-//Convierte la fecha en formato (YYYY-MM-DD)
+//Convierte la fecha en formato (DD-MM-YYYY)
 export const DateConverter = (date) => {
     try {
-        // Separar la fecha y la hora
-        const fecha = date.split(" ");
+        // Validar si la fecha es (null, undefined, etc.)
+        if (!date) {
+            return null;
+        }
 
-        // Separar día, mes y año
-        const [dia, mes, anio] = fecha.split(":").map(Number);
+        // Convertir a objeto Date si es necesario
+        const fechaObj = new Date(date);
 
-        // Retornar solo la fecha en formato SQL Server (YYYY-MM-DD)
-        return `${anio}-${mes.toString().padStart(2, "0")}-${dia.toString().padStart(2, "0")}`;
-        
+        // Verificar si la fecha es válida
+        if (isNaN(fechaObj.getTime())) {
+            throw new Error(`Fecha inválida, ${error.message}`);
+        }
+
+        // Obtener día, mes y año
+        const dia = fechaObj.getDate() + 1; // Los dias en JS van de 0 a 30
+        const mes = fechaObj.getMonth() + 1; // Los meses en JS van de 0 a 11
+        const anio = fechaObj.getFullYear();
+
+        // Formatear en dd/mm/yyyy
+        return `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
+
     } catch (error) {
-        throw new Error('Error al convertir la fecha al formato (YYYY-MM-DD) de SQL');
-    }    
-}
+        throw new Error(`Error al convertir la fecha al formato (DD/MM/YYYY): ${error.message}`);
+    }
+};
 
 //Convierte la fecha en formato (YYYY-MM-DD HH:mm:ss)
 export const DateTimeConverter = (date) => {
