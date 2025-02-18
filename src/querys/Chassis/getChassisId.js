@@ -21,7 +21,7 @@ export const GetChassisId = async (idChassis) => {
                                         FROM [Troqueros].[dbo].[Chasis]
                                         WHERE id_chasis = @IdChassis`);
         
-        return result.recordsets;
+        return result.recordset[0];
     } catch (error) {
         HandleError(v1(), error.message, 'querys/Chassis/getChassisId/GetChassisId', error, 'user');
         throw new Error('No se pudo obtener los chasis');
