@@ -1,5 +1,5 @@
 import express from 'express';
-import { CleanData, ValidateUserData } from '../middlewares/registerUser.middleware.js';
+import { ValidateUserData } from '../middlewares/registerUser.middleware.js';
 import { CtrCreateUser } from '../controllers/CreateUserController.js';
 
 
