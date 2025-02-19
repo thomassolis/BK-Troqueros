@@ -28,6 +28,12 @@ export const InsertTruckHead = async (truckHead) => {
 
         if (error.number === 2627) {
             MyThrow.ErrorCode = 2627;
+
+            if (error.message.includes('PK_')) {
+                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            }
+
+            MyThrow.msg = 'La placa ya existe.';
         }
 
         HandleError(v1(), error.message, 'querys/TruckHead/insertTruckHead/InsertTruckHead', error, 'user');

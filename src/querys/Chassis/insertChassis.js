@@ -3,8 +3,10 @@ import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 
+//Inserta un chasis
 export const InsertChassis = async (chassis) => {
     try {
+        console.log(chassis)
         const result = await pool.request()
                                 .input("Placa", sql.VarChar, chassis.placa)
                                 .input("NumPoliza", sql.VarChar, chassis.numPoliza)
@@ -14,7 +16,7 @@ export const InsertChassis = async (chassis) => {
                                 .input("FechaUltRevisado", sql.Date, chassis.fechaUltRevisado)
                                 .input("Foto", sql.VarChar, chassis.foto)
                                 .query(`DECLARE @NuevoID CHAR(7);
-                                        EXEC GenerarIDChasis @NuevoID OUTPUT
+                                        EXEC Prc_GenerarIDChasis @NuevoID OUTPUT
                                         
                                         INSERT INTO [Troqueros].[dbo].[Chasis] (id_chasis, placa, numero_poliza, 
                                         fecha_expedicion_poliza, fecha_caducidad_poliza, fecha_renovacion_revisado,
@@ -28,6 +30,12 @@ export const InsertChassis = async (chassis) => {
 
         if (error.number === 2627) {
             MyThrow.ErrorCode = 2627;
+
+            if (error.message.includes('PK_')) {
+                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            }
+
+            MyThrow.msg = 'La placa ya existe.';
         }
 
         HandleError(v1(), error.message, 'querys/Chassis/insertChassis/InsertChassis', error, 'user');
