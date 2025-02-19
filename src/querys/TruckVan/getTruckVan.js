@@ -15,7 +15,8 @@ export const GetTruckVan = async (page) => {
                                 .query(`SELECT
                                             id_furgon,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Furgon]
                                         ORDER BY id_furgon
                                         OFFSET @Page ROWS
@@ -42,7 +43,8 @@ export const GetTruckVanByFilter = async (page, search) => {
                                 .query(`SELECT
                                             id_furgon,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Furgon]
                                         WHERE placa LIKE @Search
                                         ORDER BY id_furgon
