@@ -14,7 +14,7 @@ export const InsertTruckHead = async (truckHead) => {
                                 .input("FechaUltRevisado", sql.Date, truckHead.fechaUltRevisado)
                                 .input("Foto", sql.VarChar, truckHead.foto)
                                 .query(`DECLARE @NuevoID CHAR(7);
-                                        EXEC GenerarIDCabezal @NuevoID OUTPUT
+                                        EXEC Prc_GenerarIDCabezal @NuevoID OUTPUT
                                         
                                         INSERT INTO [Troqueros].[dbo].[Cabezal] (id_cabezal, placa, numero_poliza, 
                                         fecha_expedicion_poliza, fecha_caducidad_poliza, fecha_renovacion_revisado,
