@@ -3,6 +3,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import Joi from 'joi';
 
 const userSchema = Joi.object({
+    id_proveedor:  Joi.string().allow(null).optional(),
     nombre: Joi.string().trim().required(),
     personaContacto: Joi.string().allow(null, '').default(null),
     celular: Joi.string().allow(null, '').default(null),
