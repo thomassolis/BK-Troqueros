@@ -24,7 +24,7 @@ export const CtrInsertTruckHead = async (req, res) => {
     } catch (error) {
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: 'La placa ya existe'});
+            return res.status(500).json({success: false, message: error.msg});
         }
         
         HandleError(v1(), error.message, 'controllers/TruckHead/insertTruckHeadController/CtrInsertTruckHead', error, 'user');
