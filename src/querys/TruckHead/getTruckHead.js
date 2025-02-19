@@ -15,7 +15,8 @@ export const GetTruckHead = async (page) => {
                                 .query(`SELECT
                                             id_cabezal,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Cabezal]
                                         ORDER BY id_cabezal
                                         OFFSET @Page ROWS
@@ -42,7 +43,8 @@ export const GetTruckHeadByFilter = async (page, search) => {
                                 .query(`SELECT
                                             id_cabezal,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Cabezal]
                                         WHERE placa LIKE @Search
                                         ORDER BY id_cabezal
