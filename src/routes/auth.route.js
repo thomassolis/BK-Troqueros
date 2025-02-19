@@ -5,7 +5,7 @@ import { CtrLogout } from '../controllers/LogoutController.js';
 
 const router = express.Router();
 
-router.post('/auth/login', ValidateTokenMiddleware, ctrAuthentication);
+router.post('/auth/login',  ctrAuthentication);
 router.post('/loguot', CtrLogout);
 
 export default router;
