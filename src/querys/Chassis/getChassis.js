@@ -7,7 +7,7 @@ import { pool } from '../../db/db.js';
 export const GetChassis = async (page) => {
     try {
         //Establece el tamaño de la página
-        const PAGE_SIZE = 2;
+        const PAGE_SIZE = 20;
 
         const result = await pool.request()
                                 .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
@@ -15,7 +15,8 @@ export const GetChassis = async (page) => {
                                 .query(`SELECT
                                             id_chasis,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Chasis]
                                         ORDER BY id_chasis
                                         OFFSET @Page ROWS
@@ -33,7 +34,7 @@ export const GetChassis = async (page) => {
 export const GetChassisByFilter = async (page, search) => {
     try {
         //Establece el tamaño de la página
-        const PAGE_SIZE = 2;
+        const PAGE_SIZE = 20;
 
         const result = await pool.request()
                                 .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
@@ -42,7 +43,8 @@ export const GetChassisByFilter = async (page, search) => {
                                 .query(`SELECT
                                             id_chasis,
                                             placa,
-                                            status
+                                            status,
+                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
                                         FROM [Troqueros].[dbo].[Chasis]
                                         WHERE placa LIKE @Search
                                         ORDER BY id_chasis
