@@ -83,7 +83,7 @@ export const ctrAuthentication = async (req, res) => {
         //Actualiza el numero de intentos
         await UpdateIntents(dataUser.email, 0, process.env.TB_US);
 
-        return res.status(200).json({ success: true, message: 'Login exitoso' });
+        return res.status(200).json({ success: true, message: 'Login exitoso', data: dataUser});
     } catch (error) {
         HandleError(v1(), error.message, 'controller/AuthController/ctrAuthentication', error, 'user');
         return res.status(500).json({ success: false, message: 'Error interno del servidor' });
