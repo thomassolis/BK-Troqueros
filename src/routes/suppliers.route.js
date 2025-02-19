@@ -8,6 +8,7 @@ import { CtrGetSuppliersId } from '../controllers/suppliers/getSuppliersIdContro
 import { ValidateDataSuppliersMiddleware } from '../middlewares/suppliers/insertSuppliers.middleware.js';
 import { CtrInsertSuppliers } from '../controllers/suppliers/insertSuppliersController.js';
 import { CtrUpdateSuppliers } from '../controllers/suppliers/updateSuppliersController.js';
+import { CtrDeleteSupplier } from '../controllers/suppliers/deleteSupplierController.js';
 
 dotenv.config();
 
@@ -17,5 +18,6 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_PR
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_PR, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetSuppliersId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_PR, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataSuppliersMiddleware, CtrInsertSuppliers);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_PR, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateDataSuppliersMiddleware, CtrUpdateSuppliers);
+router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_FU, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteSupplier);
 
 export default router;
