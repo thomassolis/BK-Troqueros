@@ -22,6 +22,10 @@ export const CtrInsertSuppliers = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Proveedor agregado.'});
     } catch (error) {
+        if (error.ErrorCode === 2627) {
+            return res.status(500).json({success: false, message: 'UPS... Ha ocurrido un error, inténtelo más tarde.'});
+        }
+
         HandleError(v1(), error.message, 'controllers/suppliers/insertSuppliersController/CtrInsertSuppliers', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }

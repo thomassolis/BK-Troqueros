@@ -23,8 +23,14 @@ export const InsertSupplier = async (supplier) => {
                                         @Email, @NumeroCuenta, @TipoBanco)`);
         
         return result.rowsAffected[0];  
-    } catch (error) {        
+    } catch (error) {
+        let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
+
+        if (error.number === 2627) {
+            MyThrow.ErrorCode = 2627;
+        }
+
         HandleError(v1(), error.message, 'querys/suppliers/insertSuppliers/InsertSuppliers', error, 'user');  
-        throw new Error('No se pudo agregar el proveedor');        
+        throw MyThrow;       
     }
 }
