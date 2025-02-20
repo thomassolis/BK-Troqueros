@@ -24,9 +24,9 @@ app.use(session(sessionConfig));
 app.use('/api', Auth);
 app.use('/api', registerUser);
 app.use('/api/clients', client);
-app.use('/api/chassis', chassis);
-app.use('/api/truck_head', truckHead);
-app.use('/api/truck_van', truckVan);
+app.use('/api/Chasises', chassis);
+app.use('/api/Cabezales', truckHead);
+app.use('/api/Furgones', truckVan);
 app.use('/api/suppliers', supplier);
 
 export default app;
