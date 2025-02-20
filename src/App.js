@@ -23,5 +23,6 @@ app.use('/api', Auth);
 app.use('/api', registerUser);
 app.use('/api/clients', client);
 app.use('/api/Chasises', chassis);
+app.use('/api/Cabezales', truckHead);
 
 export default app;
