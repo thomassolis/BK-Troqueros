@@ -10,16 +10,18 @@ export const GetChassis = async (page) => {
         const PAGE_SIZE = 20;
 
         const result = await pool.request()
-                                .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
+                                .input("Page", sql.Int, page)
                                 .input("PageSize", sql.Int, PAGE_SIZE)
                                 .query(`SELECT
                                             id_chasis,
                                             placa,
                                             status,
-                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
+                                            @Page AS paginaActual,
+                                            CEILING(COUNT(*) OVER()) AS totalRegistros,
+                                            @PageSize AS limite
                                         FROM [Troqueros].[dbo].[Chasis]
                                         ORDER BY id_chasis
-                                        OFFSET @Page ROWS
+                                        OFFSET (@Page - 1) * @PageSize ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
         
         return result.recordsets;
