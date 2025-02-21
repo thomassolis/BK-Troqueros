@@ -13,25 +13,25 @@ export const CtrGetChassis = async (req, res) => {
 
         if (search) {
             //obtiene los chasis filtrados
-            const chassis = (await GetChassisByFilter(1, search)).flat();
+            const chassis = await GetChassisByFilter(page, search);
 
             //valida que los chasis no esten nulos
-            if (chassis.length === 0) {
+            if (!chassis) {
                 return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
             }
 
-            return res.status(200).json({success: true, message: 'Data enviada', data: chassis});
+            return res.status(200).json({success: true, message: 'Data enviada', chassis});
         }
 
         //obtiene toda la data del chasis y reduce el anidamiento
-        const chassis = (await GetChassis(page)).flat();
+        const chassis = await GetChassis(page);
 
         //verifica que chasis no este nulo
-        if (chassis.length === 0) {
+        if (!chassis) {
             return res.status(200).json({success: false, message: 'No hay resultados'});
         }
 
-        return res.status(200).json({success: true, message: 'Data enviada', data: chassis});
+        return res.status(200).json({success: true, message: 'Data enviada', chassis});
     } catch (error) {
         HandleError(v1(), error.message, 'controllers/chassis/getChassisController/CtrGetChassis', error, 'user');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});

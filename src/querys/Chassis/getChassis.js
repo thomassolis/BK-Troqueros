@@ -16,15 +16,27 @@ export const GetChassis = async (page) => {
                                             id_chasis,
                                             placa,
                                             status,
-                                            @Page AS paginaActual,
-                                            CEILING(COUNT(*) OVER()) AS totalRegistros,
-                                            @PageSize AS limite
+                                            CEILING(COUNT(*) OVER()) AS totalRegistros
                                         FROM [Troqueros].[dbo].[Chasis]
                                         ORDER BY id_chasis
                                         OFFSET (@Page - 1) * @PageSize ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
         
-        return result.recordsets;
+                                        FETCH NEXT @PageSize ROWS ONLY;`);
+                                        
+        // Verificar si hay registros en la respuesta
+        const data = result.recordset;
+
+        // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
+        if (data.length === 0) {
+            return undefined
+        }
+
+        return {
+            data: result.recordset.map(({ totalRegistros, ...rest }) => rest), // Excluir totalRegistros del array de datos
+            paginaActual: page,
+            totalRegistros: result.recordset[0].totalRegistros,
+            limite: PAGE_SIZE
+        };
     } catch (error) {
         HandleError(v1(), error.message, 'querys/Chassis/getChassis/GetChassis', error, 'user');
         throw new Error('No se pudo obtener los chasis');
@@ -46,14 +58,27 @@ export const GetChassisByFilter = async (page, search) => {
                                             id_chasis,
                                             placa,
                                             status,
-                                            CEILING(COUNT(*) OVER() / CAST(@PageSize AS FLOAT)) AS totalPages
+                                            COUNT(*) OVER() AS totalRegistros
                                         FROM [Troqueros].[dbo].[Chasis]
                                         WHERE placa LIKE @Search
                                         ORDER BY id_chasis
                                         OFFSET @Page ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
-        
-        return result.recordsets;
+
+        // Verificar si hay registros en la respuesta
+        const data = result.recordset;
+
+        // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
+        if (data.length === 0) {
+            return undefined
+        }
+
+        return {
+            data: result.recordset.map(({ totalRegistros, ...rest }) => rest), // Excluir totalRegistros del array de datos
+            paginaActual: page,
+            totalRegistros: result.recordset[0].totalRegistros,
+            limite: PAGE_SIZE
+        };
     } catch (error) {
         HandleError(v1(), error.message, 'querys/Chassis/getChassis/GetChassis', error, 'user');
         throw new Error('No se pudo obtener los chasis');
