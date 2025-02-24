@@ -8,6 +8,7 @@ import Auth from './routes/auth.route.js';
 import registerUser from './routes/CreateUser.route.js';
 import client from './routes/clients.route.js';
 import chassis from './routes/chassis.route.js';
+import download from './routes/download.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
 
@@ -24,5 +25,6 @@ app.use('/api', Auth);
 app.use('/api', registerUser);
 app.use('/api/clients', client);
 app.use('/api/Chasises', chassis);
+app.use('/api/download', download);
 
 export default app;
