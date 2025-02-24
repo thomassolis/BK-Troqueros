@@ -1,4 +1,5 @@
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import session from 'express-session';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -14,6 +15,7 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(fileUpload());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));

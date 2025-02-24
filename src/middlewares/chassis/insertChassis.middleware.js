@@ -9,7 +9,6 @@ const userSchema = Joi.object({
     fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
     fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
     fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
-    foto: Joi.string().required(),
 });
 
 //Valida los datos enviados por el request body
