@@ -39,11 +39,12 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
         }
 
         //Generar los enlaces de descarga
-        const downloadLinks = {};
-        files.forEach((file, index) => {
-            // Generar el link de descarga
-            downloadLinks[`link${index + 1}`] = `${linkDownload}/${linkComplementary}/${file}`;
-        });
+        const downloadLinks = files.map((file, index) => ({
+            [`link${index + 1}`]: {
+                name: file, // Nombre del archivo
+                url: `${linkDownload}/${linkComplementary}/${file}` // URL de descarga
+            }
+        }));
 
         return downloadLinks;
     } catch (error) {
