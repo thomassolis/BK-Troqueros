@@ -24,7 +24,7 @@ export const ValidatePathMiddleware = (req, res, next) => {
         }
 
         //construimos la ruta completa
-        const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolder, ruta.fileName);
+        const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolderId, ruta.subfolder, ruta.fileName);
 
         // Verificar si la carpeta está dentro de las rutas permitidas
         if (!file.startsWith(BASE_PATHS.adjuntos)) {

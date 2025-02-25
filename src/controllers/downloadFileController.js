@@ -25,8 +25,7 @@ export const CtrDownloadFile = async (req, res) => {
         }
 
         //construimos la ruta completa
-        const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolder, ruta.fileName);
-        console.log(file)
+        const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolderId, ruta.subfolder, ruta.fileName);
         
         //descargamos el archivo
         res.download(file, (err) => {

@@ -4,6 +4,6 @@ import { CtrDownloadFile } from '../controllers/downloadFileController.js';
 
 const router = express.Router();
 
-router.get('/:folder/:subfolder/:fileName', ValidatePathMiddleware, CtrDownloadFile);
+router.get('/:folder/:subfolderId/:subfolder/:fileName', ValidatePathMiddleware, CtrDownloadFile);
 
 export default router;
