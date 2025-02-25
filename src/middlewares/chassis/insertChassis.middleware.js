@@ -4,11 +4,11 @@ import Joi from 'joi';
 
 const userSchema = Joi.object({
     placa: Joi.string().trim().required(),
-    numPoliza: Joi.string().required(),
-    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
-    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
-    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
-    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
+    numPoliza: Joi.string().allow(null, '').default(null),
+    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
+    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
+    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
+    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
 });
 
 //Valida los datos enviados por el request body
@@ -20,6 +20,7 @@ export const ValidateDataChassisMiddleware = (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Inserte bien los datos.' });
         }
 
+        req.body = value;
         next();
     } catch (error) {
         HandleError(v1(), error.message, 'middlewares/chassis/insertChassis.middleware/ValidateDataChassisMiddleware', error, 'user');
