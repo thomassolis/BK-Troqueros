@@ -19,7 +19,7 @@ export const CtrGetChassis = async (req, res) => {
                 return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
             }
 
-            return res.status(200).json({success: true, message: 'Data enviada', chassis});
+            return res.status(200).json({success: true, message: 'Data enviada', vehiculos: chassis});
         }
 
         //obtiene toda la data del chasis y reduce el anidamiento
