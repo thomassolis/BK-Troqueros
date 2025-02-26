@@ -5,11 +5,10 @@ import { GetChassis, GetChassisByFilter } from '../../querys/Chassis/getChassis.
 //Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassis = async (req, res) => {
     try {
-        //obtenemos el numero de pagina, sino existe se le asigna 1
-        const page = parseInt(req.query.page) || 1;
-
         //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
         const search = req.query.search;
+        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
+        const page = search ? 1 : parseInt(req.query.page) || 1;
 
         if (search) {
             //obtiene los chasis filtrados
