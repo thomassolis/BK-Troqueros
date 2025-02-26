@@ -5,7 +5,7 @@ import { pool } from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
 
 //inserta un cabezal
-export const InsertTruckHead = async (truckHead, folder, file) => {
+export const InsertTruckHead = async (truckHead, file) => {
     // Iniciar transacción
     const transaction = new sql.Transaction(pool);
 
@@ -32,12 +32,9 @@ export const InsertTruckHead = async (truckHead, folder, file) => {
             throw new Error('No se pudo generar el ID del cabezal.');
         }
 
-        // Verifica si existen los archivos antes de definir la ruta en la base de datos.
-        // Si el archivo "foto_poliza" está presente, se genera su ruta con el ID del cabezal.
-        // Si no existe, se asigna NULL en la base de datos para evitar errores.
-        // Lo mismo aplica para "foto_revisado".
-        const rutaPoliza = file && file.foto_poliza ? `'${folder[0]}/${idCabezal}/${folder[1]}'` : 'NULL';
-        const rutaRevisado = file && file.foto_revisado ? `'${folder[0]}/${idCabezal}/${folder[2]}'` : 'NULL';
+        //construimos la ruta de las carpetas
+        const rutaPoliza = `cabezal/${idCabezal}/poliza`;
+        const rutaRevisado = `cabezal/${idCabezal}/revisado`;
 
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
@@ -52,12 +49,12 @@ export const InsertTruckHead = async (truckHead, folder, file) => {
                 (id_cabezal, placa, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
                 fecha_renovacion_revisado, fecha_ultimo_revisado, foto_poliza, foto_revisado)
                 VALUES ('${idCabezal}', @Placa, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
-                        @FechaRenovacion, @FechaUltRevisado, ${rutaPoliza}, ${rutaRevisado})
+                        @FechaRenovacion, @FechaUltRevisado, '${rutaPoliza}', '${rutaRevisado}')
             `);
         
         //guardamos el archivo
-        const fileSaved = file && file.foto_poliza ? await SaveFile(folder[0], idCabezal, folder[1], file.foto_poliza) : true;
-        const fileSaved2 = file && file.foto_revisado ? await SaveFile(folder[0], idCabezal, folder[2], file.foto_revisado) : true;
+        const fileSaved = file && file.foto_poliza ? await SaveFile(rutaPoliza, file.foto_poliza) : true;
+        const fileSaved2 = file && file.foto_revisado ? await SaveFile(rutaRevisado, file.foto_revisado) : true;
 
         //Valida que se haya guardado los archivos
         if (!fileSaved || !fileSaved2) {
