@@ -14,13 +14,7 @@ export const CtrInsertChassis = async (req, res) => {
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        //valida que la foto de la poliza exista
-        if (!file) {}
-
-        //nombre de las carpetas a guardar los archivos
-        const folder = ['chassis', 'poliza', 'revisado'];
-
-        const inserted = await InsertChassis(chassis, folder, file); //inserta los datos
+        const inserted = await InsertChassis(chassis, file); //inserta los datos
 
         //valida que los datos se hayan insertados
         if (!inserted) {
