@@ -14,8 +14,6 @@ const userSchema = Joi.object({
 //valida los datos del request body
 export const ValidateUpdChassisDataMiddleware = (req, res, next) => {
     try {
-        console.log(req.body)
-        console.log(req.files)
         const { error, value } = userSchema.validate(req.body);
 
         if (error) {
