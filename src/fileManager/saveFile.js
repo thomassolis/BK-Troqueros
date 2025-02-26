@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 const PATH = path.resolve(__dirname, `../adjuntos`);
 
 //guardamos el archivo
-export const SaveFile = async (folder, subFolderId, subfolder, files) =>{
+export const SaveFile = async (folders, files) =>{
     try {
         //valida que el archivo exista
         if (!files) {
@@ -25,33 +25,17 @@ export const SaveFile = async (folder, subFolderId, subfolder, files) =>{
         const fileArray = Array.isArray(files) ? files : [files];
 
         //creamos la ruta del directorio chassis
-        const directoryChassis = path.join(PATH, folder)
+        const directoryChassis = path.join(PATH, folders)
 
         //comprabamos que el directorio chassis exista, sino lo creamos
         if (!fs.existsSync(directoryChassis)) {
             fs.mkdirSync(directoryChassis, { recursive: true });
         }
-
-        //creamos la ruta del directorio id_chasis
-        const directoryIdChassis = path.join(directoryChassis, subFolderId);
-
-        //comprabamos que el directorio id_chasis exista, sino lo creamos
-        if (!fs.existsSync(directoryIdChassis)) {
-            fs.mkdirSync(directoryIdChassis, { recursive: true });
-        }
-
-        //creamos la ruta del directorio poliza o revisado
-        const directoryPolORev = path.join(directoryIdChassis, subfolder);
-
-        //comprabamos que el directorio id_chasis exista, sino lo creamos
-        if (!fs.existsSync(directoryPolORev)) {
-            fs.mkdirSync(directoryPolORev, { recursive: true });
-        }
         
         //guardamos los archivos en la carpeta correspondiente
         for (const file of fileArray) {
             //creamos las rutas donde va a estar los archivos
-            const pathAbsolut = path.join(directoryPolORev, file.name);
+            const pathAbsolut = path.join(directoryChassis, file.name);
 
             await new Promise((resolve, reject) => {
                 file.mv(pathAbsolut, (err) => {
