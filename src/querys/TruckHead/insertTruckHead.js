@@ -24,16 +24,16 @@ export const InsertTruckHead = async (truckHead, folder, file) => {
                     EXEC Prc_GenerarIDCabezal @NuevoID OUTPUT;
                     SELECT @NuevoID AS id_cabezal;`);
         
-        //obtenemos el id del chasis
+        //obtenemos el id del cabezal
         const idCabezal = idResult.recordset[0].id_cabezal;
 
-        //validamos que id del chasis exista
+        //validamos que id del cabezal exista
         if (!idCabezal) {
-            throw new Error('No se pudo generar el ID del chasis.');
+            throw new Error('No se pudo generar el ID del cabezal.');
         }
 
         // Verifica si existen los archivos antes de definir la ruta en la base de datos.
-        // Si el archivo "foto_poliza" está presente, se genera su ruta con el ID del chasis.
+        // Si el archivo "foto_poliza" está presente, se genera su ruta con el ID del cabezal.
         // Si no existe, se asigna NULL en la base de datos para evitar errores.
         // Lo mismo aplica para "foto_revisado".
         const rutaPoliza = file && file.foto_poliza ? `'${folder[0]}/${idCabezal}/${folder[1]}'` : 'NULL';
@@ -72,7 +72,7 @@ export const InsertTruckHead = async (truckHead, folder, file) => {
     } catch (error) {
         await transaction.rollback();
 
-        let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
+        let MyThrow =  new Error(`No se pudo insertar el cabezal, ${error.message}`);
 
         if (error.number === 2627) {
             MyThrow.ErrorCode = 2627;
