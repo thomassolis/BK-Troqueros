@@ -7,13 +7,17 @@ export const CtrInsertTruckHead = async (req, res) => {
     try {
         //obtiene los datos del request body
         const truckHead = req.body;
+        const file = req.files;
 
         //valida que los datos no sean nulos
         if (!truckHead){
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        const inserted = await InsertTruckHead(truckHead); //inserta los datos
+        //nombre de las carpetas a guardar los archivos
+        const folder = ['cabezal', 'poliza', 'revisado'];
+
+        const inserted = await InsertTruckHead(truckHead, folder, file); //inserta los datos
 
         //valida que los datos se hayan insertados
         if (!inserted) {

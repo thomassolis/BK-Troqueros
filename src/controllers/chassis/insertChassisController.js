@@ -7,13 +7,20 @@ export const CtrInsertChassis = async (req, res) => {
     try {
         //obtiene los datos del request body
         const chassis = req.body;
+        var file = req.files;
 
         //valida que los datos no sean nulos
         if (!chassis){
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        const inserted = await InsertChassis(chassis); //inserta los datos
+        //valida que la foto de la poliza exista
+        if (!file) {}
+
+        //nombre de las carpetas a guardar los archivos
+        const folder = ['chassis', 'poliza', 'revisado'];
+
+        const inserted = await InsertChassis(chassis, folder, file); //inserta los datos
 
         //valida que los datos se hayan insertados
         if (!inserted) {
@@ -31,3 +38,5 @@ export const CtrInsertChassis = async (req, res) => {
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 }
+
+
