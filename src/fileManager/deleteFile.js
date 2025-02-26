@@ -17,8 +17,6 @@ export const DeleteFile = async (folder, subfolderId, subfolder, files) =>{
     try {
         // Construimos la ruta del archivo a eliminar
         let filePath = path.join(PATH, folder, subfolderId, subfolder);
-        console.log(filePath)
-        console.log(files)
 
         // Si `files` es null o un array vacío, eliminamos todos los archivos de la carpeta
         if (!files && fs.existsSync(filePath)) {
