@@ -33,7 +33,7 @@ export const InsertTruckVan = async (truckVan, folder, file) => {
         }
 
         // Verifica si existen los archivos antes de definir la ruta en la base de datos.
-        // Si el archivo "foto_poliza" está presente, se genera su ruta con el ID del chasis.
+        // Si el archivo "foto_poliza" está presente, se genera su ruta con el ID del furgon.
         // Si no existe, se asigna NULL en la base de datos para evitar errores.
         // Lo mismo aplica para "foto_revisado".
         const rutaPoliza = file && file.foto_poliza ? `'${folder[0]}/${idFurgon}/${folder[1]}'` : 'NULL';

@@ -17,7 +17,8 @@ export const GetTruckVanId = async (idFurgon) => {
                                             fecha_caducidad_poliza,
                                             fecha_renovacion_revisado,
                                             fecha_ultimo_revisado,
-                                            foto_poliza
+                                            foto_poliza,
+                                            foto_revisado
                                         FROM [Troqueros].[dbo].[Furgon]
                                         WHERE id_furgon = @IdFurgon`);
         
