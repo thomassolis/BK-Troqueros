@@ -20,7 +20,7 @@ export const CtrGetTruckHead = async (req, res) => {
                 return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
             }
 
-            return res.status(200).json({success: true, message: 'Data enviada', truckHead});
+            return res.status(200).json({success: true, message: 'Data enviada', vehiculos: truckHead});
         }
 
         //obtiene toda la data del cabezal y reduce el anidamiento
