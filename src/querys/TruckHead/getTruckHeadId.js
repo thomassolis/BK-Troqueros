@@ -17,7 +17,8 @@ export const GetTruckHeadId = async (idCabezal) => {
                                             fecha_caducidad_poliza,
                                             fecha_renovacion_revisado,
                                             fecha_ultimo_revisado,
-                                            foto_poliza
+                                            foto_poliza,
+                                            foto_revisado
                                         FROM [Troqueros].[dbo].[Cabezal]
                                         WHERE id_cabezal = @IdCabezal`);
         
