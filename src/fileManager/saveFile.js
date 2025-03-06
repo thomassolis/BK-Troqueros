@@ -1,17 +1,8 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { HandleError } from '../utils/HandleError.js';
 import { v1 } from 'uuid';
-
-// Convertimos la URL del archivo actual (import.meta.url) a una ruta de archivo
-const __filename = fileURLToPath(import.meta.url);
-
-// Usamos dirname para obtener el directorio donde se encuentra el archivo actual
-const __dirname = dirname(__filename);
-
-//obtenemos la ruta absoluta del directorio a usar
-const PATH = path.resolve(__dirname, `../adjuntos`);
+import { BuildPathFilesServer } from './getFilePath.js';
 
 //guardamos el archivo
 export const SaveFile = async (folders, files) =>{
@@ -20,6 +11,9 @@ export const SaveFile = async (folders, files) =>{
         if (!files) {
             return true;
         }
+
+        //obtiene ka ruta base
+        const PATH = BuildPathFilesServer();
 
         // Si `files` ya es un array, lo dejamos como está. Si es un objeto, lo convertimos en un array
         const fileArray = Array.isArray(files) ? files : [files];
