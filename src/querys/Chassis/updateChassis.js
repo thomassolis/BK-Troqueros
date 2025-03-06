@@ -37,8 +37,8 @@ export const UpdateChassis = async (chassis, files) => {
 
         //valida la existencia de los archivos
         if (!files) {
-            UpdateFile(rutaPoliza, null);
-            UpdateFile(rutaRevisado, null);
+            await UpdateFile(rutaPoliza, null);
+            await UpdateFile(rutaRevisado, null);
         }
         
         //actualiza los archivos
