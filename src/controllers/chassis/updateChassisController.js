@@ -1,7 +1,6 @@
 import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { UpdateChassis } from '../../querys/Chassis/updateChassis.js';
-import { DeleteFile } from '../../fileManager/deleteFile.js';
 
 //controlador para actualizar los datos del chasis
 export const CtrUpdateChassis = async (req, res) => {

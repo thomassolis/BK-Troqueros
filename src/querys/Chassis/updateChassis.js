@@ -34,16 +34,11 @@ export const UpdateChassis = async (chassis, files) => {
                             foto_revisado = '${rutaRevisado}',
                             fecha_modificación = GETDATE()
                     WHERE id_chasis = @IdChasis`);
-
-        //valida la existencia de los archivos
-        if (!files) {
-            await UpdateFile(rutaPoliza, null);
-            await UpdateFile(rutaRevisado, null);
-        }
         
-        //actualiza los archivos
-        const fileEliminated = files && files.foto_poliza ? await UpdateFile(rutaPoliza, files.foto_poliza) : {success:true, msg:''};
-        const fileEliminated2 = files && files.foto_revisado ? await UpdateFile(rutaRevisado, files.foto_revisado) : {success:true, msg:''};
+        //valida que los archivos exista
+        //actualiza los archivos del furgon
+        const fileEliminated = files && files.foto_poliza ? await UpdateFile(rutaPoliza, files.foto_poliza) : await UpdateFile(rutaPoliza, null);
+        const fileEliminated2 = files && files.foto_revisado ? await UpdateFile(rutaRevisado, files.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
         //Valida que se haya guardado los archivos
         if (!fileEliminated.success || !fileEliminated2.success) {
