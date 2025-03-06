@@ -2,7 +2,7 @@ import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { GetTruckVanId } from '../../querys/TruckVan/getTruckVanId.js';
 import { DateConverter } from '../../auxiliary functions/dateConverter.js';
-import { GetLinksDownloadFiles } from '../../auxiliary functions/getFiles.js';
+import { GetLinksDownloadFiles } from '../../fileManager/getFiles.js';
 
 //Obtiene el furgon por ID
 export const CtrGetTruckVanId = async (req, res) => {
@@ -25,7 +25,7 @@ export const CtrGetTruckVanId = async (req, res) => {
         //verifica que chasis no este nulo
         if (!data) {
             return res.status(404).json({success: false, message: 'No se pudo obtener los datos'});
-        }
+        }        
 
         //obtiene la data con las fechas formateas (DD/MM/YYYY)
         //obtiene los links de descarga de los archivos existentes
