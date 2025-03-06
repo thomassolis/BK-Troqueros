@@ -14,10 +14,7 @@ export const CtrInsertTruckHead = async (req, res) => {
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        //nombre de las carpetas a guardar los archivos
-        const folder = ['cabezal', 'poliza', 'revisado'];
-
-        const inserted = await InsertTruckHead(truckHead, folder, file); //inserta los datos
+        const inserted = await InsertTruckHead(truckHead, file); //inserta los datos
 
         //valida que los datos se hayan insertados
         if (!inserted) {

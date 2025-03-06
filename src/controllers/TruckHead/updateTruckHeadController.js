@@ -5,9 +5,6 @@ import { UpdateTruckHead } from '../../querys/TruckHead/updateTruckHead.js';
 //controlador para actualizar los datos del cabezal
 export const CtrUpdateTruckHead = async (req, res) => {
     try {
-        //nombre de las carpetas a guardar los archivos
-        const folders = ['cabezal', 'poliza', 'revisado'];
-
         const dataTruckHead = req.body; //obtiene los datos del request body
         const files = req.files; //obtiene todos los archivos del request files
 
@@ -17,7 +14,7 @@ export const CtrUpdateTruckHead = async (req, res) => {
         }
 
         //Actualiza el cabezal
-        const updatedTruckHead = await UpdateTruckHead(dataTruckHead, folders, files);
+        const updatedTruckHead = await UpdateTruckHead(dataTruckHead, files);
 
         //valida que el cabezal se haya actualzido
         if (!updatedTruckHead) {

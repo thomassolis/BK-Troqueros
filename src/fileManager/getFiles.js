@@ -1,19 +1,8 @@
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import path from 'path';
 import { v1 } from 'uuid';
 import { HandleError } from '../utils/HandleError.js';
-
-// Obtén la ruta del archivo actual
-const __filename = fileURLToPath(import.meta.url);
-
-// Obtén el directorio del archivo actual
-const __dirname = path.dirname(__filename);
-
-//rutas permitidas
-const BASE_PATHS = {
-    adjuntos: path.join(__dirname, '../adjuntos/'),
-};
+import { BuildPathFilesServer } from './getFilePath.js';
 
 export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
     try {
@@ -22,8 +11,11 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
             return null;
         }
 
+        //obtiene la ruta base
+        const BASE_PATHS = BuildPathFilesServer();
+
         //construimos la ruta completa
-        const directory = path.join(BASE_PATHS.adjuntos, linkComplementary);
+        const directory = path.join(BASE_PATHS, linkComplementary);
 
         //Validar que el directorio exista
         if (!fs.existsSync(directory)) {

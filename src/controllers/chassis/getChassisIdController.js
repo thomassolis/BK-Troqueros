@@ -2,7 +2,7 @@ import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { GetChassisId } from '../../querys/Chassis/getChassisId.js';
 import { DateConverter } from '../../auxiliary functions/dateConverter.js';
-import { GetLinksDownloadFiles } from '../../auxiliary functions/getFiles.js';
+import { GetLinksDownloadFiles } from '../../fileManager/getFiles.js';
 
 //Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassisId = async (req, res) => {
