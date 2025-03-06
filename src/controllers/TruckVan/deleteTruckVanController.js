@@ -6,7 +6,6 @@ export const CtrDeleteTruckVan = async (req, res) => {
     try {
         //obtiene el id del furgon del request params
         const idFurgon = req.params.id;
-        console.log(idFurgon)
 
         //valida que el id del furgon no sea nulo
         if (!idFurgon) {
