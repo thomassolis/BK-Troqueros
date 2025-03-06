@@ -6,6 +6,7 @@ import { UpdateTruckVan } from '../../querys/TruckVan/updateTruckVan.js';
 export const CtrUpdateTruckVan = async (req, res) => {
     try {
         const dataTruckVan = req.body; //obtiene los datos del request body
+        const files = req.files; //obtiene todos los archivos del request files
 
         //valida que los datos no sean nulos
         if (!dataTruckVan) {
@@ -13,7 +14,7 @@ export const CtrUpdateTruckVan = async (req, res) => {
         }
 
         //Actualiza el furgon
-        const updatedTruckVan = await UpdateTruckVan(dataTruckVan);
+        const updatedTruckVan = await UpdateTruckVan(dataTruckVan, files);
 
         //valida que el furgon se haya actualzido
         if (!updatedTruckVan) {
