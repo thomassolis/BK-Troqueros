@@ -1,4 +1,3 @@
-import { v1 } from 'uuid';
 import { codificarToken } from '../JWT/code.js';
 import { ValidateUser, VerifyPassword } from '../querys/Login/login.js';
 import { HandleError } from '../utils/HandleError.js';
@@ -7,6 +6,9 @@ import { InsertUserBan } from '../querys/Login/insertUserBan.js';
 import { NumeroMaxIntentos } from '../auxiliary functions/verifyIntents.js';
 import { Banned, UnBan } from '../querys/Login/banned.js';
 import { UpdateIntents } from '../querys/Login/updateIntents.js';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 export const ctrAuthentication = async (req, res) => {
     try {
@@ -58,7 +60,7 @@ export const ctrAuthentication = async (req, res) => {
 
             if (Boolean(ban.userB)) {
                 await Banned(email, process.env.TB_UB);
-                return res.status(403).json({success: false, message: 'Has alcanzado el número máximo de intentos. Tu cuenta ha sido bloqueada.' });
+                return res.status(403).json({success: false, message: 'Has alcanzado el número máximo de intentos. Tu cuenta ha sido baneada.' });
             }
 
             await Banned(email, process.env.TB_US);
@@ -81,11 +83,12 @@ export const ctrAuthentication = async (req, res) => {
         });
 
         //Actualiza el numero de intentos
-        await UpdateIntents(dataUser.email, 0, process.env.TB_US);
+        await UpdateIntents(dataUser.email);
 
         return res.status(200).json({ success: true, message: 'Login exitoso', data: dataUser});
     } catch (error) {
-        HandleError(v1(), error.message, 'controller/AuthController/ctrAuthentication', error, 'user');
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoAutenticado); //generar codigo del error
+        HandleError(code, error.message, 'controller/AuthController/ctrAuthentication', error);
         return res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 };

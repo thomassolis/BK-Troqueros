@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
-import { v1 } from 'uuid';
 import { HandleError } from '../utils/HandleError.js';
 import { BuildPathFilesServer } from './getFilePath.js';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { typeError } from '../dictionary/typeError.js';
 
 export const DeleteFile = async (pathFile) =>{
     try {
@@ -25,7 +26,8 @@ export const DeleteFile = async (pathFile) =>{
 
         return true;
     } catch (error) {
-        HandleError(v1(), error.message, 'fileManager/deleteFile/DeleteFile', error, 'user');
-        throw new Error(`Error al eliminar el archivo, ${error.message}`);
+        const code = GenerateCodeError('-', typeError.chasisNoEncontrado);
+        HandleError(code, error.message, 'fileManager/deleteFile/DeleteFile', error);
+        throw new Error(`Error al eliminar el archivo`);
     }
 }

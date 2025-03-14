@@ -1,4 +1,8 @@
-import Joi from "joi";
+import Joi from 'joi';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
+import { HandleError } from '../utils/HandleError.js';
 
 //Convierte la fecha en formato (DD-MM-YYYY)
 export const DateConverter = (date) => {
@@ -25,7 +29,9 @@ export const DateConverter = (date) => {
         return `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
 
     } catch (error) {
-        throw new Error(`Error al convertir la fecha al formato (DD/MM/YYYY): ${error.message}`);
+        const code = GenerateCodeError('-', typeError.general);
+        HandleError(code, error.message, 'auxiliary functions/dateConverter/DateConverter', error)
+        throw new Error(`Error al convertir la fecha al formato (DD/MM/YYYY)`);
     }
 };
 
