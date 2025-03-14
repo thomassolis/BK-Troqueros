@@ -7,9 +7,9 @@
 */
 export const modules = {
     LOGIN: "ELG",
-    CHASIS: "ECH",
-	CABEZAL: "ECA",
-	FURGON: "EFU",
+    CHASISES: "ECH",
+	CABEZALES: "ECA",
+	FURGONES: "EFU",
 	PROVEEDORES: "EPR",
 	CLIENTES: "ECL",
 	USUARIOS: "EUS",

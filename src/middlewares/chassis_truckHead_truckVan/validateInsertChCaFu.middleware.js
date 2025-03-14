@@ -25,7 +25,9 @@ export const ValidateDataInsertMiddleware = (req, res, next) => {
         req.body = value;
         next();
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoAgregado);
+        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
+        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'middlewares/chassis_truckHead_truckVan/insertChassis.middleware/ValidateDataChassisMiddleware', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
