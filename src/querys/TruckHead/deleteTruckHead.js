@@ -1,8 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { DeleteFile } from '../../fileManager/deleteFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Elimina un cabezal del sistema
 export const DeleteTruckHead = async (id) => {
@@ -31,7 +32,8 @@ export const DeleteTruckHead = async (id) => {
 
         return result.rowsAffected[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/deleteTruckHead/DeleteTruckHead', error, 'user');
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.DELETE);
+        HandleError(code, error.message, 'querys/deleteTruckHead/DeleteTruckHead', error);
         throw new Error('No se pudo eliminar el cabezal');
     }
 }
@@ -51,7 +53,8 @@ const getPathTruckHead = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/deleteTruckHead/getPathTruckHead', error, 'user');
-        throw new Error('No se pudo eliminar el Cabezal');
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.DELETE);
+        HandleError(code, error.message, 'querys/deleteTruckHead/getPathTruckHead');
+        throw new Error('No se pudo obtener la ruta de los archivos del Cabezal');
     }
 }

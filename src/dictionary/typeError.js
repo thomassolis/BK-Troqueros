@@ -12,6 +12,12 @@ export const typeError = {
         PUT: "CHNA", //Chasis no actualizado
         DELETE: "CHNE", //Chasis no eliminado
     },
+    CABEZALES: {
+        GET: "CANE", //Cabezal no encontrado
+        POST: "CANI", //Cabezal no insertado
+        PUT: "CANA", //Cabezal no actualizado
+        DELETE: "CANE", //Cabezal no eliminado
+    },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
 	duplicados: "DUP",

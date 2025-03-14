@@ -1,8 +1,10 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el cabezal con los datos de la request
 export const UpdateTruckHead = async (truckHead, files) => {
@@ -54,7 +56,8 @@ export const UpdateTruckHead = async (truckHead, files) => {
         //revierte la actualización del chasis
         await transaction.rollback();
 
-        HandleError(v1(), error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead');
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
+        HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead');
         throw new Error(`${error.msg}`);
     }
 }
