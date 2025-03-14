@@ -1,8 +1,10 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el chasis con los datos de la request
 export const UpdateChassis = async (chassis, files) => {
@@ -36,7 +38,7 @@ export const UpdateChassis = async (chassis, files) => {
                     WHERE id_chasis = @IdChasis`);
         
         //valida que los archivos exista
-        //actualiza los archivos del furgon
+        //actualiza los archivos del chasis
         const fileEliminated = files && files.foto_poliza ? await UpdateFile(rutaPoliza, files.foto_poliza) : await UpdateFile(rutaPoliza, null);
         const fileEliminated2 = files && files.foto_revisado ? await UpdateFile(rutaRevisado, files.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
@@ -54,7 +56,8 @@ export const UpdateChassis = async (chassis, files) => {
         //revierte la actualización del chasis
         await transaction.rollback();
 
-        HandleError(v1(), error.message, 'querys/Chassis/updateChassis/UpdateChassis', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoActualizado);
+        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
         throw new Error(`${error.msg}`);
     }
 }

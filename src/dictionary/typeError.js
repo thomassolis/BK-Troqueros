@@ -13,4 +13,11 @@ export const typeError = {
 	file: "FIL",
     clienteNoEncontrado: "CNE",
     validarToken: "VTK",
+    parametrosNoAgregados: "PNA",
+    chasisNoEncontrado: "CHNE",
+    permisoDenegado: "PDN",
+    general: "GEN",
+    chasisNoAgregado: "CHNI",
+    chasisNoActualizado: "CHNA",
+    chasisNoEliminado: "CHNE"
 }

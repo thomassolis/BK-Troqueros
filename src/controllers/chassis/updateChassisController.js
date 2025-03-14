@@ -1,6 +1,8 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { UpdateChassis } from '../../querys/Chassis/updateChassis.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //controlador para actualizar los datos del chasis
 export const CtrUpdateChassis = async (req, res) => {
@@ -23,7 +25,8 @@ export const CtrUpdateChassis = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Chasis actualizado.'});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/chassis/updateChassisController/CtrUpdateChassis');
+        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoActualizado);
+        HandleError(code, error.message, 'controllers/chassis/updateChassisController/CtrUpdateChassis');
         return res.status(500).json({success: false, message: `${error.message}`});
     }
 }

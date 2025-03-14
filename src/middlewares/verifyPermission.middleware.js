@@ -1,11 +1,14 @@
-import { v1 } from 'uuid';
 import { VerifyPermission } from '../querys/VerifyPermission.js';
 import { HandleError } from '../utils/HandleError.js';
+import { GetSessionUserInfo } from '../contexts/sessionContext.js';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 //controlador para verificar los permisos del usuario
 export const VerifyPermissionMiddleware = async (req, res, next) => {
     try {
-        const rol = req.session.user.rol;
+        const rol = GetSessionUserInfo().rol; //obtenemos el rol del usuario
         const module = req.permission.module;
         const action = req.permission.action;
 
@@ -24,7 +27,8 @@ export const VerifyPermissionMiddleware = async (req, res, next) => {
 
         next();
     } catch (error) {
-        HandleError(v1, error.message, 'controllers/VerifyPermissionController/CtrVerifyPermission', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.permisoDenegado);
+        HandleError(code, error.message, 'controllers/VerifyPermissionController/CtrVerifyPermission', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 }

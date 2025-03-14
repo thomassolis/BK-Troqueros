@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { HandleError } from '../utils/HandleError.js';
-import { v1 } from 'uuid';
 import { BuildPathFilesServer } from './getFilePath.js';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { typeError } from '../dictionary/typeError.js';
 
 //guardamos el archivo
 export const SaveFile = async (folders, files) =>{
@@ -44,7 +45,8 @@ export const SaveFile = async (folders, files) =>{
 
         return true;  // retorna true, sí todos los archivos se guardaron correctamente
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/chassis/insertChassisController/SaveFile', error, 'user');
-        throw new Error(`No se pudo guardar el archivo, ${error.message}`);
+        const code = GenerateCodeError('-', typeError.general);
+        HandleError(code, error.message, 'controllers/chassis/insertChassisController/SaveFile', error);
+        throw new Error(`No se pudo guardar el archivo`);
     }
 }

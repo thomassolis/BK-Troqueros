@@ -1,7 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //obtiene todos los chasis 
 export const GetChassis = async (page) => {
@@ -38,7 +40,8 @@ export const GetChassis = async (page) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/Chassis/getChassis/GetChassis', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoEncontrado);
+        HandleError(code, error.message, 'querys/Chassis/getChassis/GetChassis', error);
         throw new Error('No se pudo obtener los chasis');
     }
 }
@@ -80,7 +83,8 @@ export const GetChassisByFilter = async (page, search) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/Chassis/getChassis/GetChassis', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoEncontrado);
+        HandleError(code, error.message, 'querys/Chassis/getChassis/GetChassisByFilter', error);
         throw new Error('No se pudo obtener los chasis');
     }
 }
