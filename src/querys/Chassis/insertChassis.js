@@ -83,7 +83,7 @@ export const InsertChassis = async (chassis, file) => {
             MyThrow.msg = 'La placa ya existe.';
         }
 
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.POST);
         HandleError(code, error.message, 'querys/Chassis/insertChassis/InsertChassis', error);
         throw MyThrow;
     }
