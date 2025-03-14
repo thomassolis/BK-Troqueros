@@ -42,7 +42,7 @@ export const GetChassis = async (page) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassis/GetChassis', error);
-        throw new Error('No se pudo obtener los chasis');
+        throw new Error('No se pudo obtener la lista de los chasis');
     }
 }
 
@@ -85,6 +85,6 @@ export const GetChassisByFilter = async (page, search) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassis/GetChassisByFilter', error);
-        throw new Error('No se pudo obtener los chasis');
+        throw new Error('No se pudo obtener los chasis por filtros');
     }
 }

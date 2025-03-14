@@ -33,7 +33,7 @@ export const DeleteChassis = async (id) => {
 
         return result.rowsAffected[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoEncontrado);
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.DELETE);
         HandleError(code, error.message, 'querys/deleteChassis/DeleteChassis', error);
         throw new Error('No se pudo eliminar el chasis');
     }
@@ -55,7 +55,7 @@ const getPathChassis = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoEncontrado);
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/deleteChassis/getPathChassis', error);
         throw new Error('No se pudo obtener la ruta de los archivos del chasis');
     }

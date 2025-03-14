@@ -3,6 +3,7 @@ import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { typeError } from '../../dictionary/typeError.js';
+import { modules } from '../../dictionary/modules.js';
 
 //obtiene un chasis en especifico
 export const GetChassisId = async (idChassis) => {
@@ -27,6 +28,6 @@ export const GetChassisId = async (idChassis) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
-        throw new Error('No se pudo obtener los chasis');
+        throw new Error('No se pudo obtener el chasis por ID');
     }
 }
