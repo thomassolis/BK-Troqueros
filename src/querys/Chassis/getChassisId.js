@@ -1,7 +1,8 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //obtiene un chasis en especifico
 export const GetChassisId = async (idChassis) => {
@@ -24,7 +25,8 @@ export const GetChassisId = async (idChassis) => {
         
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/Chassis/getChassisId/GetChassisId', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoEncontrado);
+        HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
         throw new Error('No se pudo obtener los chasis');
     }
 }

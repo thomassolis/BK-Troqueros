@@ -12,6 +12,7 @@ import truckHead from './routes/truckHead.route.js';
 import download from './routes/download.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
+import { sessionMiddleware } from './contexts/sessionContext.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(fileUpload());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
+app.use(sessionMiddleware);
 
 app.use('/api', Auth);
 app.use('/api', registerUser);

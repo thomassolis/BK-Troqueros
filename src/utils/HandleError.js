@@ -1,31 +1,30 @@
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
+import { GetSessionUserInfo } from '../contexts/sessionContext.js';
 
 dotenv.config();
 
-export const HandleError = async (id_log, message, module, error, userData) => {
+export const HandleError = async (id_log, message, module, error) => {
     const LOG_FILE_PATH = process.env.LOG_FILE_PATH;
-    
-    const logDetails = {
-        id: id_log,
-        message: message || 'Error desconocido',
-        module: module || 'N/A',
-        errorDetails: error ? error.stack : 'Sin detalles del error',
-        user: userData || 'Usuario no autenticado',
-        date: formatDateTime(new Date()),
-    };
+    const user = GetSessionUserInfo(); //obtenemos la informacion del usuario
 
-    const logString = JSON.stringify(logDetails, null, 2);
+    const logDetails = `[code]: ${id_log || '-GEN-001'}\n` +
+                       `[message]: ${message || 'Error desconocido'}\n` +
+                       `[module]: ${module || 'N/A'}\n` +
+                       `[errorDetails]: ${error ? error.stack : 'Sin detalles del error'}\n` +
+                       `[user]: ${user? user.nombre : 'Usuario no autenticado'}\n` +
+                       `[date]: ${formatDateTime(new Date())}\n` +
+                       `-----------------------------------------------------------------\n` +
+                       `-----------------------------------------------------------------\n`;
 
     try {
         // Verificar si el archivo de log existe
         await fs.access(LOG_FILE_PATH).catch(async () => {
-            console.log('Archivo de log creado');
             await fs.writeFile(LOG_FILE_PATH, '', 'utf8');
         });
 
         // Agregar el log al archivo
-        await fs.appendFile(LOG_FILE_PATH, `${logString}\n`, 'utf8');
+        await fs.appendFile(LOG_FILE_PATH, `${logDetails}\n`, 'utf8');
     } catch (err) {
         console.error('Error al escribir en el archivo de log:', err);
     }
@@ -40,3 +39,4 @@ const formatDateTime = (date) => {
   
     return `${day}/${month}/${year} ${hours}:${minutes}`;  // Formato dd/MM/YYYY HH:mm
 };
+

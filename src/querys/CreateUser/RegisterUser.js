@@ -26,7 +26,7 @@ export const CreateUser = async (data) => {
 
         return insertedRole;
     } catch (error) {
-        HandleError(v1, error.message, 'CreateUser', error, 'user');
+        HandleError(v1, error.message, 'CreateUser', error, '');
         throw new Error('Error interno del servidor');
     }
 }

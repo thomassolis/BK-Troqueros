@@ -1,7 +1,9 @@
 import { pool } from '../../db/db.js';
 import sql from 'mssql';
 import { HandleError } from '../../utils/HandleError.js';
-import { v1 } from 'uuid';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Banea al usuario
 export const Banned = async (email, tableName) => {
@@ -17,8 +19,9 @@ export const Banned = async (email, tableName) => {
                             [email] = @Email`);
         
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/login/banned/Banned', error, 'user');
-        throw new Error('Error en la consulta de la base de datos');
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoAutenticado); //generar codigo del error
+        HandleError(code, error.message, 'querys/login/banned/Banned', error);
+        throw new Error(`No se pudo actualizar la informacion del usuario ${email}`);
     }
 }
 
@@ -35,7 +38,8 @@ export const UnBan = async (email) => {
                         WHERE 
                             [email] = @Email`);
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/login/banned/UnBan', error, 'user');
-        throw new Error('Error en la consulta de la base de datos');
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoAutenticado); //generar codigo del error
+        HandleError(code, error.message, 'querys/login/banned/UnBan', error);
+        throw new Error(`No se pudo actualizar la informacion del usuario ${email}`);
     }
 }

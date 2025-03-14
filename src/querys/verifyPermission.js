@@ -1,8 +1,10 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../db/db.js';
 import dotenv from 'dotenv';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 dotenv.config();
 
@@ -23,7 +25,8 @@ export const VerifyPermission = async (module, action, rol) => {
 
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1, error.message, 'querys/verifyPermission/VerifyPermission', error, 'user');
+        const code = GenerateCodeError(modules.CHASIS, typeError.permisoDenegado);
+        HandleError(code, error.message, 'querys/verifyPermission/VerifyPermission', error);
         throw new Error('Error... No se puso hacer la consulta a la base de datos');
     }
 }
