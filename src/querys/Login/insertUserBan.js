@@ -1,7 +1,9 @@
 import { pool } from '../../db/db.js';
 import sql from 'mssql';
 import { HandleError } from '../../utils/HandleError.js';
-import { v1 } from 'uuid';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
 
 //Inserta al usuario no registrado
 export const InsertUserBan = async (email) => {
@@ -12,7 +14,8 @@ export const InsertUserBan = async (email) => {
                     VALUES (@Email, 1, 1)`);
 
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/login/insertUserBan/InsertUserBan', error, 'user');
-        throw new Error('Error interno del servidor');
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoEncontrado); //generar codigo del error
+        HandleError(code, error.message, 'querys/login/insertUserBan/InsertUserBan', error);
+        throw new Error('No se ha podido insertar el usuario en usuario baneados');
     }
 }

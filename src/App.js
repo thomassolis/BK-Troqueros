@@ -8,6 +8,7 @@ import registerUser from './routes/CreateUser.route.js';
 import client from './routes/clients.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
+import { sessionMiddleware } from './contexts/sessionContext.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
+app.use(sessionMiddleware);
 
 app.use('/api', Auth);
 app.use('/api', registerUser);
