@@ -1,6 +1,9 @@
+import { GetSessionUserInfo, sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.js';
 import { VeryfyToken } from '../JWT/verifyToken.js';
 import { HandleError } from '../utils/HandleError.js';
-import { v1 } from 'uuid';
+import {GenerateCodeError} from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 // Middleware para validar el token en las cookies
 export const ValidateTokenMiddleware = async (req, res, next) => {
@@ -21,7 +24,16 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
             return res.status(401).json({success: false, message: 'Token inválido'});
         }
 
-        req.session.user = dataDecode;
+        //validmaos el contexto
+        if (!sessionStorage.getStore()) {
+            // Si no existe un contexto, creamos uno
+            sessionStorage.run({}, () => {
+                SetSessionUserInfo(dataDecode);
+                next();
+            });
+        }
+
+        SetSessionUserInfo(dataDecode);
         next();
     } catch (error) {
         //pregunta si el error ha sido por TokenExpiredError
@@ -33,8 +45,8 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         if (error.name === 'JsonWebTokenError') {
             return res.status(403).json({success: false, message: 'Token modificado'});
         }
-
-        HandleError(v1(), error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error, 'user');
+        const code = GenerateCodeError(modules.LOGIN, typeError.validarToken);
+        HandleError(code, error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 };
