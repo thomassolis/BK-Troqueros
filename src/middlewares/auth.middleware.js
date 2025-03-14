@@ -1,4 +1,4 @@
-import { GetSessionUserInfo, sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.js';
+import { sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.js';
 import { VeryfyToken } from '../JWT/verifyToken.js';
 import { HandleError } from '../utils/HandleError.js';
 import {GenerateCodeError} from '../utils/getCodeError.js';
@@ -8,6 +8,8 @@ import { typeError } from '../dictionary/typeError.js';
 // Middleware para validar el token en las cookies
 export const ValidateTokenMiddleware = async (req, res, next) => {
     try {
+        throw new Error("");
+        
         // Leer el token desde las cookies
         const token = req.cookies.token;
 
@@ -45,7 +47,9 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         if (error.name === 'JsonWebTokenError') {
             return res.status(403).json({success: false, message: 'Token modificado'});
         }
-        const code = GenerateCodeError(modules.LOGIN, typeError.validarToken);
+        
+        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }

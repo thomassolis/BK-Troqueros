@@ -31,7 +31,9 @@ export const CtrInsertChassis = async (req, res) => {
             return res.status(500).json({success: false, message: error.msg});
         }
 
-        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoAgregado);
+        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
+        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'controllers/chassis/insertChassisController/CtrInsertChassis', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }

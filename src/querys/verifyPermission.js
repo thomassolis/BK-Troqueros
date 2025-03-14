@@ -25,7 +25,9 @@ export const VerifyPermission = async (module, action, rol) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASIS, typeError.permisoDenegado);
+        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        
+        const code = GenerateCodeError(modules[module], typeError.permisoDenegado);
         HandleError(code, error.message, 'querys/verifyPermission/VerifyPermission', error);
         throw new Error('Error... No se puso hacer la consulta a la base de datos');
     }

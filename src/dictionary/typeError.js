@@ -6,6 +6,12 @@
     ************************************************************************************
 */
 export const typeError = {
+    CHASISES: {
+        GET: "CHNE", //Chasis no encontrado
+        POST: "CHNI", //Chasis no insertado
+        PUT: "CHNA", //Chasis no actualizado
+        DELETE: "CHNE", //Chasis no eliminado
+    },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
 	duplicados: "DUP",
@@ -14,10 +20,6 @@ export const typeError = {
     clienteNoEncontrado: "CNE",
     validarToken: "VTK",
     parametrosNoAgregados: "PNA",
-    chasisNoEncontrado: "CHNE",
     permisoDenegado: "PDN",
     general: "GEN",
-    chasisNoAgregado: "CHNI",
-    chasisNoActualizado: "CHNA",
-    chasisNoEliminado: "CHNE"
 }

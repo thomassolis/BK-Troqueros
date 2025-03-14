@@ -56,7 +56,7 @@ export const UpdateChassis = async (chassis, files) => {
         //revierte la actualización del chasis
         await transaction.rollback();
 
-        const code = GenerateCodeError(modules.CHASIS, typeError.chasisNoActualizado);
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
         throw new Error(`${error.msg}`);
     }
