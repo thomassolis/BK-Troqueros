@@ -1,7 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
 
 //obtiene un furgon en especifico
 export const GetTruckVanId = async (idFurgon) => {
@@ -24,7 +26,8 @@ export const GetTruckVanId = async (idFurgon) => {
         
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckVan/getTruckVanId/GetTruckVanId', error, 'user');
-        throw new Error('No se pudo obtener el furgon');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
+        HandleError(code, error.message, 'querys/TruckVan/getTruckVanId/GetTruckVanId', error);
+        throw new Error('No se pudo obtener el furgon por ID');
     }
 }

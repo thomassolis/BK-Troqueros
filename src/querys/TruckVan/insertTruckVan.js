@@ -3,6 +3,9 @@ import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Inserta un furgon
 export const InsertTruckVan = async (truckVan, file) => {
@@ -81,7 +84,8 @@ export const InsertTruckVan = async (truckVan, file) => {
             MyThrow.msg = 'La placa ya existe.';
         }
         
-        HandleError(v1(), error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error, 'user');  
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.POST);
+        HandleError(code, error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error);  
         throw MyThrow;
     }
 }

@@ -1,8 +1,10 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { DeleteFile } from '../../fileManager/deleteFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Elimina un furgon del sistema
 export const DeleteTruckVan = async (id) => {
@@ -31,7 +33,8 @@ export const DeleteTruckVan = async (id) => {
 
         return result.rowsAffected[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/deleteTruckVan/DeleteTruckVan', error, 'user');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.DELETE);
+        HandleError(code, error.message, 'querys/deleteTruckVan/DeleteTruckVan', error);
         throw new Error('No se pudo eliminar el furgon');
     }
 }
@@ -51,7 +54,8 @@ const getPathTruckVan = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/deleteTruckVan/getPathTruckVan', error, 'user');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.DELETE);
+        HandleError(code, error.message, 'querys/deleteTruckVan/getPathTruckVan', error);
         throw new Error('No se pudo eliminar el Furgon');
     }
 }

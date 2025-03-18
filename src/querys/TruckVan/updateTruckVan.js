@@ -1,8 +1,10 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el furgon con los datos de la request
 export const UpdateTruckVan = async (truckVan, files) => {
@@ -54,7 +56,8 @@ export const UpdateTruckVan = async (truckVan, files) => {
         //revierte la actualización del chasis
         await transaction.rollback();
 
-        HandleError(v1(), error.message, 'querys/TruckVan/updateTruckVan/UpdateTruckVan');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PUT);
+        HandleError(code, error.message, 'querys/TruckVan/updateTruckVan/UpdateTruckVan', error);
         throw new Error(`${error.msg}`);
     }
 }

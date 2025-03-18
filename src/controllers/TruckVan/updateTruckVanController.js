@@ -1,6 +1,8 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { UpdateTruckVan } from '../../querys/TruckVan/updateTruckVan.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
 
 //controlador para actualizar los datos del furgon
 export const CtrUpdateTruckVan = async (req, res) => {
@@ -23,7 +25,10 @@ export const CtrUpdateTruckVan = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Furgon actualizado.'});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/TruckVan/updateTruckVanController/CtrUpdateTruckVan');
+        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
+        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
+        HandleError(code, error.message, 'controllers/TruckVan/updateTruckVanController/CtrUpdateTruckVan');
         return res.status(500).json({success: false, message: 'Error interno del servidor'});
     }
 }

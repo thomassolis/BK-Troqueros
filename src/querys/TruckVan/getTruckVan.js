@@ -1,7 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Obtiene los furgones del sistema
 export const GetTruckVan = async (page) => {
@@ -37,7 +39,8 @@ export const GetTruckVan = async (page) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckVan/GetTruckVan', error, 'user');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
+        HandleError(code, error.message, 'querys/TruckVan/GetTruckVan', error);
         throw new Error('No se pudo obtener los furgones');
     }
 }
@@ -79,7 +82,8 @@ export const GetTruckVanByFilter = async (page, search) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckVan/getTruckVan/GetTruckVanByFilter', error, 'user');
-        throw new Error('No se pudo obtener los furgones');
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
+        HandleError(code, error.message, 'querys/TruckVan/getTruckVan/GetTruckVanByFilter', error);
+        throw new Error('No se pudo obtener los furgones filtrados');
     }
 }

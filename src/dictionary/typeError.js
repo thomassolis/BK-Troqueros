@@ -18,11 +18,15 @@ export const typeError = {
         PUT: "CANA", //Cabezal no actualizado
         DELETE: "CANE", //Cabezal no eliminado
     },
+    FURGONES: {
+        GET: "FUNE", //Furgon no encontrado
+        POST: "FUNI", //Furgon no insertado
+        PUT: "FUNA", //Furgon no actualizado
+        DELETE: "FUNEL", //Furgon no eliminado
+    },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
-	duplicados: "DUP",
 	serverNotResponde: "SNR",
-	file: "FIL",
     clienteNoEncontrado: "CNE",
     validarToken: "VTK",
     parametrosNoAgregados: "PNA",
