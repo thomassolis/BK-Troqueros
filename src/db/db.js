@@ -1,7 +1,9 @@
 import sql from 'mssql';
 import dotenv from 'dotenv';
 import { HandleError } from '../utils/HandleError.js';
-import { v1 } from 'uuid';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 dotenv.config();
 
@@ -22,7 +24,8 @@ const ConnectDB = async () => {
     try {
         await poolConnect;
     } catch (error) {
-        HandleError(v1(), error.message, 'db/ConnectDB', error, 'user')
+        const code = GenerateCodeError(modules.DATABASE, typeError.coneccionDB);
+        HandleError(code, error.message, 'db/ConnectDB', error);
         throw new Error('No se pudo conectar a la base de datos');
     }
 };
@@ -31,7 +34,9 @@ const CloseDB = async () => {
     try {
         await pool.close();
     } catch (error) {
-        HandleError(v1(), error.message, 'db/CloseDB', error, 'user')
+        const code = GenerateCodeError(modules.DATABASE, typeError.coneccionDB);
+        HandleError(code, error.message, 'db/CloseDB', error);
+        throw new Error('Error al cerrar la conexion con la base de datos');
     }
 };
 
