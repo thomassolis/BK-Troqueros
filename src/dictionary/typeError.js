@@ -14,6 +14,7 @@ export const typeError = {
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
+    usuarioNoCreado: "UNC",
 	duplicados: "DUP",
 	serverNotResponde: "SNR",
 	file: "FIL",
@@ -22,4 +23,9 @@ export const typeError = {
     parametrosNoAgregados: "PNA",
     permisoDenegado: "PDN",
     general: "GEN",
+    coneccionDB: "CDB",
+    closeDB: "CLDB",
+    LOGOUT: "CSS",
+    validarCorreo: "VCO",
+    insertarRol: "IRL",
 }

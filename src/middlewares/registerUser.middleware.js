@@ -1,6 +1,8 @@
 import Joi from 'joi';
 import { HandleError } from '../utils/HandleError.js';
-import { v1 } from 'uuid';
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 
 const userSchema = Joi.object({
@@ -21,8 +23,9 @@ export const ValidateUserData = (req, res, next) => {
 
         next();
     } catch (error) {
-        HandleError(v1(), error.message, 'RegisterUser.middleware', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoCreado);
+        HandleError(code, error.message, 'middleware/RegisterUser.middleware/ValidateUserData', error);
+        return res.status(500).json({success: false, message: `Error al validar los datos del usuario ${req.body.nombre} ${req.body.apellido}`});
     }    
 }
 
