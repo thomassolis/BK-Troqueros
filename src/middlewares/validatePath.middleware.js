@@ -1,18 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { HandleError } from '../utils/HandleError.js';
-import { v1 } from 'uuid';
-import { fileURLToPath } from 'url';
-
-// Obtén la ruta del archivo actual
-const __filename = fileURLToPath(import.meta.url);
-
-// Obtén el directorio del archivo actual
-const __dirname = path.dirname(__filename);
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
+import { BuildPathFilesServer } from '../fileManager/getFilePath.js';
 
 //rutas permitidas
 const BASE_PATHS = {
-    adjuntos: path.join(__dirname, '../adjuntos/'),
+    adjuntos: BuildPathFilesServer(),
 };
 
 export const ValidatePathMiddleware = (req, res, next) => {
@@ -40,7 +36,8 @@ export const ValidatePathMiddleware = (req, res, next) => {
             next();
         });
     } catch (error) {
-        HandleError(v1(), error.message, 'middlewares/validatePath.middleware/ValidatePathMiddleware', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.FILE, typeError.rutaNoEncontrada);
+        HandleError(code, error.message, 'middlewares/validatePath.middleware/ValidatePathMiddleware', error);
+        return res.status(500).json({success: false, message: 'Error al obtener los archivos'});
     }
 }

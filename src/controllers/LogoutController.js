@@ -1,6 +1,7 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../utils/HandleError.js';
-
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
 
 export const CtrLogout = (req, res) => {
     try {
@@ -12,7 +13,8 @@ export const CtrLogout = (req, res) => {
         
         res.status(200).json({ success: true, message: 'Logout exitoso' });
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/LogoutController/CtrLogout', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'})
+        const code = GenerateCodeError(modules.LOGIN, typeError.LOGOUT);
+        HandleError(code, error.message, 'controllers/LogoutController/CtrLogout', error);
+        return res.status(500).json({success: false, message: 'Error al cerrar sessión'});
     }
 } 
