@@ -1,18 +1,13 @@
-import fs from 'fs';
-import { fileURLToPath } from 'url';
 import path from 'path';
 import { HandleError } from "../utils/HandleError.js"
-import { v1 } from 'uuid';
-
-// Obtén la ruta del archivo actual
-const __filename = fileURLToPath(import.meta.url);
-
-// Obtén el directorio del archivo actual
-const __dirname = path.dirname(__filename);
+import { GenerateCodeError } from '../utils/getCodeError.js';
+import { modules } from '../dictionary/modules.js';
+import { typeError } from '../dictionary/typeError.js';
+import { BuildPathFilesServer } from '../fileManager/getFilePath.js';
 
 //rutas permitidas
 const BASE_PATHS = {
-    adjuntos: path.join(__dirname, '../adjuntos/'),
+    adjuntos: BuildPathFilesServer(),
 };
 
 export const CtrDownloadFile = async (req, res) => {
@@ -35,7 +30,8 @@ export const CtrDownloadFile = async (req, res) => {
             }
         });
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/downloadFileController/CtrDownloadFile', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.FILE, typeError.rutaNoEncontrada);
+        HandleError(code, error.message, 'controllers/downloadFileController/CtrDownloadFile', error);
+        return res.status(500).json({success: false, message: 'Error al obtener los archivos'});
     }
 }

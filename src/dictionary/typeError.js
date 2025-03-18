@@ -34,4 +34,5 @@ export const typeError = {
     LOGOUT: "CSS",
     validarCorreo: "VCO",
     insertarRol: "IRL",
+    rutaNoEncontrada: "RNE",
 }
