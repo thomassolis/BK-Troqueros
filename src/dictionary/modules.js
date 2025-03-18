@@ -14,4 +14,5 @@ export const modules = {
 	CLIENTES: "ECL",
 	USUARIOS: "EUS",
     DATABASE: "EDB",
+    FILE: "EFL",
 }
