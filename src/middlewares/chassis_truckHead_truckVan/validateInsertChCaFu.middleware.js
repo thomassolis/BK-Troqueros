@@ -5,12 +5,23 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 const schema = Joi.object({
-    placa: Joi.string().trim().required(),
+    placa: Joi.string().trim().required().messages({
+        'string.empty': 'El campo placa es obligatorio.',
+        'any.required': 'El campo placa es obligatorio.'
+    }),
     numPoliza: Joi.string().empty('').allow(null).default(null),
-    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
-    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
-    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
-    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
+    }),
+    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
+    }),
+    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
+    }),
+    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
+    }),
 });
 
 //Valida los datos enviados por el request body
@@ -19,8 +30,7 @@ export const ValidateDataInsertMiddleware = (req, res, next) => {
         const { error, value } = schema.validate(req.body);
 
         if (error) {
-            console.log(error)
-            return res.status(403).json({ success: false, message: 'Inserte bien los datos.' });
+            return res.status(403).json({ success: false, message: error.message });
         }
 
         req.body = value;
