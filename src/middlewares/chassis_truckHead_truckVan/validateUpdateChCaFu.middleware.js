@@ -6,6 +6,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //crea un esquema dinamico, donde el id del cuerpo de solicitud puede ser id_chasis, id_cabezal o id_furgon
 const CreateSchema = (data) => {
+    console.log(data)
     // Encuentra qué propiedad del body es un ID (asumiendo que los IDs terminan en "_id" o "id_")
     const idKey = Object.keys(data).find(key => key.includes("id"));
 
@@ -17,6 +18,8 @@ const CreateSchema = (data) => {
     return Joi.object({
         [idKey]: Joi.string().trim().required(),
         status: Joi.string().allow(null, '').default(null),
+        placa: Joi.string().allow(null, '').default(null),        
+        numPoliza: Joi.string().allow(null, '').default(null),        
         fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
         fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
         fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
@@ -26,10 +29,12 @@ const CreateSchema = (data) => {
 
 //valida los datos del request body
 export const ValidateDataUpdateMiddleware = (req, res, next) => {
+    console.log(req.body);
     try {
         const schema = CreateSchema(req.body); //crea el schema
         const { error, value } = schema.validate(req.body);
-
+        req.body = value
+        console.log(error)
         if (error) {
             return res.status(403).json({ success: false, message: 'Inserte bien los datos.' });
         }

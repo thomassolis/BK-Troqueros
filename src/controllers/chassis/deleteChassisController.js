@@ -8,6 +8,7 @@ export const CtrDeleteChassis = async (req, res) => {
     try {
         //obtiene el id del chasis del request params
         const id_chassis = req.params.id;        
+        console.log('id_chassis',id_chassis)
 
         //valida que el id del chasis no sea nulo
         if (!id_chassis) {
@@ -24,10 +25,11 @@ export const CtrDeleteChassis = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Chasis eliminado correctamente.'});
     } catch (error) {
+        console.log(error);
         const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
         const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'controllers/chassis/deleteChassisController/CtrDeleteChassis', error);
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        return res.status(500).json({success: false, message: 'Error al eliminar'});
     }
 }

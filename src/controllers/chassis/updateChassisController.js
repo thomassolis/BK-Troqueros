@@ -6,10 +6,12 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //controlador para actualizar los datos del chasis
 export const CtrUpdateChassis = async (req, res) => {
+    
     try {
         const dataChassis = req.body; //obtiene los datos del request body
         const files = req.files; //obtiene todos los archivos del request files
-
+        console.log('files: ',files);
+        console.log('dataChassis: ',dataChassis)
         //valida que los datos no sean nulos
         if (!dataChassis) {
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});

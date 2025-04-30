@@ -25,6 +25,7 @@ export const CtrInsertTruckVan = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Furgon insertado.'});
     } catch (error) {
+        console.log(error);
         if (error.ErrorCode === 2627) {
             return res.status(500).json({success: false, message: error.msg});
         }
