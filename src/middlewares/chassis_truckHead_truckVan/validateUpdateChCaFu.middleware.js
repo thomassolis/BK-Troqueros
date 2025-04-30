@@ -16,11 +16,18 @@ const CreateSchema = (data) => {
 
     return Joi.object({
         [idKey]: Joi.string().trim().required(),
-        status: Joi.string().allow(null, '').default(null),
-        fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
+        placa: Joi.string().empty('').allow(null).default(null),
+        numPoliza: Joi.string().empty('').allow(null).default(null),
+        fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+        fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+        fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+        fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+        foto_poliza: Joi.alternatives()
+            .try(Joi.any(), Joi.array().items(Joi.any()))
+            .optional(),
+        foto_revisado: Joi.alternatives()
+            .try(Joi.any(), Joi.array().items(Joi.any()))
+            .optional()
     });
 };
 
@@ -34,6 +41,7 @@ export const ValidateDataUpdateMiddleware = (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Inserte bien los datos.' });
         }
 
+        req.body = value;
         next();
     } catch (error) {
         const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error

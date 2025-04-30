@@ -20,22 +20,30 @@ export const UpdateFile = async (folder, files) => {
         // Construimos la ruta del archivo a actualizar
         const filePath = path.join(PATH, folder);
 
+        // Si `files` es null o un array vacío, eliminamos todos los archivos de la carpeta
+        if (!files || files.length == 0) {
+            if (fs.existsSync(filePath)) {
+                fs.readdirSync(filePath).forEach(file => {
+                    const fullPath = path.join(filePath, file);
+                    fs.unlinkSync(fullPath);
+                });
+            }
+        
+            return { success: true, msg: 'Archivo actualizado' };
+        }
+
+        // Valida si la ruta del archivo existe
+        //Sino existe lo crea
+        if (!fs.existsSync(filePath)) {
+            fs.mkdirSync(filePath, { recursive: true });
+        }
+
         //obtenemos los archivos del servidor
         let filesServer = GetFileServer(filePath);
 
-        // Si `files` es null o un array vacío, eliminamos todos los archivos de la carpeta
-        if (!files && fs.existsSync(filePath)) {
-            fs.readdirSync(filePath).forEach(file => {
-                //construimos la ruta del archivo a eliminar
-                file = path.join(filePath, file);
-                fs.unlinkSync(file); // Elimina cada archivo dentro de la carpeta
-            });
-
-            return {success: true, msg: 'Archivo actualizado'};
-        }
-
         //recorrer el array y verificar si cada elemento es un archivo
         for (const item of files) {
+            console.log("entro")
             await ComparateFileWithFilesServer(item, folder, filesServer);
         }
 
@@ -47,6 +55,7 @@ export const UpdateFile = async (folder, files) => {
 
         return {success: true, msg: 'Archivo actualizado'};
     } catch (error) {
+        console.log(error)
         const code = GenerateCodeError('-', typeError.general);
         HandleError(code, error.msg, 'fileManager/updateFile/UpdateFile', error);
         throw { success: false, msg: error.msg };
@@ -55,9 +64,8 @@ export const UpdateFile = async (folder, files) => {
 
 //valida si es un archivo
 const isFile = (item) => {
-    const obj = Object.values(item)[0]; // Extrae el objeto dentro del array
-
-    if (obj && obj.name && obj.data && obj.size && obj.encoding && obj.mimetype && obj.md5 && obj.mv) {
+    // Valida que el archivo tenga esas propiedades
+    if (item && item.name && item.data && item.size && item.encoding && item.mimetype && item.md5 && item.mv) {
         return true
     }
 
@@ -88,16 +96,14 @@ const ComparateFileWithFilesServer = async (file, folder, filesServer) => {
     let originalPath =  null;
 
     try {
-        //obtenemos los valores del archivo
-        const archivo = Object.values(file);        
-
         // Verifica si el elemento es un archivo
         if (isFile(file)) {
             //comprueba si el archivo ya existe en el servidor
-            const index = filesServer.indexOf(archivo[0]['name']);
+            const index = filesServer.indexOf(file.name);
 
             //si el archivo existe lo eliminamos de la lista
             if (index !== -1) {
+                console.log(folder)
                 // Si existe, eliminamos el archivo de la lista
                 const removedFile = filesServer.splice(index, 1)[0];
 
@@ -108,15 +114,17 @@ const ComparateFileWithFilesServer = async (file, folder, filesServer) => {
                 tempFilePath = TemporarilyStoresFile(removedFile, folder);
 
                 //guardamos el archivo
-                await SaveFile(folder, archivo);
+                await SaveFile(folder, file);
             }
             
             //sino existe, guardamos el archivo
-            await SaveFile(folder, archivo);
+            await SaveFile(folder, file);
+
+            return
         }
 
         //comprueba si el archivo ya existe en el servidor
-        const index = filesServer.indexOf(archivo[0]['name']);
+        const index = filesServer.indexOf(file.name);
 
         //si el archivo existe lo elimnamos de la lista
         if (index !== -1) {
@@ -146,7 +154,7 @@ const TemporarilyStoresFile = (fileName, folder) => {
         const PATH = BuildPathFilesServer();
 
         //ruta completa del archivo original
-        const originalFilePath = path.join(PATH, folder, fileName); 
+        const originalFilePath = path.join(PATH, folder, fileName);
 
         //verifica que el archivo exista
         if (!fs.existsSync(originalFilePath)) {
@@ -213,6 +221,7 @@ const DeleteFileTemp = (pathTemp) => {
         //eliminamos los archivos temporales
         files.forEach(file => fs.unlinkSync(path.join(pathTemp, file)));
     } catch (error) {
+        console.log(error)
         const code = GenerateCodeError('-', typeError.general);
         HandleError(code, `No se pudo eliminar los archivos temporales, ${error.msg}`, 'fileManager/updateFile/DeleteFileTemp', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
