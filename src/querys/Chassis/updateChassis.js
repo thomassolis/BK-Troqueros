@@ -36,6 +36,7 @@ export const UpdateChassis = async (chassis, files) => {
         const result = await transaction.request()
             .input("IdChasis", sql.VarChar, chassis.id)
             .input("Placa", sql.VarChar, chassis.placa)
+            .input("Status", sql.VarChar, chassis.status)
             .input("NumPoliza", sql.VarChar, chassis.numPoliza)
             .input("FechaExpedicion", sql.Date, chassis.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, chassis.fechaCaducidad)
@@ -43,6 +44,7 @@ export const UpdateChassis = async (chassis, files) => {
             .input("FechaUltRevisado", sql.Date, chassis.fechaUltRevisado)
             .query(`UPDATE [Troqueros].[dbo].[Chasis]
                         SET placa = @Placa,
+                            status = @Status,
                             numero_poliza = @NumPoliza,
                             fecha_expedicion_poliza = @FechaExpedicion,
                             fecha_caducidad_poliza = @FechaCaducidad,

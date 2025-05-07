@@ -7,6 +7,7 @@ import { typeError } from '../../dictionary/typeError.js';
 //controlador para actualizar los datos del chasis
 export const CtrUpdateChassis = async (req, res) => {
     
+    
     try {
         const dataChassis = req.body; //obtiene los datos del request body
         const files = req.files || {}; //obtiene todos los archivos del request files

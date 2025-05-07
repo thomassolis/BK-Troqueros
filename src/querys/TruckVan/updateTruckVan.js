@@ -36,6 +36,7 @@ export const UpdateTruckVan = async (truckVan, files) => {
         const result = await pool.request()
                                 .input("IdTruckVan", sql.VarChar, truckVan.id)
                                 .input("Placa", sql.VarChar, truckVan.placa)
+                                .input("Status", sql.VarChar, truckHead.status)
                                 .input("NumPoliza", sql.VarChar, truckVan.numPoliza)
                                 .input("FechaExpedicion", sql.Date, truckVan.fechaExpedicion)
                                 .input("FechaCaducidad", sql.Date, truckVan.fechaCaducidad)
@@ -43,6 +44,7 @@ export const UpdateTruckVan = async (truckVan, files) => {
                                 .input("FechaUltRevisado", sql.Date, truckVan.fechaUltRevisado)
                                 .query(`UPDATE [Troqueros].[dbo].[Furgon]
                                             SET placa = @Placa,
+                                                status = @Status,
                                                 numero_poliza = @NumPoliza,
                                                 fecha_expedicion_poliza = @FechaExpedicion,
                                                 fecha_caducidad_poliza = @FechaCaducidad,
