@@ -16,10 +16,8 @@ const CreateSchema = (data) => {
 
     return Joi.object({
         [idKey]: Joi.string().trim().required(),
-        placa: Joi.string().trim().required().messages({
-            'string.empty': 'El campo placa es obligatorio.',
-            'any.required': 'El campo placa es obligatorio.'
-        }),
+        placa: Joi.string().trim().allow(null).default(null),
+        status: Joi.string().trim().allow(null, "").default("Pendiente"),
         numPoliza: Joi.string().empty('').allow(null).default(null),
         fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
             'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
