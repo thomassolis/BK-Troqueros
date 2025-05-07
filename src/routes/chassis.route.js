@@ -18,7 +18,7 @@ const router = express.Router();
 router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassis);
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassisId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataInsertMiddleware, CtrInsertChassis);
-router.put('/update', /*ValidateTokenMiddleware,*/ AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), /*VerifyPermissionMiddleware,*/ ValidateDataUpdateMiddleware, CtrUpdateChassis);
+router.put('/update', /*ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateDataUpdateMiddleware,*/ CtrUpdateChassis);
 router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteChassis);
 
 export default router;

@@ -34,7 +34,7 @@ export const UpdateChassis = async (chassis, files) => {
         const rutaRevisado = `chassis/${chassis.id_chasis}/revisado`;
 
         const result = await transaction.request()
-            .input("IdChasis", sql.VarChar, chassis.id_chasis)
+            .input("IdChasis", sql.VarChar, chassis.id)
             .input("NumPoliza", sql.VarChar, chassis.numPoliza)
             .input("FechaExpedicion", sql.Date, chassis.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, chassis.fechaCaducidad)
@@ -62,11 +62,16 @@ export const UpdateChassis = async (chassis, files) => {
             throw new Error('Error al actualizar los archivos. Se revirtió la transacción.');
         }
 
+        console.log("====================================")
+        console.log(chassis)
+        console.log(result.rowsAffected)
+
         // Si todo está bien, se realiza un commit y se hace el update
         await transaction.commit();
         
         return true;
     } catch (error) {
+        console.log(error)
         //revierte la actualización del chasis
         if (transaction) {
             await transaction.rollback();

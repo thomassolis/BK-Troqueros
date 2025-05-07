@@ -17,15 +17,6 @@ const CreateSchema = (data) => {
 
     return Joi.object({
         [idKey]: Joi.string().trim().required(),
-<<<<<<< HEAD
-        status: Joi.string().allow(null, '').default(null),
-        placa: Joi.string().allow(null, '').default(null),        
-        numPoliza: Joi.string().allow(null, '').default(null),        
-        fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-        fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-=======
         placa: Joi.string().empty('').allow(null).default(null),
         numPoliza: Joi.string().empty('').allow(null).default(null),
         fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
@@ -38,7 +29,6 @@ const CreateSchema = (data) => {
         foto_revisado: Joi.alternatives()
             .try(Joi.any(), Joi.array().items(Joi.any()))
             .optional()
->>>>>>> ff54b8b164bee964a700a1bd5cd7694229ea57e3
     });
 };
 

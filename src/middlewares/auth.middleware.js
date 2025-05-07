@@ -10,7 +10,6 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
     try {
         // Leer el token desde las cookies
         const token = req.cookies.token;
-
         //Valida que el token exista
         if (!token) {
             return res.status(401).json({success: false, message: 'Token no proporcionado'});
@@ -34,8 +33,10 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         }
 
         SetSessionUserInfo(dataDecode);
+        console.log("sali del middle")
         next();
     } catch (error) {
+        console.log("errpr", error)
         //pregunta si el error ha sido por TokenExpiredError
         if (error.name === 'TokenExpiredError') {
             return res.status(403).json({success: false, message: 'El token ha expirado'});
