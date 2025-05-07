@@ -42,6 +42,7 @@ export const InsertTruckVan = async (truckVan, file) => {
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
             .input("Placa", sql.VarChar, truckVan.placa)
+            .input("Status", sql.VarChar, chassis.status)
             .input("NumPoliza", sql.VarChar, truckVan.numPoliza)
             .input("FechaExpedicion", sql.Date, truckVan.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, truckVan.fechaCaducidad)
@@ -49,9 +50,9 @@ export const InsertTruckVan = async (truckVan, file) => {
             .input("FechaUltRevisado", sql.Date, truckVan.fechaUltRevisado)
             .query(`
                 INSERT INTO [Troqueros].[dbo].[Furgon] 
-                (id_furgon, placa, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
+                (id_furgon, placa, status, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
                 fecha_renovacion_revisado, fecha_ultimo_revisado, foto_poliza, foto_revisado)
-                VALUES ('${idFurgon}', @Placa, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
+                VALUES ('${idFurgon}', @Placa, @Status, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
                         @FechaRenovacion, @FechaUltRevisado, '${rutaPoliza}', '${rutaRevisado}')
             `);
         

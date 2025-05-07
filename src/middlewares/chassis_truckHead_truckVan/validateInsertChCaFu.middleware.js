@@ -5,18 +5,19 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 const schema = Joi.object({
-    placa: Joi.string().trim().allow(null).default(null),
-    numPoliza: Joi.string().empty('').allow(null).default(null),
-    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+    placa: Joi.string().trim().allow(null, "").default(""),
+    status: Joi.string().trim().allow(null, "").default("No Disponible"),
+    numPoliza: Joi.string().empty('').allow(null, "").default(""),
+    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null).messages({
+    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
 });
@@ -37,6 +38,6 @@ export const ValidateDataInsertMiddleware = (req, res, next) => {
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
         const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'middlewares/chassis_truckHead_truckVan/insertChassis.middleware/ValidateDataChassisMiddleware', error);
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        return res.status(500).json({success: false, message: 'Error al validar los datos'});
     }
 }

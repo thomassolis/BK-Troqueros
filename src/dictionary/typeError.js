@@ -11,18 +11,21 @@ export const typeError = {
         POST: "CHNI", //Chasis no insertado
         PUT: "CHNA", //Chasis no actualizado
         DELETE: "CHNE", //Chasis no eliminado
+        PATCH: "CHSN", // Status no actualizado (Chassis)
     },
     CABEZALES: {
         GET: "CANE", //Cabezal no encontrado
         POST: "CANI", //Cabezal no insertado
         PUT: "CANA", //Cabezal no actualizado
         DELETE: "CANE", //Cabezal no eliminado
+        PATCH: "CASN", // Status no actualizado (Cabezal)
     },
     FURGONES: {
         GET: "FUNE", //Furgon no encontrado
         POST: "FUNI", //Furgon no insertado
         PUT: "FUNA", //Furgon no actualizado
         DELETE: "FUNEL", //Furgon no eliminado
+        PATCH: "FUSN", // Status no actualizado (Furgon)
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
