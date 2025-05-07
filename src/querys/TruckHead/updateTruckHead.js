@@ -34,20 +34,20 @@ export const UpdateTruckHead = async (truckHead, files) => {
         const rutaRevisado = `cabezal/${truckHead.id_cabezal}/revisado`;
 
         const result = await transaction.request()
-            .input("IdTruckHead", sql.VarChar, truckHead.id_cabezal)
-            .input("Status", sql.VarChar, truckHead.status)
+            .input("IdTruckHead", sql.VarChar, truckHead.id)
+            .input("Placa", sql.VarChar, truckHead.placa)
+            .input("NumPoliza", sql.VarChar, truckHead.numPoliza)
             .input("FechaExpedicion", sql.Date, truckHead.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, truckHead.fechaCaducidad)
             .input("FechaRenovacion", sql.Date, truckHead.fechaRenovacion)
             .input("FechaUltRevisado", sql.Date, truckHead.fechaUltRevisado)
             .query(`UPDATE [Troqueros].[dbo].[Cabezal]
-                        SET status = @Status,
+                        SET placa = @Placa,
+                            numero_poliza = @NumPoliza,
                             fecha_expedicion_poliza = @FechaExpedicion,
                             fecha_caducidad_poliza = @FechaCaducidad,
                             fecha_renovacion_revisado = @FechaRenovacion,
                             fecha_ultimo_revisado = @FechaUltRevisado,
-                            foto_poliza = '${rutaPoliza}',
-                            foto_revisado = '${rutaRevisado}',
                             fecha_modificación = GETDATE()
                     WHERE id_cabezal = @IdTruckHead`);
                 
@@ -62,18 +62,38 @@ export const UpdateTruckHead = async (truckHead, files) => {
             throw new Error('Error al eliminar los archivos. Se revirtió la transacción.');
         }
 
-        // Si todo está bien, se realiza un commit y se hace el update
-        await transaction.commit();
+        // Valida que se haya hecho la actualización
+        if (result.rowsAffected > 0) {
+            // Si todo está bien, se realiza un commit y se hace el update
+            await transaction.commit();
+            
+            return true;
+        }
         
-        return true;
+        // Revierte la transaction
+        await transaction.rollback();
+        
+        return false;
     } catch (error) {
         //revierte la actualización del cabezal
         if (transaction) {
             await transaction.rollback();
-        } 
+        }
+
+        let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
+
+        if (error.number === 2627) {
+            MyThrow.ErrorCode = 2627;
+
+            if (error.message.includes('PK_')) {
+                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            }
+
+            MyThrow.msg = 'La placa ya existe.';
+        }
 
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
         HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead');
-        throw new Error(`${error.msg}`);
+        throw MyThrow;
     }
 }

@@ -25,7 +25,7 @@ export const UpdateChassis = async (chassis, files) => {
         });
 
         transaction = new sql.Transaction(pool); // Creamos la transaction
-        
+
         // Comienza la transacción
         await transaction.begin();
 
@@ -35,19 +35,19 @@ export const UpdateChassis = async (chassis, files) => {
 
         const result = await transaction.request()
             .input("IdChasis", sql.VarChar, chassis.id)
+            .input("Placa", sql.VarChar, chassis.placa)
             .input("NumPoliza", sql.VarChar, chassis.numPoliza)
             .input("FechaExpedicion", sql.Date, chassis.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, chassis.fechaCaducidad)
             .input("FechaRenovacion", sql.Date, chassis.fechaRenovacion)
             .input("FechaUltRevisado", sql.Date, chassis.fechaUltRevisado)
             .query(`UPDATE [Troqueros].[dbo].[Chasis]
-                        SET numero_poliza = @NumPoliza,
+                        SET placa = @Placa,
+                            numero_poliza = @NumPoliza,
                             fecha_expedicion_poliza = @FechaExpedicion,
                             fecha_caducidad_poliza = @FechaCaducidad,
                             fecha_renovacion_revisado = @FechaRenovacion,
                             fecha_ultimo_revisado = @FechaUltRevisado,
-                            foto_poliza = '${rutaPoliza}',
-                            foto_revisado = '${rutaRevisado}',
                             fecha_modificación = GETDATE()
                     WHERE id_chasis = @IdChasis`);
         
@@ -62,23 +62,38 @@ export const UpdateChassis = async (chassis, files) => {
             throw new Error('Error al actualizar los archivos. Se revirtió la transacción.');
         }
 
-        console.log("====================================")
-        console.log(chassis)
-        console.log(result.rowsAffected)
-
-        // Si todo está bien, se realiza un commit y se hace el update
-        await transaction.commit();
+        // Valida que se haya hecho la actualización
+        if (result.rowsAffected > 0) {
+            // Si todo está bien, se realiza un commit y se hace el update
+            await transaction.commit();
+            
+            return true;
+        }
         
-        return true;
+        // Revierte la transaction
+        await transaction.rollback();
+        
+        return false;
     } catch (error) {
         console.log(error)
         //revierte la actualización del chasis
         if (transaction) {
             await transaction.rollback();
-        }        
+        }
+        let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
+
+        if (error.number === 2627) {
+            MyThrow.ErrorCode = 2627;
+
+            if (error.message.includes('PK_')) {
+                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            }
+
+            MyThrow.msg = 'La placa ya existe.';
+        }
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
         HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error.msg);
-        throw new Error(`${error.msg}`);
+        throw MyThrow;
     }
 }

@@ -8,7 +8,7 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 export const CtrUpdateTruckVan = async (req, res) => {
     try {
         const dataTruckVan = req.body; //obtiene los datos del request body
-        const files = req.files; //obtiene todos los archivos del request files
+        const files = req.files || {}; //obtiene todos los archivos del request files
 
         //valida que los datos no sean nulos
         if (!dataTruckVan) {
@@ -25,6 +25,11 @@ export const CtrUpdateTruckVan = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Furgon actualizado.'});
     } catch (error) {
+        //Valida si el error ocurrido sea por insertar una placa ya registrada
+        if (error.ErrorCode === 2627) {
+            return res.status(500).json({success: false, message: error.msg});
+        }
+        
         const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
         const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
