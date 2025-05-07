@@ -13,7 +13,7 @@ export const Ctr_UdpStatusTruckHead = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Error al actualizar el furgon' })
         }
 
-        const updated = await UpdateStatusTruckHead(truckVan) // Actualizamos el status
+        const updated = await UpdateStatusTruckHead(truckHead) // Actualizamos el status
 
         if (!updated) {
             return res.status(400).json({ success: false, message: 'Status no actualizado' })
