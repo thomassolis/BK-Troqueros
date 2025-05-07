@@ -9,9 +9,23 @@ import { typeError } from '../../dictionary/typeError.js';
 //Actualiza el chasis con los datos de la request
 export const UpdateChassis = async (chassis, files) => {
     // Iniciar transacción
-    const transaction = new sql.Transaction(pool);
+    let transaction = null;
 
     try {
+        const cleanFiles = {}; // Instanciamos un nuevo objeto
+
+        // Obtenemos los archivos
+        // Guardamos lor archivos en el objeto creado
+        Object.keys(files).forEach(key => {
+            const value = files[key]; // Obtenemos la llave del objeto
+
+            // Valida si el objeto es un array
+            // De lo contrario lo convierte a un array
+            cleanFiles[key] = Array.isArray(value) ? value : [value];
+        });
+
+        transaction = new sql.Transaction(pool); // Creamos la transaction
+        
         // Comienza la transacción
         await transaction.begin();
 
@@ -21,13 +35,13 @@ export const UpdateChassis = async (chassis, files) => {
 
         const result = await transaction.request()
             .input("IdChasis", sql.VarChar, chassis.id_chasis)
-            .input("Status", sql.VarChar, chassis.status)
+            .input("NumPoliza", sql.VarChar, chassis.numPoliza)
             .input("FechaExpedicion", sql.Date, chassis.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, chassis.fechaCaducidad)
             .input("FechaRenovacion", sql.Date, chassis.fechaRenovacion)
             .input("FechaUltRevisado", sql.Date, chassis.fechaUltRevisado)
             .query(`UPDATE [Troqueros].[dbo].[Chasis]
-                        SET status = @Status,
+                        SET numero_poliza = @NumPoliza,
                             fecha_expedicion_poliza = @FechaExpedicion,
                             fecha_caducidad_poliza = @FechaCaducidad,
                             fecha_renovacion_revisado = @FechaRenovacion,
@@ -39,8 +53,8 @@ export const UpdateChassis = async (chassis, files) => {
         
         //valida que los archivos exista
         //actualiza los archivos del chasis
-        const fileEliminated = files && files.foto_poliza ? await UpdateFile(rutaPoliza, files.foto_poliza) : await UpdateFile(rutaPoliza, null);
-        const fileEliminated2 = files && files.foto_revisado ? await UpdateFile(rutaRevisado, files.foto_revisado) : await UpdateFile(rutaRevisado, null);
+        const fileEliminated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
+        const fileEliminated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
         //Valida que se haya guardado los archivos
         if (!fileEliminated.success || !fileEliminated2.success) {
@@ -54,10 +68,12 @@ export const UpdateChassis = async (chassis, files) => {
         return true;
     } catch (error) {
         //revierte la actualización del chasis
-        await transaction.rollback();
+        if (transaction) {
+            await transaction.rollback();
+        }        
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
-        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
+        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error.msg);
         throw new Error(`${error.msg}`);
     }
 }

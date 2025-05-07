@@ -9,9 +9,23 @@ import { typeError } from '../../dictionary/typeError.js';
 //Actualiza el furgon con los datos de la request
 export const UpdateTruckVan = async (truckVan, files) => {
     // Iniciar transacción
-    const transaction = new sql.Transaction(pool);
-
+    let transaction = new sql.Transaction(pool);
+    
     try {
+        const cleanFiles = {}; // Instanciamos un nuevo objeto
+
+        // Obtenemos los archivos
+        // Guardamos lor archivos en el objeto creado
+        Object.keys(files).forEach(key => {
+            const value = files[key]; // Obtenemos la llave del objeto
+
+            // Valida si el objeto es un array
+            // De lo contrario lo convierte a un array
+            cleanFiles[key] = Array.isArray(value) ? value : [value];
+        });
+
+        transaction = new sql.Transaction(pool); // Creamos la transaction
+
         // Comienza la transacción
         await transaction.begin();
 
@@ -53,8 +67,10 @@ export const UpdateTruckVan = async (truckVan, files) => {
         
         return true;
     } catch (error) {
-        //revierte la actualización del chasis
-        await transaction.rollback();
+        //revierte la actualización del furgon
+        if (transaction) {
+            await transaction.rollback();
+        } 
 
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PUT);
         HandleError(code, error.message, 'querys/TruckVan/updateTruckVan/UpdateTruckVan', error);

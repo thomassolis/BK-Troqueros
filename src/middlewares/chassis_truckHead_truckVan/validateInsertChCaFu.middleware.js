@@ -6,11 +6,11 @@ import { typeError } from '../../dictionary/typeError.js';
 
 const schema = Joi.object({
     placa: Joi.string().trim().required(),
-    numPoliza: Joi.string().allow(null, '').default(null),
-    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
-    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).allow(null, '').default(null),
+    numPoliza: Joi.string().empty('').allow(null).default(null),
+    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
+    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null).default(null),
 });
 
 //Valida los datos enviados por el request body
@@ -19,6 +19,7 @@ export const ValidateDataInsertMiddleware = (req, res, next) => {
         const { error, value } = schema.validate(req.body);
 
         if (error) {
+            console.log(error)
             return res.status(403).json({ success: false, message: 'Inserte bien los datos.' });
         }
 
