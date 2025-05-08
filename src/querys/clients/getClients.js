@@ -1,0 +1,104 @@
+import { HandleError } from '../../utils/HandleError.js';
+import sql from 'mssql';
+import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+
+// Obtiene todos los clientes
+export const GetAllClients = async (page) => {
+    try {
+        //Establece el tamaño de la página
+        const PAGE_SIZE = 20;
+
+        const result = await pool.request()
+            .input("Page", sql.Int, page)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .query(`
+                    SELECT
+                        C.[id_cliente],
+                        C.[nombre],
+                        C.[tipo_cliente] AS tipoCliente,
+                        C.[nombre_persona_contacto] AS personaContacto,
+                        C.[telefono_persona_contacto] AS telefono,
+                        C.[email_persona_contacto] AS correo,
+                        P.[fecha_creacion] AS fechaUltimoPedido,
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM Clientes C JOIN Peticiones P
+                        ON C.[id_cliente] = P.[cliente_id]
+                    ORDER BY C.[id_cliente]
+                    OFFSET (@Page - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY
+                `)
+
+        // Valida si la consulta obtuvo dados
+        if (result.recordset.length === 0) {
+            return []
+        }
+
+        return {
+            data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
+                ...rest,
+                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+            })), // Excluir totalRegistros del array de datos
+            paginaActual: page,
+            totalRegistros: result.recordset[0].totalRegistros,
+            limite: PAGE_SIZE
+        };
+    } catch (error) {
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        HandleError(code, error.message, 'querys/clients/getClients/GetAllClients', error);
+        throw new Error('Ha ocurrido un error al obtener los clientes');
+    }
+}
+
+
+// Filtra los clientes por nombre
+export const GetClientsFilters = async (page, nameCustomer) => {
+    try {
+        //Establece el tamaño de la página
+        const PAGE_SIZE = 20;
+
+        const result = await pool.request()
+            .input("SearchName", sql.VarChar, nameCustomer)
+            .input("Page", sql.Int, page)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .query(`
+                    SELECT
+                        C.[id_cliente],
+                        C.[nombre],
+                        C.[tipo_cliente] AS tipoCliente,
+                        C.[nombre_persona_contacto] AS personaContacto,
+                        C.[telefono_persona_contacto] AS telefono,
+                        C.[email_persona_contacto] AS correo,
+                        P.[fecha_creacion] AS fechaUltimoPedido,
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM Clientes C JOIN Peticiones P
+                        ON C.[id_cliente] = P.[cliente_id]
+                    WHERE C.[nombre] LIKE '%' + @SearchName + '%'
+                    ORDER BY C.[id_cliente]
+                    OFFSET (@Page - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY
+                `)
+
+        // Valida si la consulta obtuvo dados
+        if (result.recordset.length === 0) {
+            return []
+        }
+
+        return {
+            data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
+                ...rest,
+                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+            })), // Excluir totalRegistros del array de datos
+            paginaActual: page,
+            totalRegistros: result.recordset[0].totalRegistros,
+            limite: PAGE_SIZE
+        };
+    } catch (error) {
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        HandleError(code, error.message, 'querys/clients/getClients/GetAllClients', error);
+        throw new Error('Ha ocurrido un error al buscar el cliente');
+    }
+}
