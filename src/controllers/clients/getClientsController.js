@@ -32,6 +32,6 @@ export const Ctr_GetClients = async (req, res) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
         HandleError(code, error.message, 'controllers/clients/getClientsController/Ctr_GetClients', error);
-        return res.status(404).json({ success: false, message: `${error.message}. Intentelo más tarde` })
+        return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde` })
     }
 }
