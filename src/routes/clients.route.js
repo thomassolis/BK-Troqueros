@@ -7,6 +7,7 @@ import { Ctr_GetClients } from '../controllers/clients/getClientsController.js';
 import { Ctr_GetClientsById } from '../controllers/clients/getClientIDController.js';
 import { Ctr_InsertClient } from '../controllers/clients/getInsertClientController.js';
 import { MdlwareValidateDataInsertClient } from '../middlewares/clients/validateDataInsert.middleware.js';
+import { Ctr_DeleteClient } from '../controllers/clients/deleteClientController.js';
 
 dotenv.config();
 
@@ -16,6 +17,6 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL, process.env.PE_SEE), VerifyPermissionMiddleware, Ctr_GetClientsById);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL, process.env.PE_CREATE), VerifyPermissionMiddleware, MdlwareValidateDataInsertClient, Ctr_InsertClient);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL, process.env.PE_UPD), VerifyPermissionMiddleware);
-router.delete('/delete', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL, process.env.PE_DEL), VerifyPermissionMiddleware);
+router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CL, process.env.PE_DEL), VerifyPermissionMiddleware, Ctr_DeleteClient);
 
 export default router;
