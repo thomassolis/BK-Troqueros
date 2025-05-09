@@ -5,7 +5,7 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-// Actualiza el status del furgon
+// Actualiza el status del chasis
 export const UpdateStatusChassis= async (chassis) => {
     let transaction = null
     try {
@@ -15,7 +15,6 @@ export const UpdateStatusChassis= async (chassis) => {
         }
 
         transaction = new sql.Transaction(pool) // Instancia un objeto transactio
-
         await transaction.begin() // Comienza la transaction
 
         const result = await transaction.request()
@@ -29,20 +28,21 @@ export const UpdateStatusChassis= async (chassis) => {
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            transaction.commit()
+            await transaction.commit()
             return true
         }
 
-        transaction.rollback()
+        await transaction.rollback()
         return false
     } catch (error) {
         // En caso de error revierte la transaction
         if (transaction) {
-            transaction.rollback()
+            await transaction.rollback()
             return false
         }
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
-        HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusTruckVan', error);
+        HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusChassis', error);
+        throw new Error('Ha ocurrido un error alactualizar el status del chasis');        
     }
 }

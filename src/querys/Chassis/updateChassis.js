@@ -81,20 +81,23 @@ export const UpdateChassis = async (chassis, files) => {
         if (transaction) {
             await transaction.rollback();
         }
-        let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
 
+        // Valida si el error ha sido por primary key o unique key
         if (error.number === 2627) {
+            let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
-                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            } else {
+                MyThrow.message = 'La placa ya existe.';
             }
 
-            MyThrow.msg = 'La placa ya existe.';
+            throw MyThrow;
         }
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
-        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error.msg);
-        throw MyThrow;
+        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error.message);
+        throw new Error('Ha ocurrido un error al actualizar la información del chasis');        
     }
 }

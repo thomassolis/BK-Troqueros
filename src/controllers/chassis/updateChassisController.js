@@ -27,13 +27,13 @@ export const CtrUpdateChassis = async (req, res) => {
     } catch (error) {
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: error.msg});
+            return res.status(500).json({success: false, message: error.message});
         }
         
         const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
         const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'controllers/chassis/updateChassisController/CtrUpdateChassis');
-        return res.status(500).json({success: false, message: `${error.message}`});
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }
