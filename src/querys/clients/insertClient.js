@@ -21,7 +21,7 @@ export const InsertClient = async (data, files) => {
         }
 
         transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
-        transaction.begin() // Iniciamos la transaction
+        await transaction.begin() // Iniciamos la transaction
 
         const id = await CreateIDClient(data.nombre) // Crea el ID del cliente
 
@@ -62,16 +62,16 @@ export const InsertClient = async (data, files) => {
         
         // Valida que se haya hecho el insert
         if (result.rowsAffected > 0) {
-            transaction.commit()
+            await transaction.commit()
             return true
         }
 
-        transaction.rollback()
+        await transaction.rollback()
         return false
     } catch (error) {
         // En caso de error revierte la transaction
         if (transaction) {
-            transaction.rollback()
+            await transaction.rollback()
         }
 
         const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.POST);

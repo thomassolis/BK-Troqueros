@@ -62,8 +62,8 @@ const getPathClient = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
-        HandleError(code, error.message, 'querys/deleteChassis/getPathChassis', error);
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.DELETE);
+        HandleError(code, error.message, 'querys/clients/deleteClient/getPathClient', error);
         throw new Error('No se pudo obtener la ruta de los archivos del chasis');
     }
 }

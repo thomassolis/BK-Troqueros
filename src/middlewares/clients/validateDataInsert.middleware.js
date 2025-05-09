@@ -1,4 +1,8 @@
 import Joi from "joi";
+import { HandleError } from '../../utils/HandleError.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 
 const schemaClient = Joi.object({
@@ -49,14 +53,14 @@ export const MdlwareValidateDataInsertClient = (req, res, next) => {
         const { error, value } = schemaClient.validate(data)
 
         if (error) {
-            console.log(error)
             return res.status(401).json({ success: true, message: error.message })
         }
 
         req.body = value
         next();
     } catch (error) {
-        console.log(error)
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.POST);
+        HandleError(code, error.message, 'middlewares/clients/validateDataInsert.middleware/MdlwareValidateDataInsertClient', error);
         return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información. Intente más tarde' })
     }
 }
