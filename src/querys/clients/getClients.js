@@ -23,10 +23,17 @@ export const GetAllClients = async (page) => {
                         C.[nombre_persona_contacto] AS personaContacto,
                         C.[telefono_persona_contacto] AS telefono,
                         C.[email_persona_contacto] AS correo,
-                        P.[fecha_creacion] AS fechaUltimoPedido,
+                        MAX(P.[fecha_creacion]) AS fechaUltimoPedido,
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM Clientes C JOIN Peticiones P
+                    FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
+                    GROUP BY 
+                        C.[id_cliente], 
+                        C.[nombre],
+                        C.[tipo_cliente],
+                        C.[nombre_persona_contacto],
+                        C.[telefono_persona_contacto],
+                        C.[email_persona_contacto]
                     ORDER BY C.[id_cliente]
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY
@@ -72,11 +79,18 @@ export const GetClientsFilters = async (page, nameCustomer) => {
                         C.[nombre_persona_contacto] AS personaContacto,
                         C.[telefono_persona_contacto] AS telefono,
                         C.[email_persona_contacto] AS correo,
-                        P.[fecha_creacion] AS fechaUltimoPedido,
+                        MAX(P.[fecha_creacion]) AS fechaUltimoPedido,
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM Clientes C JOIN Peticiones P
+                    FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
                     WHERE C.[nombre] LIKE '%' + @SearchName + '%'
+                    GROUP BY 
+                        C.[id_cliente], 
+                        C.[nombre],
+                        C.[tipo_cliente],
+                        C.[nombre_persona_contacto],
+                        C.[telefono_persona_contacto],
+                        C.[email_persona_contacto]
                     ORDER BY C.[id_cliente]
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY

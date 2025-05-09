@@ -8,7 +8,6 @@ import { typeError } from '../../dictionary/typeError.js';
 // Controlador para obtener los clientes
 export const Ctr_GetClients = async (req, res) => {
     try {
-        console.log(req.query)
         //obtenemos la palabra a buscar
         const search = req.query.search;
         // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)

@@ -21,7 +21,7 @@ export const DateConverter = (date) => {
         }
 
         // Obtener día, mes y año
-        const dia = fechaObj.getDate() + 1; // Los dias en JS van de 0 a 30
+        const dia = fechaObj.getDate(); // Los dias en JS van de 0 a 30
         const mes = fechaObj.getMonth() + 1; // Los meses en JS van de 0 a 11
         const anio = fechaObj.getFullYear();
 

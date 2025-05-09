@@ -42,7 +42,7 @@ export const GetClientById = async (id) => {
             }))
         };
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
         throw new Error('Ha ocurrido un error al obtener la información del usuario solicitado');
     }
