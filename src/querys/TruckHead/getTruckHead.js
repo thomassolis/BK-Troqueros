@@ -41,7 +41,7 @@ export const GetTruckHead = async (page) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
         HandleError(code, error.message, 'querys/TruckHead/GetTruckHead', error);
-        throw new Error('No se pudo obtener la lista de los cabezales');
+        throw new Error('Ha ocurrido un error al obtener los chasis del sistema');
     }
 }
 
@@ -84,6 +84,6 @@ export const GetTruckHeadByFilter = async (page, search) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
         HandleError(code, error.message, 'querys/TruckHead/getTruckHead/GetTruckHeadByFilter', error);
-        throw new Error('No se pudo obtener los cabezales por filtros');
+        throw new Error('Ha ocurrido un error al filtrar los chasis');
     }
 }

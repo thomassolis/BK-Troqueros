@@ -8,8 +8,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //inserta un cabezal
 export const InsertTruckHead = async (truckHead, file) => {
-    // Iniciar transacción
-    const transaction = new sql.Transaction(pool);
+    let transaction = null;
 
     try {
         //validamos si file tiene datos
@@ -17,8 +16,8 @@ export const InsertTruckHead = async (truckHead, file) => {
             file = Object.assign({}, file);
         }
 
-        // Comienza la transacción
-        await transaction.begin();
+        transaction = new sql.Transaction(pool); // Instanciamos un objecto Transaction
+        await transaction.begin(); // Comienza la transacción
 
         //Generamos el ID del chasis antes del INSERT
         const idResult = await transaction.request()
@@ -74,22 +73,26 @@ export const InsertTruckHead = async (truckHead, file) => {
         await transaction.rollback();        
         return false;
     } catch (error) {
-        await transaction.rollback();
-
-        let MyThrow =  new Error(`No se pudo insertar el cabezal, ${error.message}`);
+        // En caso de error revertimos la transaction
+        if (transaction) {
+            await transaction.rollback();
+        }
 
         if (error.number === 2627) {
+            let MyThrow =  new Error(`No se pudo insertar el cabezal, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
                 MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            } else {
+                MyThrow.msg = 'La placa ya existe.';
             }
 
-            MyThrow.msg = 'La placa ya existe.';
+            throw MyThrow;            
         }
 
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.POST);
         HandleError(code, error.message, 'querys/TruckHead/insertTruckHead/InsertTruckHead', error);
-        throw MyThrow;
+        throw new Error('Ha ocurrido un error al crear el cabezal');        
     }
 }

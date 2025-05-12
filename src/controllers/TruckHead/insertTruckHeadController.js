@@ -34,6 +34,6 @@ export const CtrInsertTruckHead = async (req, res) => {
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
         const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'controllers/TruckHead/insertTruckHeadController/CtrInsertTruckHead', error);
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

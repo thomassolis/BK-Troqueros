@@ -38,11 +38,10 @@ export const UpdateStatusChassis= async (chassis) => {
         // En caso de error revierte la transaction
         if (transaction) {
             await transaction.rollback()
-            return false
         }
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
         HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusChassis', error);
-        throw new Error('Ha ocurrido un error alactualizar el status del chasis');        
+        throw new Error('Ha ocurrido un error al actualizar el status del chasis');        
     }
 }

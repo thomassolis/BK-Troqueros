@@ -8,8 +8,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el cabezal con los datos de la request
 export const UpdateTruckHead = async (truckHead, files) => {
-    // Iniciar transacción
-    let transaction = new sql.Transaction(pool);
+    let transaction = null;
 
     try {
         const cleanFiles = {}; // Instanciamos un nuevo objeto
@@ -66,15 +65,12 @@ export const UpdateTruckHead = async (truckHead, files) => {
 
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
-            // Si todo está bien, se realiza un commit y se hace el update
-            await transaction.commit();
-            
+            await transaction.commit();            
             return true;
         }
         
         // Revierte la transaction
-        await transaction.rollback();
-        
+        await transaction.rollback();        
         return false;
     } catch (error) {
         //revierte la actualización del cabezal
@@ -82,20 +78,21 @@ export const UpdateTruckHead = async (truckHead, files) => {
             await transaction.rollback();
         }
 
-        let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
-
         if (error.number === 2627) {
+            let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
                 MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            } else {
+                MyThrow.msg = 'La placa ya existe.';
             }
 
-            MyThrow.msg = 'La placa ya existe.';
+            throw MyThrow;
         }
 
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
         HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead');
-        throw MyThrow;
+        throw new Error('Ha ocurrido un error al actualizar la información del cabezal');
     }
 }

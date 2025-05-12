@@ -26,7 +26,7 @@ export const DeleteFile = async (pathFile) =>{
 
         return true;
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.chasisNoEncontrado);
+        const code = GenerateCodeError('-', typeError.rutaNoEncontrada);
         HandleError(code, error.message, 'fileManager/deleteFile/DeleteFile', error);
         throw new Error(`Error al eliminar el archivo`);
     }

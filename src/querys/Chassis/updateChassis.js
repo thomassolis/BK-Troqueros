@@ -8,7 +8,6 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el chasis con los datos de la request
 export const UpdateChassis = async (chassis, files) => {
-    // Iniciar transacción
     let transaction = null;
 
     try {
@@ -67,14 +66,12 @@ export const UpdateChassis = async (chassis, files) => {
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
             // Si todo está bien, se realiza un commit y se hace el update
-            await transaction.commit();
-            
+            await transaction.commit();            
             return true;
         }
         
         // Revierte la transaction
-        await transaction.rollback();
-        
+        await transaction.rollback();        
         return false;
     } catch (error) {
         //revierte la actualización del chasis
