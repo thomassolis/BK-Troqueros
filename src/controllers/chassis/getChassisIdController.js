@@ -41,9 +41,7 @@ export const CtrGetChassisId = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Data enviada', data: chassis});
     } catch (error) {
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'controllers/chassis/getChassisController/CtrGetChassis', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }

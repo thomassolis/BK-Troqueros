@@ -22,7 +22,7 @@ export const DeleteTruckHead = async (id) => {
 
         //validamos que los archivos se hayan eliminado correctamente
         if (!eliminatedPoliza || !eliminatedRevisado) {
-            throw new Error(`Error al eliminar los archivos, ${id}`);
+            throw new Error(`Error al eliminar los archivos`);
         }
 
         const result = await pool.request()

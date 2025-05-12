@@ -43,7 +43,6 @@ export const UpdateFile = async (folder, files) => {
 
         //recorrer el array y verificar si cada elemento es un archivo
         for (const item of files) {
-            console.log("entro")
             await ComparateFileWithFilesServer(item, folder, filesServer);
         }
 
@@ -55,10 +54,9 @@ export const UpdateFile = async (folder, files) => {
 
         return {success: true, msg: 'Archivo actualizado'};
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, error.msg, 'fileManager/updateFile/UpdateFile', error);
-        throw { success: false, msg: error.msg };
+        HandleError(code, error.me, 'fileManager/updateFile/UpdateFile', error);
+        throw { success: false, msg: error.msg || error.message };
     }
 }
 
@@ -85,7 +83,7 @@ const GetFileServer = (directoryPath) => {
         return filePaths;
     } catch (error) {
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, `Error al obtener los archivos del servidor, ${error.msg}`, 'fileManager/updateFile/GetFileServer', error);
+        HandleError(code, `Error al obtener los archivos del servidor, ${error.message}`, 'fileManager/updateFile/GetFileServer', error);
         throw { success: false, msg: `No se pudo actualizar el archivo` };
     }
 }
@@ -103,7 +101,6 @@ const ComparateFileWithFilesServer = async (file, folder, filesServer) => {
 
             //si el archivo existe lo eliminamos de la lista
             if (index !== -1) {
-                console.log(folder)
                 // Si existe, eliminamos el archivo de la lista
                 const removedFile = filesServer.splice(index, 1)[0];
 
@@ -142,7 +139,7 @@ const ComparateFileWithFilesServer = async (file, folder, filesServer) => {
         }
 
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, `Error al comparar los archivos, ${error.msg}`, 'fileManager/updateFile/ComparateFileWithFilesServer', error);
+        HandleError(code, `Error al comparar los archivos, ${error.message}`, 'fileManager/updateFile/ComparateFileWithFilesServer', error);
         throw { success: false, msg: `No se pudo actualizar el archivo` };
     }
 }
@@ -183,7 +180,7 @@ const TemporarilyStoresFile = (fileName, folder) => {
         return {success: false, msg: 'No se pudo guardar el archivo temporalmente'};
     } catch (error) {
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, `Error al guardar temporalmente el archivo, ${error.msg}`, 'fileManager/updateFile/TemporarilyStoresFile', error);
+        HandleError(code, `Error al guardar temporalmente el archivo, ${error.message}`, 'fileManager/updateFile/TemporarilyStoresFile', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }
 }
@@ -203,7 +200,7 @@ const RestoreFileFromTemp = (tempFilePath, filePath) => {
         }
     } catch (error) {
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, `No se pudo restaurar el archivo, ${error.msg}`, 'fileManager/updateFile/RestoreFileFromTemp', error);
+        HandleError(code, `No se pudo restaurar el archivo, ${error.message}`, 'fileManager/updateFile/RestoreFileFromTemp', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }
 }
@@ -221,9 +218,8 @@ const DeleteFileTemp = (pathTemp) => {
         //eliminamos los archivos temporales
         files.forEach(file => fs.unlinkSync(path.join(pathTemp, file)));
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, `No se pudo eliminar los archivos temporales, ${error.msg}`, 'fileManager/updateFile/DeleteFileTemp', error);
+        HandleError(code, `No se pudo eliminar los archivos temporales, ${error.message}`, 'fileManager/updateFile/DeleteFileTemp', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }
 }

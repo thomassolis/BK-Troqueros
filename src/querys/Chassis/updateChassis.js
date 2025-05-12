@@ -22,6 +22,7 @@ export const UpdateChassis = async (chassis, files) => {
             // De lo contrario lo convierte a un array
             cleanFiles[key] = Array.isArray(value) ? value : [value];
         });
+        console.log(cleanFiles)
 
         transaction = new sql.Transaction(pool); // Creamos la transaction
 
@@ -29,8 +30,8 @@ export const UpdateChassis = async (chassis, files) => {
         await transaction.begin();
 
         //construimos la ruta de las carpetas
-        const rutaPoliza = `chassis/${chassis.id_chasis}/poliza`;
-        const rutaRevisado = `chassis/${chassis.id_chasis}/revisado`;
+        const rutaPoliza = `chassis/${chassis.id}/poliza`;
+        const rutaRevisado = `chassis/${chassis.id}/revisado`;
 
         const result = await transaction.request()
             .input("IdChasis", sql.VarChar, chassis.id)
@@ -94,7 +95,7 @@ export const UpdateChassis = async (chassis, files) => {
         }
 
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
-        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error.message);
+        HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
         throw new Error('Ha ocurrido un error al actualizar la información del chasis');        
     }
 }

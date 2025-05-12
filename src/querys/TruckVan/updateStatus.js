@@ -29,20 +29,20 @@ export const UpdateStatusTruckVan = async (truckVan) => {
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            transaction.commit()
+            await transaction.commit()
             return true
         }
 
-        transaction.rollback()
+        await transaction.rollback()
         return false
     } catch (error) {
         // En caso de error revierte la transaction
         if (transaction) {
-            transaction.rollback()
-            return false
+            await transaction.rollback()
         }
 
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PATCH);
         HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusTruckVan', error);
+        throw new Error('Ha ocurrido un error al actualizar el status del furgon');
     }
 }

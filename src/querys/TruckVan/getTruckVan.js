@@ -23,12 +23,9 @@ export const GetTruckVan = async (page) => {
                                         ORDER BY id_furgon
                                         OFFSET (@Page - 1) * @PageSize ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
-        
-        // Verificar si hay registros en la respuesta
-        const data = result.recordset;
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
+        if (result.recordset.length === 0) {
             return undefined
         }
 
@@ -41,7 +38,7 @@ export const GetTruckVan = async (page) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
         HandleError(code, error.message, 'querys/TruckVan/GetTruckVan', error);
-        throw new Error('No se pudo obtener los furgones');
+        throw new Error('Ha ocurrido un error al obtener los furgones del sistema');
     }
 }
 
@@ -66,12 +63,9 @@ export const GetTruckVanByFilter = async (page, search) => {
                                         ORDER BY id_furgon
                                         OFFSET @Page ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
-        
-        // Verificar si hay registros en la respuesta
-        const data = result.recordset;
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
+        if (result.recordset.length === 0) {
             return undefined
         }
 
@@ -84,6 +78,6 @@ export const GetTruckVanByFilter = async (page, search) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
         HandleError(code, error.message, 'querys/TruckVan/getTruckVan/GetTruckVanByFilter', error);
-        throw new Error('No se pudo obtener los furgones filtrados');
+        throw new Error('Ha ocurrido un error al obtener los furgones solicitados');
     }
 }

@@ -85,6 +85,6 @@ export const GetChassisByFilter = async (page, search) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassis/GetChassisByFilter', error);
-        throw new Error('Ha ocurrido un error al filtrar los chasis');
+        throw new Error('Ha ocurrido un error al obtener los chasis solicitados');
     }
 }

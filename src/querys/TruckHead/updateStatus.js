@@ -28,7 +28,7 @@ export const UpdateStatusTruckHead = async (truckHead) => {
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            transaction.commit()
+            await transaction.commit()
             return true
         }
 

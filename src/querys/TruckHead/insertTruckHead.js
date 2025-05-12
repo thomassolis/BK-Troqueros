@@ -19,7 +19,7 @@ export const InsertTruckHead = async (truckHead, file) => {
         transaction = new sql.Transaction(pool); // Instanciamos un objecto Transaction
         await transaction.begin(); // Comienza la transacción
 
-        //Generamos el ID del chasis antes del INSERT
+        //Generamos el ID del cabezal antes del INSERT
         const idResult = await transaction.request()
             .query(`DECLARE @NuevoID CHAR(7);
                     EXEC Prc_GenerarIDCabezal @NuevoID OUTPUT;
@@ -40,7 +40,7 @@ export const InsertTruckHead = async (truckHead, file) => {
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
             .input("Placa", sql.VarChar, truckHead.placa)
-            .input("Status", sql.VarChar, chassis.status)
+            .input("Status", sql.VarChar, truckHead.status)
             .input("NumPoliza", sql.VarChar, truckHead.numPoliza)
             .input("FechaExpedicion", sql.Date, truckHead.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, truckHead.fechaCaducidad)
