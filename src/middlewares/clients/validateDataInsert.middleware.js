@@ -25,7 +25,8 @@ const schemaClient = Joi.object({
     telPersonaContacto: Joi.string().trim().max(20).allow(null, "").default("").messages({
       'string.max': 'El teléfono del contacto no puede tener más de 20 caracteres'
     }),
-    emailPersonaContacto: Joi.string().trim().max(200).allow(null, "").default("").messages({
+    emailPersonaContacto: Joi.string().trim().email().max(200).allow(null, "").default("").messages({
+      'string.email': 'El correo electrónico no tiene un formato válido.',
       'string.max': 'El email del contato no puede tener más de 200 caracteres'
     }),
     numeroCuenta: Joi.string().trim().max(30).allow(null, "").default("").messages({
@@ -40,20 +41,14 @@ const schemaClient = Joi.object({
     nombreCuenta: Joi.string().trim().max(50).allow(null, "").default("").messages({
       'string.max': 'El nombre de la cuenta no puede tener más de 50 caracteres'
     }),
-    // Campos a quitar del schema
-    nombrePersonaFinanciera: Joi.string().allow(null, "").default(""),
-    telContactoFinanciero: Joi.string().allow(null, "").default(""),
-    emailContactoFinanciero:Joi.string().allow(null, "").default(""),
 })
 
 export const MdlwareValidateDataInsertClient = (req, res, next) => {
     try {
-        console.log(req.body)
-
         const { error, value } = schemaClient.validate(req.body)
 
         if (error) {
-            return res.status(401).json({ success: true, message: error.message })
+          return res.status(401).json({ success: true, message: error.message })
         }
 
         req.body = value
