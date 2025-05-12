@@ -13,21 +13,22 @@ export const GetClientById = async (id) => {
             .input("ID", sql.VarChar, id)
             .query(`
                     SELECT
-                        C.[id_cliente],
-                        C.[nombre],
-                        C.[ruc_empresa] AS ruc,
-                        C.[direccion],
-                        C.[nombre_persona_contacto] AS nombrePersonaContacto,
-                        C.[telefono_persona_contacto] AS telPersonaContacto,
-                        C.[email_persona_contacto] AS emailPersonaContacto,
-                        C.[nombre_cuenta] AS nombreCuenta,
-                        C.[numero_cuenta] AS numeroCuenta,
-                        C.[tipo_cuenta] AS tipoCuenta,
-                        C.[nombre_banco] AS nombreBanco,
-                        P.[fecha_creacion] AS fechaUltimoPedido
-                    FROM Clientes C JOIN Peticiones P
-                        ON C.[id_cliente] = P.[cliente_id]
-                    WHERE C.[id_cliente] = @ID
+                        [id_cliente],
+                        [nombre],
+                        [ruc_empresa] AS ruc,
+                        [direccion],
+                        [nombre_persona_contacto] AS nombrePersonaContacto,
+                        [telefono_persona_contacto] AS telPersonaContacto,
+                        [email_persona_contacto] AS emailPersonaContacto,
+                        [nombre_cuenta] AS nombreCuenta,
+                        [numero_cuenta] AS numeroCuenta,
+                        [tipo_cuenta] AS tipoCuenta,
+                        [nombre_banco] AS nombreBanco,
+                        [copia_cedula_representante_legal] AS cedRepresentanteLegal,
+                        [copia_aviso_operaciones] AS avisoOperaciones,
+                        [fecha_creacion] AS fechaUltimoPedido
+                    FROM Clientes
+                    WHERE [id_cliente] = @ID
                 `)
 
         // Valida si la consulta tiene datos
@@ -35,12 +36,7 @@ export const GetClientById = async (id) => {
             return null
         }
 
-        return {
-            data: result.recordset.map(({fechaUltimoPedido, ...rest }) => ({
-                ...rest,
-                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
-            }))
-        };
+        return result.recordset[0];
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
