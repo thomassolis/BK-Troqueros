@@ -4,11 +4,16 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetClientById } from '../../querys/clients/getClientId.js';
+import { GetLinksDownloadFiles } from '../../fileManager/getFiles.js';
+import { DateConverter } from '../../auxiliary functions/dateConverter.js';
 
 
 // Controlador para obtener la información de un cliente
 export const Ctr_GetClientsById = async (req, res) => {
     try {
+        const protocol = req.protocol; //protocolo => http ó https
+        const host = req.get('host'); //localhost:puerto
+        const linkDownload = `${protocol}://${host}/api/download`;
         const id = req.params.id
 
         // Valida que el Id del cliente exista
@@ -23,7 +28,14 @@ export const Ctr_GetClientsById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'El cliente solicitado no existe' })
         }
 
-        return res.status(200).json({ success: true, message: 'Data Enviada', data: client })
+        const data = {
+            ...client,
+            fechaUltimoPedido: DateConverter(client.fechaUltimoPedido),
+            cedRepresentanteLegal: GetLinksDownloadFiles(linkDownload, client.cedRepresentanteLegal),
+            avisoOperaciones: GetLinksDownloadFiles(linkDownload, client.avisoOperaciones)
+        }
+
+        return res.status(200).json({ success: true, message: 'Data Enviada', data })
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
         HandleError(code, error.message, 'controllers/clients/getClientIDController/Ctr_GetClientsById', error);
