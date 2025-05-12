@@ -1,19 +1,23 @@
 import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { InsertChassis } from '../../querys/Chassis/insertChassis.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //controlado para insertar chasis
 export const CtrInsertChassis = async (req, res) => {
     try {
         //obtiene los datos del request body
         const chassis = req.body;
+        var file = req.files;
 
         //valida que los datos no sean nulos
         if (!chassis){
             return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
         }
 
-        const inserted = await InsertChassis(chassis); //inserta los datos
+        const inserted = await InsertChassis(chassis, file); //inserta los datos
 
         //valida que los datos se hayan insertados
         if (!inserted) {
@@ -22,12 +26,15 @@ export const CtrInsertChassis = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Chasis insertado.'});
     } catch (error) {
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.POST);
+
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: error.msg});
+            HandleError(code, error.message, 'controllers/chassis/insertChassisController/CtrInsertChassis', error);
+            return res.status(500).json({success: false, message: error.message});
         }
 
-        HandleError(v1(), error.message, 'controllers/chassis/insertChassisController/CtrInsertChassis', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        HandleError(code, error.message, 'controllers/chassis/insertChassisController/CtrInsertChassis', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

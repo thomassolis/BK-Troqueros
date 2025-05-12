@@ -2,10 +2,12 @@ import bcrypt from 'bcryptjs';
 import { pool, ConnectDB } from '../../db/db.js';
 import sql from 'mssql';
 import { HandleError } from '../../utils/HandleError.js';
-import { v1 } from 'uuid';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Valida que el usuario exista
-export const ValidateUser = async (email, pass) => {
+export const ValidateUser = async (email) => {
     try {
         const result = await pool.request()
                             .input("Email", sql.VarChar, email)
@@ -51,11 +53,12 @@ export const ValidateUser = async (email, pass) => {
                                             )
                                             ELSE NULL
                                         END AS resultado`);
-
+        
         return JSON.parse(result.recordset[0].resultado);
     } 
     catch (error) {
-        HandleError(v1(), error.message, 'querys/login/ValidateUser', error, 'user');
+        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoEncontrado); //generar codigo del error
+        HandleError(code, error.message, 'querys/login/ValidateUser', error, 'Usuario no auntenticado');
         throw new Error('Error interno del servidor');
     }
 };

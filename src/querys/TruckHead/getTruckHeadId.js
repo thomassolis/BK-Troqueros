@@ -1,7 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //obtiene un cabezal en especifico
 export const GetTruckHeadId = async (idCabezal) => {
@@ -17,13 +19,15 @@ export const GetTruckHeadId = async (idCabezal) => {
                                             fecha_caducidad_poliza,
                                             fecha_renovacion_revisado,
                                             fecha_ultimo_revisado,
-                                            foto_poliza
+                                            foto_poliza,
+                                            foto_revisado
                                         FROM [Troqueros].[dbo].[Cabezal]
                                         WHERE id_cabezal = @IdCabezal`);
         
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckHead/getTruckHeadId/GetTruckHeadId', error, 'user');
-        throw new Error('No se pudo obtener los cabezales');
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
+        HandleError(code, error.message, 'querys/TruckHead/getTruckHeadId/GetTruckHeadId', error);
+        throw new Error('Ha ocurrido un error al obtener la información del cabezal solicitado');
     }
 }

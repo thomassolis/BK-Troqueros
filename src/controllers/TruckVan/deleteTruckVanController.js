@@ -1,12 +1,13 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { DeleteTruckVan } from '../../querys/TruckVan/deleteTruckVan.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
 
 export const CtrDeleteTruckVan = async (req, res) => {
     try {
         //obtiene el id del furgon del request params
         const idFurgon = req.params.id;
-        console.log(idFurgon)
 
         //valida que el id del furgon no sea nulo
         if (!idFurgon) {
@@ -23,7 +24,8 @@ export const CtrDeleteTruckVan = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Furgon eliminado correctamente.'});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/TruckVan/deleteTruckVanController/CtrDeleteTruckVan', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.DELETE);
+        HandleError(code, error.message, 'controllers/TruckVan/deleteTruckVanController/CtrDeleteTruckVan', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

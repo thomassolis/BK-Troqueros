@@ -1,6 +1,8 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { DeleteTruckHead } from '../../querys/TruckHead/deleteTruckHead.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 export const CtrDeleteTruckHead = async (req, res) => {
     try {
@@ -22,7 +24,8 @@ export const CtrDeleteTruckHead = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Cabezal eliminado correctamente.'});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/TruckHead/deleteTruckHeadController/CtrDeleteTruckHead', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.DELETE);
+        HandleError(code, error.message, 'controllers/TruckHead/deleteTruckHeadController/CtrDeleteTruckHead', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

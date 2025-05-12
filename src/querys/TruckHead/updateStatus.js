@@ -1,0 +1,47 @@
+import { HandleError } from '../../utils/HandleError.js';
+import sql from 'mssql';
+import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
+
+// Actualiza el status del cabezal
+export const UpdateStatusTruckHead = async (truckHead) => {
+    let transaction = null
+    try {
+        // Valida que furgon sea undefined
+        if (!truckHead) {
+            return null
+        }
+
+        transaction = new sql.Transaction(pool) // Instancia un objeto transaction
+        await transaction.begin() // Comienza la transaction
+
+        const result = await transaction.request()
+            .input("ID", sql.VarChar, truckHead.id)
+            .input("Status", sql.VarChar, truckHead.status)
+            .query(`
+                    UPDATE Cabezal
+                        SET status = @Status
+                    WHERE id_cabezal = @ID
+                `)
+
+        // Valida que se haya hecho el update
+        if (result.rowsAffected > 0) {
+            await transaction.commit()
+            return true
+        }
+
+        await transaction.rollback()
+        return false
+    } catch (error) {
+        // En caso de error revierte la transaction
+        if (transaction) {
+            await transaction.rollback()
+        }
+
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);
+        HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusTruckHead', error);
+        throw new Error('Ha ocurrido un error al actualizar el status del cabezal');
+    }
+}

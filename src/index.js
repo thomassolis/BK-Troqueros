@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 5000;
 
 // Leer los certificados SSL
 const sslOptions = {
-  key: fs.readFileSync('./ssl/localhost.key'),
-  cert: fs.readFileSync('./ssl/localhost.crt'),
+  key: fs.readFileSync('./ssl/key.pem'),
+  cert: fs.readFileSync('./ssl/cert.pem'),
 };
 
 // Iniciar servidor HTTPS

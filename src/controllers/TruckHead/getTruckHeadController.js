@@ -1,40 +1,42 @@
-import { v1 } from 'uuid'
 import { HandleError } from '../../utils/HandleError.js'
 import { GetTruckHead, GetTruckHeadByFilter } from '../../querys/TruckHead/getTruckHead.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Obtiene todos los cabezales que hay en el sistema
 export const CtrGetTruckHead = async (req, res) => {
     try {
-        //obtenemos el numero de pagina, sino existe se le asigna 1
-        const page = parseInt(req.query.page) || 1;
-
         //obtenemos la palabra a buscar
         const search = req.query.search;
+        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
+        const page = search ? 1 : parseInt(req.query.page) || 1;
 
         //Valida si ha ingresado una palabra a buscar
         if (search) {
             //obtiene los cabezales filtrados
-            const truckHead = (await GetTruckHeadByFilter(1, search)).flat();
+            const truckHead = await GetTruckHeadByFilter(page, search);
 
             //valida que los truckHead no sea nulo
-            if (truckHead.length === 0) {
+            if (!truckHead) {
                 return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
             }
 
-            return res.status(200).json({success: true, message: 'Data enviada', data: chassis});
+            return res.status(200).json({success: true, message: 'Data enviada', vehiculos: truckHead});
         }
 
         //obtiene toda la data del cabezal y reduce el anidamiento
-        const truckHead = (await GetTruckHead(page)).flat();
+        const truckHead = await GetTruckHead(page);
 
         //valida que truckHead no sea nulo
-        if (truckHead.length === 0) {
+        if (!truckHead) {
             return res.status(200).json({success: false, message: 'No hay resultados'});
         }
 
-        return res.status(200).json({success: true, message: 'Data enviada', data: truckHead});
+        return res.status(200).json({success: true, message: 'Data enviada', vehiculos: truckHead});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/TruckHead/getTruckHeadController/CtrGetTruckHead', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
+        HandleError(code, error.message, 'controllers/TruckHead/getTruckHeadController/CtrGetTruckHead', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }
