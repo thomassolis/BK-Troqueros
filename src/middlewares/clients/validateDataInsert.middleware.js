@@ -48,9 +48,9 @@ const schemaClient = Joi.object({
 
 export const MdlwareValidateDataInsertClient = (req, res, next) => {
     try {
-        const data = req.body; // Obtenemo la data del nuevo cliente
+        console.log(req.body)
 
-        const { error, value } = schemaClient.validate(data)
+        const { error, value } = schemaClient.validate(req.body)
 
         if (error) {
             return res.status(401).json({ success: true, message: error.message })

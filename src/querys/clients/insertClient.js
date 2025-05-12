@@ -36,7 +36,7 @@ export const InsertClient = async (data, files) => {
             .input("Direccion", sql.VarChar, data.direccion)
             .input("NombreContacto", sql.VarChar, data.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, data.telPersonaContacto)
-            .input("EmailContacto", sql.VarChar, data.emailContactoFinanciero)
+            .input("EmailContacto", sql.VarChar, data.emailPersonaContacto)
             .input("NumeroCuenta", sql.VarChar, data.numeroCuenta)
             .input("NombreBanco", sql.VarChar, data.nombreBanco)
             .input("TipoCuenta", sql.VarChar, data.tipoCuenta)
@@ -92,9 +92,9 @@ const GetLastID = async (idClient) => {
                     ORDER BY fecha_creacion DESC
                 `)
 
-        return result.recordset[0].id_cliente
+        return result.recordset[0]?.id_cliente
     } catch (error) {
-        throw new Error(`Error en al obtener el último ID, ${error}`);
+        throw new Error(`Error en al obtener el último ID, ${error.message}`);
     }
 }
 
@@ -125,6 +125,6 @@ const CreateIDClient = async (nameClient) => {
 
         return base + (sufijo + 1).toString();
     } catch (error) {
-        throw new Error(`Error al crear el ID del cliente, ${error}`);
+        throw new Error(`Error al crear el ID del cliente, ${error.message}`);
     }
 }

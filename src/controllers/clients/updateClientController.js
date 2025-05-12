@@ -24,12 +24,15 @@ export const Ctr_UpdateClient = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'La información del cliente ha sido actualizada' })
     } catch (error) {
+        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.PUT);
+
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {
+            HandleError(code, error.message, 'controllers/clients/updateClientController/Ctr_UpdateClient', error);
             return res.status(500).json({success: false, message: error.message});
         }
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.PUT);
-        HandleError(code, error.message, 'controllers/clients/updateClientController/Ctr_UpdateClient');
+        
+        HandleError(code, error.message, 'controllers/clients/updateClientController/Ctr_UpdateClient', error);
         return res.status(500).json({ success: false, message: `${error.message}. Inténtelo más tarde` })
     }
 }
