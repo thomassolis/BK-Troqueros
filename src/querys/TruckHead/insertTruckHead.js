@@ -83,9 +83,9 @@ export const InsertTruckHead = async (truckHead, file) => {
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
-                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
             } else {
-                MyThrow.msg = 'La placa ya existe.';
+                MyThrow.message = 'La placa ya existe.';
             }
 
             throw MyThrow;            
