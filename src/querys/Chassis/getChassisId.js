@@ -28,6 +28,6 @@ export const GetChassisId = async (idChassis) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
-        throw new Error('No se pudo obtener el chasis por ID');
+        throw new Error('Ha ocurrido un error al obtener la información del chasis solicitado');
     }
 }

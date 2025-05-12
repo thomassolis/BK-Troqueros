@@ -11,7 +11,7 @@ export const Ctr_UdpStatusChassis = async (req, res) => {
 
         // Validamos que chasis no sea undefined
         if (!chassis) {
-            return res.status(400).json({ success: false, message: 'Error al actualizar el furgon' })
+            return res.status(400).json({ success: false, message: 'Por favor inserte los datos solicitados' })
         }
 
         const updated = await UpdateStatusChassis(chassis) // Actualizamos el status
@@ -24,10 +24,8 @@ export const Ctr_UdpStatusChassis = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Status actualizado' })
         
     } catch (error) {
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
-        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusChassis');
-        return res.status(500).json({success: false, message: `${error.message}`});
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
+        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusChassis', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

@@ -24,10 +24,8 @@ export const CtrDeleteTruckHead = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Cabezal eliminado correctamente.'});
     } catch (error) {
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.DELETE);
         HandleError(code, error.message, 'controllers/TruckHead/deleteTruckHeadController/CtrDeleteTruckHead', error);
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

@@ -7,7 +7,6 @@ import { typeError } from '../../dictionary/typeError.js';
 //controlador para actualizar los datos del cabezal
 export const CtrUpdateTruckHead = async (req, res) => {
     try {
-        console.log(req.body)
         const dataTruckHead = req.body; //obtiene los datos del request body
         const files = req.files || {}; //obtiene todos los archivos del request files
 
@@ -26,15 +25,15 @@ export const CtrUpdateTruckHead = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Cabezal actualizado.'});
     } catch (error) {
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
+
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: error.msg});
+            HandleError(code, error.message, 'controllers/TruckHead/updateTruckHeadController/CtrUpdateTruckHead', error);
+            return res.status(500).json({success: false, message: error.message});
         }
-        
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
-        HandleError(code, error.message, 'controllers/TruckHead/updateTruckHeadController/CtrUpdateTruckHead');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+
+        HandleError(code, error.message, 'controllers/TruckHead/updateTruckHeadController/CtrUpdateTruckHead', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

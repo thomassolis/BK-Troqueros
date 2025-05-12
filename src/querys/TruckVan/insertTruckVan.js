@@ -9,8 +9,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //Inserta un furgon
 export const InsertTruckVan = async (truckVan, file) => {
-    // Iniciar transacción
-    const transaction = new sql.Transaction(pool);
+    let transaction = null;
 
     try {
         //validamos si file tiene datos
@@ -18,8 +17,8 @@ export const InsertTruckVan = async (truckVan, file) => {
             file = Object.assign({}, file);
         }
 
-        // Comienza la transacción
-        await transaction.begin();
+        transaction = new sql.Transaction(pool); // Instanciamos un objecto Transaction
+        await transaction.begin(); // Comienza la transacción
 
         //Generamos el ID del furgon antes del INSERT
         const idResult = await transaction.request()
@@ -42,7 +41,7 @@ export const InsertTruckVan = async (truckVan, file) => {
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
             .input("Placa", sql.VarChar, truckVan.placa)
-            .input("Status", sql.VarChar, chassis.status)
+            .input("Status", sql.VarChar, truckVan.status)
             .input("NumPoliza", sql.VarChar, truckVan.numPoliza)
             .input("FechaExpedicion", sql.Date, truckVan.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, truckVan.fechaCaducidad)
@@ -66,27 +65,35 @@ export const InsertTruckVan = async (truckVan, file) => {
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }
 
-        // Si todo está bien, se realiza un commit y se hace el insert
-        await transaction.commit();
-        
-        return true;  
+        // Valida que se haya hecho el insert
+        if (result.rowsAffected > 0) {
+            await transaction.commit();        
+            return true;
+        }
+
+        await transaction.rollback();        
+        return false;  
     } catch (error) {
-        await transaction.rollback();
-        
-        let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
+        // En caso de error revertimos la transaction
+        if (transaction) {
+            await transaction.rollback();
+        }
 
         if (error.number === 2627) {
+            let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
                 MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            } else {
+                MyThrow.msg = 'La placa ya existe.';
             }
 
-            MyThrow.msg = 'La placa ya existe.';
+            throw MyThrow;
         }
         
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.POST);
         HandleError(code, error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error);  
-        throw MyThrow;
+        throw new Error('Ha ocurrido un error al crear el furgon');
     }
 }

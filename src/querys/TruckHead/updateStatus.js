@@ -14,8 +14,7 @@ export const UpdateStatusTruckHead = async (truckHead) => {
             return null
         }
 
-        transaction = new sql.Transaction(pool) // Instancia un objeto transactio
-
+        transaction = new sql.Transaction(pool) // Instancia un objeto transaction
         await transaction.begin() // Comienza la transaction
 
         const result = await transaction.request()
@@ -29,20 +28,20 @@ export const UpdateStatusTruckHead = async (truckHead) => {
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            transaction.commit()
+            await transaction.commit()
             return true
         }
 
-        transaction.rollback()
+        await transaction.rollback()
         return false
     } catch (error) {
         // En caso de error revierte la transaction
         if (transaction) {
-            transaction.rollback()
-            return false
+            await transaction.rollback()
         }
 
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);
         HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusTruckHead', error);
+        throw new Error('Ha ocurrido un error al actualizar el status del cabezal');
     }
 }

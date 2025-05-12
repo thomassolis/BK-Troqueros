@@ -8,8 +8,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el cabezal con los datos de la request
 export const UpdateTruckHead = async (truckHead, files) => {
-    // Iniciar transacción
-    let transaction = new sql.Transaction(pool);
+    let transaction = null;
 
     try {
         const cleanFiles = {}; // Instanciamos un nuevo objeto
@@ -30,8 +29,8 @@ export const UpdateTruckHead = async (truckHead, files) => {
         await transaction.begin();
 
         //construimos la ruta de las carpetas
-        const rutaPoliza = `cabezal/${truckHead.id_cabezal}/poliza`;
-        const rutaRevisado = `cabezal/${truckHead.id_cabezal}/revisado`;
+        const rutaPoliza = `cabezal/${truckHead.id}/poliza`;
+        const rutaRevisado = `cabezal/${truckHead.id}/revisado`;
 
         const result = await transaction.request()
             .input("IdTruckHead", sql.VarChar, truckHead.id)
@@ -54,9 +53,9 @@ export const UpdateTruckHead = async (truckHead, files) => {
                     WHERE id_cabezal = @IdTruckHead`);
                 
         //valida que los archivos exista
-        //actualiza los archivos del furgon
-        const fileEliminated = files && files.foto_poliza ? await UpdateFile(rutaPoliza, files.foto_poliza) : await UpdateFile(rutaPoliza, null);
-        const fileEliminated2 = files && files.foto_revisado ? await UpdateFile(rutaRevisado, files.foto_revisado) : await UpdateFile(rutaRevisado, null);
+        //actualiza los archivos del cabezal
+        const fileEliminated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
+        const fileEliminated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
         //Valida que se haya guardado los archivos
         if (!fileEliminated.success || !fileEliminated2.success) {
@@ -66,15 +65,12 @@ export const UpdateTruckHead = async (truckHead, files) => {
 
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
-            // Si todo está bien, se realiza un commit y se hace el update
-            await transaction.commit();
-            
+            await transaction.commit();            
             return true;
         }
         
         // Revierte la transaction
-        await transaction.rollback();
-        
+        await transaction.rollback();        
         return false;
     } catch (error) {
         //revierte la actualización del cabezal
@@ -82,20 +78,21 @@ export const UpdateTruckHead = async (truckHead, files) => {
             await transaction.rollback();
         }
 
-        let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.msg}`);
-
         if (error.number === 2627) {
+            let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
-                MyThrow.msg = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            } else {
+                MyThrow.message = 'La placa ya existe.';
             }
 
-            MyThrow.msg = 'La placa ya existe.';
+            throw MyThrow;
         }
 
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
-        HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead');
-        throw MyThrow;
+        HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead', error);
+        throw new Error('Ha ocurrido un error al actualizar la información del cabezal');
     }
 }
