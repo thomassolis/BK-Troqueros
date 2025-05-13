@@ -1,3 +1,4 @@
+
 /* 
     ************************************************************************************
     *                                                                                  *
@@ -38,6 +39,12 @@ export const typeError = {
         POST: "PRNI", //Proveedor no insertado
         PUT: "PRNA", //Proveedor no actualizado
         DELETE: "PRNEL", //Proveedor no eliminado
+    },
+    DRIVERS: {
+        GET: "CONE", //Conductor no encontrado
+        POST: "CONI", //Conductor no insertado
+        PUT: "CONA", //Conductor no actualizado
+        DELETE: "CONEL", //Conductor no eliminado
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",

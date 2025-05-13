@@ -15,4 +15,5 @@ export const modules = {
 	USUARIOS: "EUS",
     DATABASE: "EDB",
     FILE: "EFL",
+    DRIVERS: "ECO",
 }
