@@ -18,7 +18,6 @@ export const Mdlware_ValidateDataUpdateSuppliers = (req, res, next) => {
         if (error) {
             return res.status(403).json({ success: false, message: error.message });
         }
-        console.log(value)
 
         req.body = value;
         next();
