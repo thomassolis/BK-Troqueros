@@ -23,7 +23,7 @@ export const Ctr_DeleteClient = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'Cliente eliminado satisfactoriamnete!' })
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.DELETE);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.DELETE);
         HandleError(code, error.message, 'controllers/clients/deleteClientController/Ctr_DeleteClient', error);
         return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde` })
     }

@@ -103,7 +103,7 @@ export const UpdateClient = async (client, files) => {
             throw MyThrow;
         }
 
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.PUT);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
         HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cliente');
     }

@@ -54,7 +54,7 @@ export const MdlwareValidateDataInsertClient = (req, res, next) => {
         req.body = value
         next();
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.POST);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'middlewares/clients/validateDataInsert.middleware/MdlwareValidateDataInsertClient', error);
         return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información. Intente más tarde' })
     }

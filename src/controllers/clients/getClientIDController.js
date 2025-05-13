@@ -37,7 +37,7 @@ export const Ctr_GetClientsById = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'Data Enviada', data })
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
         HandleError(code, error.message, 'controllers/clients/getClientIDController/Ctr_GetClientsById', error);
         return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde` })
     }
