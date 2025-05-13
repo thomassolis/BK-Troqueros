@@ -1,7 +1,9 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //obtiene un proveedor en especifico
 export const GetSuppleirId = async (idSupplier) => {
@@ -22,7 +24,8 @@ export const GetSuppleirId = async (idSupplier) => {
         
         return result.recordset[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/TruckVan/getTruckVanId/GetTruckVanId', error, 'user');
-        throw new Error('No se pudo obtener el furgon');
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.GET)
+        HandleError(code, error.message, 'querys/suppliers/getSuppliersId/GetSuppleirId', error);
+        throw new Error('Ha ocurrido un error al obtener la información del proveedor solicitado');
     }
 }

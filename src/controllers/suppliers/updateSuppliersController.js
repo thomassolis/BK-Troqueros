@@ -1,6 +1,9 @@
 import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { UpdateSuppliers } from '../../querys/suppliers/updateSuppliers.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //controlador para actualizar los datos del cabezal
 export const CtrUpdateSuppliers = async (req, res) => {
@@ -22,7 +25,8 @@ export const CtrUpdateSuppliers = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Proveedor actualizado.'});
     } catch (error) {
-        HandleError(v1(), error.message, 'controllers/suppliers/updateTruckSuppliersController/CtrUpdateSuppliers');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.PUT)
+        HandleError(code, error.message, 'controllers/suppliers/updateSuppliersController/CtrUpdateSuppliers');
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

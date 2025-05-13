@@ -1,19 +1,21 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import sql from 'mssql';
 import { pool } from '../../db/db.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //Actualiza el proveedor con los datos de la request
 export const UpdateSuppliers = async (supplier) => {
     try {
         const result = await pool.request()
-                                .input("IdProveedor", sql.Char(7), supplier.id_proveedor)
+                                .input("IdProveedor", sql.VarChar, supplier.id_proveedor)
                                 .input("Nombre", sql.VarChar, supplier.nombre)
                                 .input("PersonaContacto", sql.VarChar, supplier.personaContacto)
-                                .input("Celular", sql.Date, supplier.celular)
-                                .input("Telefono", sql.Date, supplier.telefono)
-                                .input("Email", sql.Date, supplier.email)
-                                .input("NumeroCuenta", sql.Date, supplier.numeroCuenta)
+                                .input("Celular", sql.VarChar, supplier.celular)
+                                .input("Telefono", sql.VarChar, supplier.telefono)
+                                .input("Email", sql.VarChar, supplier.email)
+                                .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
                                 .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
                                 .query(`UPDATE [Troqueros].[dbo].[Proveedores]
                                             SET id_proveedor = @IdProveedor,
@@ -29,7 +31,8 @@ export const UpdateSuppliers = async (supplier) => {
 
         return result.rowsAffected[0];
     } catch (error) {
-        HandleError(v1(), error.message, 'querys/suppliers/updateSuppliers/UpdateSuppliers');
-        throw new Error('No se pudo actualizar el proveedor');
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.PUT)
+        HandleError(code, error.message, 'querys/suppliers/updateSuppliers/UpdateSuppliers', error);
+        throw new Error('Ha ocurrido un error al actualizar la información del proveedor');
     }
 }

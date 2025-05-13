@@ -1,6 +1,8 @@
-import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
 import { InsertSupplier } from '../../querys/suppliers/insertSuppliers.js';
+import { GenerateCodeError } from '../../utils/getCodeError.js';
+import { modules } from '../../dictionary/modules.js';
+import { typeError } from '../../dictionary/typeError.js';
 
 //controlador para insertar proveedor
 export const CtrInsertSuppliers = async (req, res) => {
@@ -17,16 +19,13 @@ export const CtrInsertSuppliers = async (req, res) => {
 
         //valida que los datos se hayan insertados
         if (!inserted) {
-            return res.status(400).json({success: false, message: 'No se pudo agregar al proveedor.'});
+            return res.status(400).json({success: false, message: 'No se pudo crear al proveedor.'});
         }
 
-        return res.status(201).json({success: true, message: 'Proveedor agregado.'});
+        return res.status(201).json({success: true, message: 'Proveedor creado satisfactoriamente!.'});
     } catch (error) {
-        if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: 'UPS... Ha ocurrido un error, inténtelo más tarde.'});
-        }
-
-        HandleError(v1(), error.message, 'controllers/suppliers/insertSuppliersController/CtrInsertSuppliers', error, 'user');
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.POST)
+        HandleError(code, error.message, 'controllers/suppliers/insertSuppliersController/CtrInsertSuppliers', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

@@ -10,7 +10,7 @@ export const modules = {
     CHASISES: "ECH",
 	CABEZALES: "ECA",
 	FURGONES: "EFU",
-	PROVEEDORES: "EPR",
+	SUPPLIERS: "EPR",
 	CLIENTES: "ECL",
 	USUARIOS: "EUS",
     DATABASE: "EDB",
