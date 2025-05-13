@@ -57,7 +57,7 @@ export const Mdlware_ValidateDataUpdateClient = (req, res, next) => {
         req.body = value;
         next()
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.PUT);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
         HandleError(code, error.message, 'middlewares/clients/validateDataUpdateClient.middleware/Mdlware_ValidateDataUpdateClient', error);
         return res.status(500).json({success: false, message: 'Ha ocurrido un error al validar los datos del cliente'});
     }

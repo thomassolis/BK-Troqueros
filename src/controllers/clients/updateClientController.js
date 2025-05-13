@@ -24,7 +24,7 @@ export const Ctr_UpdateClient = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'La información del cliente ha sido actualizada' })
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.PUT);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
 
         //Valida si el error ocurrido sea por insertar una placa ya registrada
         if (error.ErrorCode === 2627) {

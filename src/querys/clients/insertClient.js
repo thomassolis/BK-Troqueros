@@ -74,7 +74,7 @@ export const InsertClient = async (data, files) => {
             await transaction.rollback()
         }
 
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.POST);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'querys/Clients/insertClient/InsertClient', error);
         throw new Error('Ha ocurrido un error al crear al cliente');
     }

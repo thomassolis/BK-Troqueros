@@ -40,7 +40,7 @@ export const DeleteClient = async (id) => {
 
         return false
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.DELETE);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.DELETE);
         HandleError(code, error.message, 'querys/clients/deleteClient/DeleteClient', error);
         throw new Error('Ha ocurrido un error al eliminar el cliente');
     }
@@ -62,7 +62,7 @@ const getPathClient = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.DELETE);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.DELETE);
         HandleError(code, error.message, 'querys/clients/deleteClient/getPathClient', error);
         throw new Error('No se pudo obtener la ruta de los archivos del chasis');
     }

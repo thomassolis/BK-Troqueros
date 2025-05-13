@@ -27,7 +27,7 @@ export const typeError = {
         DELETE: "FUNEL", //Furgon no eliminado
         PATCH: "FUSN", // Status no actualizado (Furgon)
     },
-    CLIENTES: {
+    CLIENTS: {
         GET: "CLNE", //Cliente no encontrado
         POST: "CLNI", //Cliente no insertado
         PUT: "CLNA", //Cliente no actualizado

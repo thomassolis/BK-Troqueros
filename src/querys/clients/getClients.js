@@ -54,7 +54,7 @@ export const GetAllClients = async (page) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
         HandleError(code, error.message, 'querys/clients/getClients/GetAllClients', error);
         throw new Error('Ha ocurrido un error al obtener los clientes');
     }
@@ -111,7 +111,7 @@ export const GetClientsFilters = async (page, nameCustomer) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
         HandleError(code, error.message, 'querys/clients/getClients/GetAllClients', error);
         throw new Error('Ha ocurrido un error al buscar el cliente');
     }

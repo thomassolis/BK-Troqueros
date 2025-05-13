@@ -38,7 +38,7 @@ export const GetClientById = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTES, typeError.CLIENTES.GET);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
         HandleError(code, error.message, 'querys/Chassis/getChassisId/GetChassisId', error);
         throw new Error('Ha ocurrido un error al obtener la información del usuario solicitado');
     }
