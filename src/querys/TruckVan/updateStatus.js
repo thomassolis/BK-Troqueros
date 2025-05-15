@@ -7,40 +7,24 @@ import { typeError } from '../../dictionary/typeError.js';
 
 // Actualiza el status del furgon
 export const UpdateStatusTruckVan = async (truckVan) => {
-    let transaction = null
     try {
-        // Valida que furgon sea undefined
-        if (!truckVan) {
-            return null
-        }
-
-        transaction = new sql.Transaction(pool) // Instancia un objeto transactio
-
-        await transaction.begin() // Comienza la transaction
-
-        const result = await transaction.request()
+        const result = await pool.request()
             .input("ID", sql.VarChar, truckVan.id)
             .input("Status", sql.VarChar, truckVan.status)
             .query(`
                     UPDATE Furgon
-                        SET status = @Status
+                        SET status = @Status,
+                            fecha_modificación = GETDATE()
                     WHERE id_furgon = @ID
                 `)
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            await transaction.commit()
             return true
         }
 
-        await transaction.rollback()
         return false
     } catch (error) {
-        // En caso de error revierte la transaction
-        if (transaction) {
-            await transaction.rollback()
-        }
-
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PATCH);
         HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusTruckVan', error);
         throw new Error('Ha ocurrido un error al actualizar el status del furgon');

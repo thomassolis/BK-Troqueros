@@ -78,6 +78,8 @@ export const InsertTruckHead = async (truckHead, file) => {
             await transaction.rollback();
         }
 
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.POST);
+
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo insertar el cabezal, ${error.message}`);
             MyThrow.ErrorCode = 2627;
@@ -88,10 +90,10 @@ export const InsertTruckHead = async (truckHead, file) => {
                 MyThrow.message = 'La placa ya existe.';
             }
 
+            HandleError(code, error.message, 'querys/TruckHead/insertTruckHead/InsertTruckHead', error);
             throw MyThrow;            
         }
-
-        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.POST);
+        
         HandleError(code, error.message, 'querys/TruckHead/insertTruckHead/InsertTruckHead', error);
         throw new Error('Ha ocurrido un error al crear el cabezal');        
     }

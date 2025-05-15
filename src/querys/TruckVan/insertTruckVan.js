@@ -79,6 +79,8 @@ export const InsertTruckVan = async (truckVan, file) => {
             await transaction.rollback();
         }
 
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.POST);
+
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo insertar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
@@ -89,10 +91,10 @@ export const InsertTruckVan = async (truckVan, file) => {
                 MyThrow.message = 'La placa ya existe.';
             }
 
+            HandleError(code, error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error);  
             throw MyThrow;
-        }
+        }        
         
-        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.POST);
         HandleError(code, error.message, 'querys/TruckVan/insertTruckVan/InsertTruckVan', error);  
         throw new Error('Ha ocurrido un error al crear el furgon');
     }
