@@ -13,7 +13,7 @@ export const schemaDriver = Joi.object({
     apellido: Joi.string().trim().max(20).allow(null, '').default('').messages({
         'string.max': 'El campo apellido no debe contener más de 20 caracteres.'
     }),
-    cedula: Joi.string().trim().max(20).allow(null, '').required('').messages({
+    cedula: Joi.string().trim().max(20).required('').messages({
         'any.required': 'El campo cedula es requerido.',
         'string.empty': 'El campo cedula no debe estar vacío.',
         'string.max': 'El campo cedula no debe contener más de 20 caracteres.'
@@ -53,6 +53,6 @@ export const Mdlware_ValidateDataInsertDriver = (req, res, next) => {
     } catch (error) {
         const code = GenerateCodeError(modules.DRIVERS, typeError.DRIVERS.POST)
         HandleError(code, error.message, 'middlewares/drivers/validateDataInsertDriver.middleware/Mdlware_ValidateDataInsertDriver', error);
-        return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información. Intente más tarde' })
+        return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información del conductor. Intente más tarde' });
     }
 }
