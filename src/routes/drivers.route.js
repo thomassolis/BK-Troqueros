@@ -9,6 +9,7 @@ import { Mdlware_ValidateDataInsertDriver } from '../middlewares/drivers/validat
 import { Ctr_InsertDriver } from '../controllers/drivers/insertDriverController.js';
 import { Mdlware_ValidateDataUpdDriver } from '../middlewares/drivers/validateDataUpdateDriver.middleware.js';
 import { Ctr_UpdateDriver } from '../controllers/drivers/updateDriverController.js';
+import { Ctr_UpdateStatusDriver } from '../controllers/drivers/updateStatusDriverController.js';
 
 dotenv.config();
 
@@ -18,5 +19,6 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CO
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CO, process.env.PE_SEE), VerifyPermissionMiddleware, Ctr_GetDriverById);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CO, process.env.PE_CREATE), VerifyPermissionMiddleware, Mdlware_ValidateDataInsertDriver, Ctr_InsertDriver);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CO, process.env.PE_UPD), VerifyPermissionMiddleware, Mdlware_ValidateDataUpdDriver, Ctr_UpdateDriver);
+router.patch('/update_status', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CO, process.env.PE_UPD), VerifyPermissionMiddleware, Ctr_UpdateStatusDriver);
 
 export default router;
