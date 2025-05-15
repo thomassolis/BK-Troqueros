@@ -7,10 +7,11 @@ import { UpdateStatusTruckHead } from '../../querys/TruckHead/updateStatus.js';
 
 export const Ctr_UdpStatusTruckHead = async (req, res) => {
     try {
-        const truckHead = req.body;
+        const truckHead = req.body; // Obtenemos los datos
 
-        if (!truckHead) {
-            return res.status(400).json({ success: false, message: 'Error al actualizar el furgon' })
+        // Validamos que cabezal no sea undefined
+        if (!truckHead || !Object.keys(truckHead).length) {
+            return res.status(400).json({ success: false, message: 'Status no proporcionado' })
         }
 
         const updated = await UpdateStatusTruckHead(truckHead) // Actualizamos el status
@@ -23,7 +24,7 @@ export const Ctr_UdpStatusTruckHead = async (req, res) => {
         
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);
-        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusTruckHead', error);
+        HandleError(code, error.message, 'controllers/TruckHead/updateStatusController/Ctr_UdpStatusTruckHead', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

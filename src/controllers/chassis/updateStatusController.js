@@ -10,8 +10,8 @@ export const Ctr_UdpStatusChassis = async (req, res) => {
         const chassis = req.body; // Obtenemos los datos
 
         // Validamos que chasis no sea undefined
-        if (!chassis) {
-            return res.status(400).json({ success: false, message: 'Por favor inserte los datos solicitados' })
+        if (!chassis || !Object.keys(chassis).length) {
+            return res.status(400).json({ success: false, message: 'Status no proporcionado' })
         }
 
         const updated = await UpdateStatusChassis(chassis) // Actualizamos el status

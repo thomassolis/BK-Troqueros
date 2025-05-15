@@ -7,41 +7,26 @@ import { typeError } from '../../dictionary/typeError.js';
 
 // Actualiza el status del chasis
 export const UpdateStatusChassis= async (chassis) => {
-    let transaction = null
     try {
-        // Valida que furgon sea undefined
-        if (!chassis) {
-            return null
-        }
-
-        transaction = new sql.Transaction(pool) // Instancia un objeto transactio
-        await transaction.begin() // Comienza la transaction
-
-        const result = await transaction.request()
+        const result = await pool.request()
             .input("ID", sql.VarChar, chassis.id)
             .input("Status", sql.VarChar, chassis.status)
             .query(`
                     UPDATE Chasis
-                        SET status = @Status
+                        SET status = @Status,
+                            fecha_modificación = GETDATE()
                     WHERE id_chasis = @ID
                 `)
 
         // Valida que se haya hecho el update
         if (result.rowsAffected > 0) {
-            await transaction.commit()
-            return true
+            return true;
         }
 
-        await transaction.rollback()
-        return false
+        return false;
     } catch (error) {
-        // En caso de error revierte la transaction
-        if (transaction) {
-            await transaction.rollback()
-        }
-
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
-        HandleError(code, error.message, 'querys/TruckVan/updateStatus/UpdateStatusChassis', error);
+        HandleError(code, error.message, 'querys/Chassis/updateStatus/UpdateStatusChassis', error);
         throw new Error('Ha ocurrido un error al actualizar el status del chasis');        
     }
 }
