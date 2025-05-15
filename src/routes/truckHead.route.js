@@ -10,6 +10,7 @@ import { CtrUpdateTruckHead } from '../controllers/TruckHead/updateTruckHeadCont
 import { CtrGetTruckHeadId } from '../controllers/TruckHead/getTruckHeadIdController.js';
 import { CtrInsertTruckHead } from '../controllers/TruckHead/insertTruckHeadController.js';
 import { CtrDeleteTruckHead } from '../controllers/TruckHead/deleteTruckHeadController.js';
+import { Ctr_UdpStatusTruckHead } from '../controllers/TruckHead/updateStatusController.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetTruckHeadId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataInsertMiddleware, CtrInsertTruckHead);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
+router.patch('/update_status', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_UPD), VerifyPermissionMiddleware, Ctr_UdpStatusTruckHead);
 router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteTruckHead);
 
 export default router;

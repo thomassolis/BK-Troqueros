@@ -41,6 +41,7 @@ export const InsertTruckHead = async (truckHead, file) => {
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
             .input("Placa", sql.VarChar, truckHead.placa)
+            .input("Status", sql.VarChar, chassis.status)
             .input("NumPoliza", sql.VarChar, truckHead.numPoliza)
             .input("FechaExpedicion", sql.Date, truckHead.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, truckHead.fechaCaducidad)
@@ -48,9 +49,9 @@ export const InsertTruckHead = async (truckHead, file) => {
             .input("FechaUltRevisado", sql.Date, truckHead.fechaUltRevisado)
             .query(`
                 INSERT INTO [Troqueros].[dbo].[Cabezal] 
-                (id_cabezal, placa, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
+                (id_cabezal, placa, status, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
                 fecha_renovacion_revisado, fecha_ultimo_revisado, foto_poliza, foto_revisado)
-                VALUES ('${idCabezal}', @Placa, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
+                VALUES ('${idCabezal}', @Placa, @Status, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
                         @FechaRenovacion, @FechaUltRevisado, '${rutaPoliza}', '${rutaRevisado}')
             `);
         
@@ -64,10 +65,14 @@ export const InsertTruckHead = async (truckHead, file) => {
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }
 
-        // Si todo está bien, se realiza un commit y se hace el insert
-        await transaction.commit();
-        
-        return true;
+        // Valida que se haya hecho el insert
+        if (result.rowsAffected > 0) {
+            await transaction.commit();        
+            return true;
+        }
+
+        await transaction.rollback();        
+        return false;
     } catch (error) {
         await transaction.rollback();
 

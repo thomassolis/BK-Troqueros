@@ -10,6 +10,7 @@ import { ValidateDataInsertMiddleware } from '../middlewares/chassis_truckHead_t
 import { ValidateDataUpdateMiddleware } from '../middlewares/chassis_truckHead_truckVan/validateUpdateChCaFu.middleware.js';
 import { CtrDeleteChassis } from '../controllers/chassis/deleteChassisController.js';
 import { CtrGetChassisId } from '../controllers/chassis/getChassisIdController.js';
+import { Ctr_UdpStatusChassis } from '../controllers/chassis/updateStatusController.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH
 router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetChassisId);
 router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataInsertMiddleware, CtrInsertChassis);
 router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateDataUpdateMiddleware, CtrUpdateChassis);
+router.patch('/update_status', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_UPD), VerifyPermissionMiddleware, Ctr_UdpStatusChassis);
 router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CH, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteChassis);
 
 export default router;

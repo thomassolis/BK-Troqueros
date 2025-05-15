@@ -41,6 +41,7 @@ export const InsertChassis = async (chassis, file) => {
         //Hacemos el INSERT con las rutas generadas
         const result = await transaction.request()
             .input("Placa", sql.VarChar, chassis.placa)
+            .input("Status", sql.VarChar, chassis.status)
             .input("NumPoliza", sql.VarChar, chassis.numPoliza)
             .input("FechaExpedicion", sql.Date, chassis.fechaExpedicion)
             .input("FechaCaducidad", sql.Date, chassis.fechaCaducidad)
@@ -48,9 +49,9 @@ export const InsertChassis = async (chassis, file) => {
             .input("FechaUltRevisado", sql.Date, chassis.fechaUltRevisado)
             .query(`
                 INSERT INTO [Troqueros].[dbo].[Chasis] 
-                (id_chasis, placa, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
+                (id_chasis, placa, status, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
                 fecha_renovacion_revisado, fecha_ultimo_revisado, foto_poliza, foto_revisado)
-                VALUES ('${idChasis}', @Placa, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
+                VALUES ('${idChasis}', @Placa, @Status, @NumPoliza, @FechaExpedicion, @FechaCaducidad,
                         @FechaRenovacion, @FechaUltRevisado, '${rutaPoliza}', '${rutaRevisado}')
             `);
 
@@ -64,10 +65,15 @@ export const InsertChassis = async (chassis, file) => {
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }
 
-        // Si todo está bien, se realiza un commit y se hace el insert
-        await transaction.commit();
+        // Valida que se haya hecho el insert
+        if (result.rowsAffected > 0) {
+            await transaction.commit();        
+            return true;
+        }
+
+        await transaction.rollback();        
+        return false;
         
-        return true;
     } catch (error) {
         await transaction.rollback();
 
