@@ -24,11 +24,8 @@ export const GetTruckHead = async (page) => {
                                         OFFSET (@Page - 1) * @PageSize ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
 
-        // Verificar si hay registros en la respuesta
-        const data = result.recordset;
-
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
+        if (result.recordset.length === 0) {
             return undefined
         }
         
@@ -41,7 +38,7 @@ export const GetTruckHead = async (page) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
         HandleError(code, error.message, 'querys/TruckHead/GetTruckHead', error);
-        throw new Error('No se pudo obtener la lista de los cabezales');
+        throw new Error('Ha ocurrido un error al obtener los cabezales del sistema');
     }
 }
 
@@ -66,12 +63,9 @@ export const GetTruckHeadByFilter = async (page, search) => {
                                         ORDER BY id_cabezal
                                         OFFSET @Page ROWS
                                         FETCH NEXT @PageSize ROWS ONLY;`);
-        
-        // Verificar si hay registros en la respuesta
-        const data = result.recordset;
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
+        if (result.recordset.length === 0) {
             return undefined
         }
 
@@ -84,6 +78,6 @@ export const GetTruckHeadByFilter = async (page, search) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
         HandleError(code, error.message, 'querys/TruckHead/getTruckHead/GetTruckHeadByFilter', error);
-        throw new Error('No se pudo obtener los cabezales por filtros');
+        throw new Error('Ha ocurrido un error al obtener los cabezales solicitados');
     }
 }

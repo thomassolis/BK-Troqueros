@@ -28,6 +28,6 @@ export const GetTruckVanId = async (idFurgon) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
         HandleError(code, error.message, 'querys/TruckVan/getTruckVanId/GetTruckVanId', error);
-        throw new Error('No se pudo obtener el furgon por ID');
+        throw new Error('Ha ocurrido un error al obtener la información del cabezal solicitado');
     }
 }

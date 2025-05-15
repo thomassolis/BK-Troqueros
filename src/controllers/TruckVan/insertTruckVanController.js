@@ -25,15 +25,14 @@ export const CtrInsertTruckVan = async (req, res) => {
 
         return res.status(201).json({success: true, message: 'Furgon insertado.'});
     } catch (error) {
-        console.log(error);
+        const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.POST);
+
         if (error.ErrorCode === 2627) {
-            return res.status(500).json({success: false, message: error.msg});
+            HandleError(code, error.message, 'controllers/TruckVan/insertTruckVanController/CtrInsertTruckVan', error);
+            return res.status(500).json({success: false, message: error.message});
         }
 
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
         HandleError(code, error.message, 'controllers/TruckVan/insertTruckVanController/CtrInsertTruckVan', error);
-        return res.status(500).json({success: false, message: 'Error interno del servidor'});
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

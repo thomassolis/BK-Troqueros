@@ -13,7 +13,7 @@ export const Ctr_UdpStatusTruckHead = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Error al actualizar el furgon' })
         }
 
-        const updated = await UpdateStatusTruckHead(truckVan) // Actualizamos el status
+        const updated = await UpdateStatusTruckHead(truckHead) // Actualizamos el status
 
         if (!updated) {
             return res.status(400).json({ success: false, message: 'Status no actualizado' })
@@ -22,10 +22,8 @@ export const Ctr_UdpStatusTruckHead = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Status actualizado' })
         
     } catch (error) {
-        const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
-        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusTruckHead');
-        return res.status(500).json({success: false, message: `${error.message}`});
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);
+        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusTruckHead', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

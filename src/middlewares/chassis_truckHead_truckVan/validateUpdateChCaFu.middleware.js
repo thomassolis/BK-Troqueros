@@ -6,18 +6,22 @@ import { typeError } from '../../dictionary/typeError.js';
 
 const schema = Joi.object({
     id: Joi.string().required(),
-    placa: Joi.string().trim().allow(null, "").default(""),
+    placa: Joi.string().trim().max(10).required().messages({
+        'any.required': 'La placa es obligatoria.',
+        'string.empty': 'La placa no puede estar vacía.',
+        'string.max': 'La placa no puede tener más de 20 caracteres.',
+    }),
     numPoliza: Joi.string().empty('').allow(null, "").default(""),
-    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
+    fechaExpedicion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default(null).messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
+    fechaCaducidad: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default(null).messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
+    fechaRenovacion: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default(null).messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default("").messages({
+    fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default(null).messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
 });

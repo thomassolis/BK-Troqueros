@@ -28,6 +28,6 @@ export const GetTruckHeadId = async (idCabezal) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
         HandleError(code, error.message, 'querys/TruckHead/getTruckHeadId/GetTruckHeadId', error);
-        throw new Error('No se pudo obtener los cabezales por ID');
+        throw new Error('Ha ocurrido un error al obtener la información del cabezal solicitado');
     }
 }
