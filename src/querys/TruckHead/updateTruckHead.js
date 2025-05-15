@@ -54,11 +54,11 @@ export const UpdateTruckHead = async (truckHead, files) => {
                 
         //valida que los archivos exista
         //actualiza los archivos del cabezal
-        const fileEliminated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
-        const fileEliminated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
+        const fileUpdated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
+        const fileUpdated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
         //Valida que se haya guardado los archivos
-        if (!fileEliminated.success || !fileEliminated2.success) {
+        if (!fileUpdated.success || !fileUpdated2.success) {
             await transaction.rollback();
             throw new Error('Error al eliminar los archivos. Se revirtió la transacción.');
         }
@@ -78,20 +78,22 @@ export const UpdateTruckHead = async (truckHead, files) => {
             await transaction.rollback();
         }
 
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
+
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
-            if (error.message.includes('PK_')) {
-                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            if (error.message.includes('UQ_')) {
+                MyThrow.message = 'La placa insertada ya existe, favor de verificar la información a actualizar';
             } else {
-                MyThrow.message = 'La placa ya existe.';
+                MyThrow.message = 'Ha ocurrido un error al actualizar la información del cabezal';
             }
 
+            HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead', error);
             throw MyThrow;
         }
-
-        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PUT);
+        
         HandleError(code, error.message, 'querys/TruckHead/updateTruckHead/UpdateTruckHead', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cabezal');
     }
