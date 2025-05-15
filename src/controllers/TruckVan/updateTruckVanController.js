@@ -9,12 +9,7 @@ export const CtrUpdateTruckVan = async (req, res) => {
     try {
         const dataTruckVan = req.body; //obtiene los datos del request body
         const files = req.files || {}; //obtiene todos los archivos del request files
-
-        //valida que los datos no sean nulos
-        if (!dataTruckVan) {
-            return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
-        }
-
+        
         //Actualiza el furgon
         const updatedTruckVan = await UpdateTruckVan(dataTruckVan, files);
 

@@ -77,6 +77,8 @@ export const InsertChassis = async (chassis, file) => {
     } catch (error) {
         await transaction.rollback();
 
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.POST);
+
         // Valida si el error ha sido por primary key o unique key
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo insertar el chasis, ${error.message}`);
@@ -88,10 +90,11 @@ export const InsertChassis = async (chassis, file) => {
                 MyThrow.message = 'La placa ya existe.';
             }
 
+            HandleError(code, error.message, 'querys/Chassis/insertChassis/InsertChassis', error);
             throw MyThrow
         }
 
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.POST);
+        
         HandleError(code, error.message, 'querys/Chassis/insertChassis/InsertChassis', error);
         throw new Error('Ha ocurrido un error al crear el chasis');
     }
