@@ -9,14 +9,15 @@ import { ValidateDataUpdateMiddleware } from '../middlewares/chassis_truckHead_t
 import { CtrUpdateTruckVan } from '../controllers/TruckVan/updateTruckVanController.js';
 import { CtrDeleteTruckVan } from '../controllers/TruckVan/deleteTruckVanController.js';
 import { Ctr_UdpStatusTruckVan } from '../controllers/TruckVan/updateStatusController.js';
+import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
 
 const MODULE = 'Furgon';
 const router = express.Router();
 
 router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckVan);
 router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckVanId);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataInsertMiddleware, CtrInsertTruckVan);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataUpdateMiddleware, CtrUpdateTruckVan);
+router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataInsertMiddleware, CtrInsertTruckVan);
+router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataUpdateMiddleware, CtrUpdateTruckVan);
 router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusTruckVan);
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteTruckVan);
 

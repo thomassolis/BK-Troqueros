@@ -9,14 +9,15 @@ import { CtrGetTruckHeadId } from '../controllers/TruckHead/getTruckHeadIdContro
 import { CtrInsertTruckHead } from '../controllers/TruckHead/insertTruckHeadController.js';
 import { CtrDeleteTruckHead } from '../controllers/TruckHead/deleteTruckHeadController.js';
 import { Ctr_UdpStatusTruckHead } from '../controllers/TruckHead/updateStatusController.js';
+import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
 
 const MODULE = 'Cabezal';
 const router = express.Router();
 
 router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHead);
 router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHeadId);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataInsertMiddleware, CtrInsertTruckHead);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
+router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataInsertMiddleware, CtrInsertTruckHead);
+router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
 router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusTruckHead);
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteTruckHead);
 
