@@ -25,6 +25,7 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
 
         //Leer todos los archivos en la carpeta
         const files = fs.readdirSync(directory);
+        console.log(files)
 
         //Validar si hay archivos en la carpeta
         if (files.length === 0) {
@@ -35,6 +36,7 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
         const downloadLinks = files.map((file, index) => ({
             [`link${index + 1}`]: {
                 name: file, // Nombre del archivo
+                ext: path.extname(file), // Extensión del archivo
                 url: `${linkDownload}/${linkComplementary}/${file}` // URL de descarga
             }
         }));
