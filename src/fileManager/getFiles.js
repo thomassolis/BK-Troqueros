@@ -4,6 +4,7 @@ import { HandleError } from '../utils/HandleError.js';
 import { BuildPathFilesServer } from './getFilePath.js';
 import { GenerateCodeError } from '../utils/getCodeError.js';
 import { typeError } from '../dictionary/typeError.js';
+import { modules } from '../dictionary/modules.js';
 
 export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
     try {
@@ -43,7 +44,7 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
 
         return downloadLinks;
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, error.message, 'auxiliary functions/getFiles/GetLinksDownloadFiles', error);
         throw new Error('Error al obtener lso links de descargas de los archivos.');        
     }

@@ -5,6 +5,7 @@ import { SaveFile } from './saveFile.js';
 import { BuildPathFilesServer } from './getFilePath.js';
 import { GenerateCodeError } from '../utils/getCodeError.js';
 import { typeError } from '../dictionary/typeError.js';
+import { modules } from '../dictionary/modules.js';
 
 //Actualiza los archivos del sistema
 export const UpdateFile = async (folder, files) => {
@@ -54,7 +55,7 @@ export const UpdateFile = async (folder, files) => {
 
         return {success: true, msg: 'Archivo actualizado'};
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, error.me, 'fileManager/updateFile/UpdateFile', error);
         throw { success: false, msg: error.msg || error.message };
     }
@@ -82,7 +83,7 @@ const GetFileServer = (directoryPath) => {
         // Retornar los archivos encontrados
         return filePaths;
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, `Error al obtener los archivos del servidor, ${error.message}`, 'fileManager/updateFile/GetFileServer', error);
         throw { success: false, msg: `No se pudo actualizar el archivo` };
     }
@@ -138,7 +139,7 @@ const ComparateFileWithFilesServer = async (file, folder, filesServer) => {
             DeleteFileTemp(path.dirname(tempFilePath));
         }
 
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, `Error al comparar los archivos, ${error.message}`, 'fileManager/updateFile/ComparateFileWithFilesServer', error);
         throw { success: false, msg: `No se pudo actualizar el archivo` };
     }
@@ -179,7 +180,7 @@ const TemporarilyStoresFile = (fileName, folder) => {
 
         return {success: false, msg: 'No se pudo guardar el archivo temporalmente'};
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, `Error al guardar temporalmente el archivo, ${error.message}`, 'fileManager/updateFile/TemporarilyStoresFile', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }
@@ -199,7 +200,7 @@ const RestoreFileFromTemp = (tempFilePath, filePath) => {
             fs.copyFileSync(tempFilePath, originalFilePath);
         }
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, `No se pudo restaurar el archivo, ${error.message}`, 'fileManager/updateFile/RestoreFileFromTemp', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }
@@ -218,7 +219,7 @@ const DeleteFileTemp = (pathTemp) => {
         //eliminamos los archivos temporales
         files.forEach(file => fs.unlinkSync(path.join(pathTemp, file)));
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.general);
+        const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, `No se pudo eliminar los archivos temporales, ${error.message}`, 'fileManager/updateFile/DeleteFileTemp', error);
         throw { success: false, msg: `UPS, ha ocurrido un problema, inténtalo más tarde` };
     }

@@ -12,6 +12,7 @@ import truckHead from './routes/truckHead.route.js';
 import truckVan from './routes/truckVan.route.js';
 import supplier from './routes/suppliers.route.js';
 import download from './routes/download.route.js';
+import preview from './routes/preview.route.js';
 import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
 import { sessionMiddleware } from './contexts/sessionContext.js';
@@ -35,6 +36,7 @@ app.use('/api/Cabezales', truckHead);
 app.use('/api/Furgones', truckVan);
 app.use('/api/suppliers', supplier);
 app.use('/api/download', download);
+app.use('/api/preview', preview);
 app.use('/api/drivers', drivers);
 
 export default app;

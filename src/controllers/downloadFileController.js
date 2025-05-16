@@ -12,12 +12,7 @@ const BASE_PATHS = {
 
 export const CtrDownloadFile = async (req, res) => {
     try {
-        const ruta = req.params
-
-        //validamos que el request params no este vacío
-        if (!ruta) {
-            return res.status(500).json({ success: false, message: 'UPS... Ha ocurrido un error' });
-        }
+        const ruta = req.params;
 
         //construimos la ruta completa
         const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolderId, ruta.subfolder, ruta.fileName);
