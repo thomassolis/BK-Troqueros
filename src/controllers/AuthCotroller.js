@@ -59,11 +59,11 @@ export const ctrAuthentication = async (req, res) => {
             }
 
             if (Boolean(ban.userB)) {
-                await Banned(email, process.env.TB_UB);
+                await Banned(email, 'Usuarios_Baneados');
                 return res.status(403).json({success: false, message: 'Has alcanzado el número máximo de intentos. Tu cuenta ha sido baneada.' });
             }
 
-            await Banned(email, process.env.TB_US);
+            await Banned(email, 'Usuarios');
             return res.status(403).json({success: false, message: ban.msg });
         }
 
