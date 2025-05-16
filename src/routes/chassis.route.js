@@ -9,14 +9,15 @@ import { ValidateDataUpdateMiddleware } from '../middlewares/chassis_truckHead_t
 import { CtrDeleteChassis } from '../controllers/chassis/deleteChassisController.js';
 import { CtrGetChassisId } from '../controllers/chassis/getChassisIdController.js';
 import { Ctr_UdpStatusChassis } from '../controllers/chassis/updateStatusController.js';
+import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
 
 const MODULE = 'Chasis';
 const router = express.Router();
 
 router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetChassis);
 router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetChassisId);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataInsertMiddleware, CtrInsertChassis);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataUpdateMiddleware, CtrUpdateChassis);
+router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataInsertMiddleware, CtrInsertChassis);
+router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataUpdateMiddleware, CtrUpdateChassis);
 router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusChassis);
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteChassis);
 

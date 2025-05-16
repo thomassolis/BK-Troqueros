@@ -43,7 +43,7 @@ export const ValidateDataInsertMiddleware = (req, res, next) => {
         }
 
         req.body = value;
-        next();
+        //next();
     } catch (error) {
         const typError = req.method; //obtenemos el metodo para poder identificar el tipo de error
         const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
