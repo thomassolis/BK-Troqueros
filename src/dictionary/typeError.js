@@ -1,3 +1,4 @@
+
 /* 
     ************************************************************************************
     *                                                                                  *
@@ -26,6 +27,24 @@ export const typeError = {
         PUT: "FUNA", //Furgon no actualizado
         DELETE: "FUNEL", //Furgon no eliminado
         PATCH: "FUSN", // Status no actualizado (Furgon)
+    },
+    CLIENTS: {
+        GET: "CLNE", //Cliente no encontrado
+        POST: "CLNI", //Cliente no insertado
+        PUT: "CLNA", //Cliente no actualizado
+        DELETE: "CLNEL", //Cliente no eliminado
+    },
+    SUPPLIERS: {
+        GET: "PRNE", //Proveedor no encontrado
+        POST: "PRNI", //Proveedor no insertado
+        PUT: "PRNA", //Proveedor no actualizado
+        DELETE: "PRNEL", //Proveedor no eliminado
+    },
+    DRIVERS: {
+        GET: "CONE", //Conductor no encontrado
+        POST: "CONI", //Conductor no insertado
+        PUT: "CONA", //Conductor no actualizado
+        DELETE: "CONEL", //Conductor no eliminado
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",

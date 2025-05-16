@@ -24,10 +24,13 @@ const schema = Joi.object({
     fechaUltRevisado: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).empty('').allow(null, "").default(null).messages({
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
+    foto_poliza: Joi.any()
 });
 
 //Valida los datos enviados por el request body
 export const ValidateDataInsertMiddleware = (req, res, next) => {
+    console.log(req.body)
+    console.log(req.files)
     try {
         const { error, value } = schema.validate(req.body);
 

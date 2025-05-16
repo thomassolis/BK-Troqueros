@@ -7,6 +7,7 @@ import { typeError } from '../dictionary/typeError.js';
 
 // Middleware para validar el token en las cookies
 export const ValidateTokenMiddleware = async (req, res, next) => {
+    console.log('Entra')
     try {
         // Leer el token desde las cookies
         const token = req.cookies.token;
