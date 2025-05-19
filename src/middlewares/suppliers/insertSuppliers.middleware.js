@@ -34,8 +34,15 @@ export const schemaSuppliers = Joi.object({
 //Valida los datos enviados por el request body
 export const ValidateDataSuppliersMiddleware = (req, res, next) => {
     try {
+        const data = req.body; // Obtiene la data del conductor
+        
+        // Valida que los datos del conductor no sean undefined
+        if (!data || !Object.keys(data).length) {
+            return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })
+        }
+
         //Valida que los datos cumplan con el esquema establecido
-        const { error, value } = schemaSuppliers.validate(req.body);
+        const { error, value } = schemaSuppliers.validate(data);
 
         if (error) {
             return res.status(400).json({ success: false, message: error.message });
