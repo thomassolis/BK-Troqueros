@@ -29,7 +29,7 @@ app.use(session(sessionConfig));
 app.use(sessionMiddleware);
 
 app.use('/api', Auth);
-app.use('/api', registerUser);
+app.use('/api/users', registerUser);
 app.use('/api/clients', client);
 app.use('/api/Chasises', chassis);
 app.use('/api/Cabezales', truckHead);

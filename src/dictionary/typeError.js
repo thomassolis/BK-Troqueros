@@ -63,4 +63,5 @@ export const typeError = {
     insertarRol: "IRL",
     rutaNoEncontrada: "RNE",
     validarFileExtension: "VFE",
+    tokenNoProporcionado: "TNP",
 }
