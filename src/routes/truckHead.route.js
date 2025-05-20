@@ -1,7 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import { ValidateTokenMiddleware } from '../middlewares/auth.middleware.js';
-import { AddParamersMiddleware } from '../middlewares/addParamers.middleware.js';
 import { VerifyPermissionMiddleware } from '../middlewares/verifyPermission.middleware.js';
 import { CtrGetTruckHead } from '../controllers/TruckHead/getTruckHeadController.js';
 import { ValidateDataInsertMiddleware } from '../middlewares/chassis_truckHead_truckVan/validateInsertChCaFu.middleware.js';
@@ -12,15 +10,14 @@ import { CtrInsertTruckHead } from '../controllers/TruckHead/insertTruckHeadCont
 import { CtrDeleteTruckHead } from '../controllers/TruckHead/deleteTruckHeadController.js';
 import { Ctr_UdpStatusTruckHead } from '../controllers/TruckHead/updateStatusController.js';
 
-dotenv.config();
-
+const MODULE = 'Cabezal';
 const router = express.Router();
 
-router.get('/', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetTruckHead);
-router.get('/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_SEE), VerifyPermissionMiddleware, CtrGetTruckHeadId);
-router.post('/add', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_CREATE), VerifyPermissionMiddleware, ValidateDataInsertMiddleware, CtrInsertTruckHead);
-router.put('/update', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_UPD), VerifyPermissionMiddleware, ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
-router.patch('/update_status', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_UPD), VerifyPermissionMiddleware, Ctr_UdpStatusTruckHead);
-router.delete('/delete/:id', ValidateTokenMiddleware, AddParamersMiddleware(process.env.TB_CA, process.env.PE_DEL), VerifyPermissionMiddleware, CtrDeleteTruckHead);
+router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHead);
+router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHeadId);
+router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataInsertMiddleware, CtrInsertTruckHead);
+router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
+router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusTruckHead);
+router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteTruckHead);
 
 export default router;

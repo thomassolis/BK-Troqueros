@@ -9,7 +9,7 @@ export const NumeroMaxIntentos = async (email, numIntentos, user_ban) => {
 
     //Verifica que el usuario sea de la tabla de baneos
     if (numIntentos < MAX_INTENTOS && user_ban) {
-        await UpdateIntents(email, numIntentos + 1, process.env.TB_UB); //actualiza el numero de intentos por parte del usuario
+        await UpdateIntents(email, numIntentos + 1, 'Usuarios_Baneados'); //actualiza el numero de intentos por parte del usuario
 
         return {
             success: true,
@@ -19,7 +19,7 @@ export const NumeroMaxIntentos = async (email, numIntentos, user_ban) => {
 
     //Sí los intentos es menor a 5, actualiza el numero de intentos por parte de usuario
     if (numIntentos < MAX_INTENTOS && !user_ban) {
-        await UpdateIntents(email, numIntentos + 1, process.env.TB_US); //actualiza el numero de intentos por parte del usuario
+        await UpdateIntents(email, numIntentos + 1, 'Usuarios'); //actualiza el numero de intentos por parte del usuario
 
         return {
             success: true,

@@ -22,7 +22,6 @@ export const UpdateChassis = async (chassis, files) => {
             // De lo contrario lo convierte a un array
             cleanFiles[key] = Array.isArray(value) ? value : [value];
         });
-        console.log(cleanFiles)
 
         transaction = new sql.Transaction(pool); // Creamos la transaction
 
@@ -55,11 +54,11 @@ export const UpdateChassis = async (chassis, files) => {
         
         //valida que los archivos exista
         //actualiza los archivos del chasis
-        const fileEliminated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
-        const fileEliminated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
+        const fileupdated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
+        const fileupdated2 = cleanFiles && cleanFiles.foto_revisado ? await UpdateFile(rutaRevisado, cleanFiles.foto_revisado) : await UpdateFile(rutaRevisado, null);
 
         //Valida que se haya guardado los archivos
-        if (!fileEliminated.success || !fileEliminated2.success) {
+        if (!fileupdated.success || !fileupdated2.success) {
             await transaction.rollback();
             throw new Error('Error al actualizar los archivos. Se revirtió la transacción.');
         }
@@ -81,21 +80,23 @@ export const UpdateChassis = async (chassis, files) => {
             await transaction.rollback();
         }
 
+        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
+
         // Valida si el error ha sido por primary key o unique key
         if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.message}`);
+            let MyThrow =  new Error(`No se pudo actualizar el chasis, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
-            if (error.message.includes('PK_')) {
-                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
+            if (error.message.includes('UQ_')) {
+                MyThrow.message = 'La placa insertada ya existe, favor de verificar la información a actualizar';
             } else {
-                MyThrow.message = 'La placa ya existe.';
+                MyThrow.message = 'Ha ocurrido un error al actualizar la información del chasis';
             }
 
+            HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
             throw MyThrow;
         }
 
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PUT);
         HandleError(code, error.message, 'querys/Chassis/updateChassis/UpdateChassis', error);
         throw new Error('Ha ocurrido un error al actualizar la información del chasis');        
     }

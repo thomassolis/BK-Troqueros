@@ -25,10 +25,10 @@ export const VerifyPermission = async (module, action, rol) => {
 
         return result.recordset[0];
     } catch (error) {
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
+        module = 'E' + module.substring(0, 2).toUpperCase();
         
-        const code = GenerateCodeError(modules[module], typeError.permisoDenegado);
+        const code = GenerateCodeError(module, typeError.permisoDenegado);
         HandleError(code, error.message, 'querys/verifyPermission/VerifyPermission', error);
-        throw new Error('Error... No se puso hacer la consulta a la base de datos');
+        throw new Error('Ha ocurrido un error al validar los permisos');
     }
 }

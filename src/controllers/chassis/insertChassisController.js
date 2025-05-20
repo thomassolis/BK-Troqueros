@@ -13,11 +13,6 @@ export const CtrInsertChassis = async (req, res) => {
         const chassis = req.body;
         var file = req.files;
 
-        //valida que los datos no sean nulos
-        if (!chassis){
-            return res.status(400).json({success: false, message: 'Por favor inserte los datos solicitados'});
-        }
-
         const inserted = await InsertChassis(chassis, file); //inserta los datos
 
         //valida que los datos se hayan insertados
