@@ -2,6 +2,7 @@ import app from './App.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import https from 'https';
+import { InitSocket } from './socket/socket.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -15,7 +16,12 @@ const sslOptions = {
   cert: fs.readFileSync('./ssl/cert.pem'),
 };
 
+const server = https.createServer(sslOptions, app);
+
+// Inicializamos el socket
+InitSocket(server);
+
 // Iniciar servidor HTTPS
-https.createServer(sslOptions, app).listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Secure Server running on https://localhost:${PORT}`);
 });
