@@ -15,11 +15,6 @@ export const CtrPreviewFile = async (req, res) => {
     try {
         const ruta = req.params;
 
-        // Validamos que el request params no esté vacío
-        if (!ruta) {
-            return res.status(400).json({ success: false, message: 'Solicitud no válida, falta información.' });
-        }
-
         // Construimos la ruta completa del archivo
         const file = path.join(BASE_PATHS.adjuntos, ruta.folder, ruta.subfolderId, ruta.subfolder, ruta.fileName);
 

@@ -7,22 +7,18 @@ import { typeError } from '../dictionary/typeError.js';
 
 export const CtrCreateUser = async (req, res) => {
     try {
-        const dataUser = req.body;
-
-        if (!dataUser) {
-            res.json({ success: false, message: 'Debe introducir la información solicitada.' })
-        }
+        const dataUser = req.body; // Obtenemos la info del usuario
 
         const emailExist = await ValidateEmail(dataUser.email);
 
         if (emailExist) {
-            return res.json({ success: false, message: 'El correo ya existe, por favor intente con otro correo.' });
+            return res.status(400).json({ success: false, message: 'El correo ya existe, por favor intente con otro correo.' });
         }
 
         const passHash = await GeneratePasswordHash(dataUser.pass)
 
         if (!passHash){
-            return res.json({ success: false, message: 'Error al crear la cuenta, intentelo más tarde.' });
+            return res.status(500).json({ success: false, message: 'Error al crear la cuenta, intentelo más tarde.' });
         }
 
         dataUser.pass = passHash;
@@ -30,15 +26,15 @@ export const CtrCreateUser = async (req, res) => {
         const userCreated = await CreateUser(dataUser);
 
         if (!userCreated) {
-            return res.json({ success: false, message: 'Error al crear al usuario. Por favor, inténtelo más tarde.' });
+            return res.status(400).json({ success: false, message: 'Error al crear al usuario. Por favor, inténtelo más tarde.' });
         }
 
-        return res.json({ success: true, message: 'Usuario creado satisfactoriamente 😃' });
+        return res.status(201).json({ success: true, message: 'Usuario creado satisfactoriamente 😃' });
 
     } catch (error) {
-        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoCreado);
+        const code = GenerateCodeError(modules.USUARIOS, typeError.usuarioNoCreado);
         HandleError(code, error.message, 'CtrCreateUser', error);
-        return res.json({ success: false, message: 'Error al crear el usuario' });
+        return res.status(500).json({ success: false, message: 'Error al crear el usuario' });
     }
 }
 

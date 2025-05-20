@@ -8,14 +8,15 @@ import { MdlwareValidateDataInsertClient } from '../middlewares/clients/validate
 import { Ctr_DeleteClient } from '../controllers/clients/deleteClientController.js';
 import { Mdlware_ValidateDataUpdateClient } from '../middlewares/clients/validateDataUpdateClient.middleware.js';
 import { Ctr_UpdateClient } from '../controllers/clients/updateClientController.js';
+import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
 
 const MODULE = 'Clientes';
 const router = express.Router();
 
 router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClients);
 router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClientsById);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), MdlwareValidateDataInsertClient, Ctr_InsertClient);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdateClient, Ctr_UpdateClient);
+router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, MdlwareValidateDataInsertClient, Ctr_InsertClient);
+router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdateClient, Ctr_UpdateClient);
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteClient);
 
 export default router;

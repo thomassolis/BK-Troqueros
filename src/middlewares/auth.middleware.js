@@ -2,7 +2,6 @@ import { sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.j
 import { VeryfyToken } from '../JWT/verifyToken.js';
 import { HandleError } from '../utils/HandleError.js';
 import {GenerateCodeError} from '../utils/getCodeError.js';
-import { modules } from '../dictionary/modules.js';
 import { typeError } from '../dictionary/typeError.js';
 
 // Middleware para validar el token en las cookies
@@ -48,8 +47,7 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
             return res.status(403).json({success: false, message: 'Token modificado'});
         }
         
-        const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo
-        const code = GenerateCodeError(modules[module], typeError[module]?.[typError]);
+        const code = GenerateCodeError('ETK', typeError.tokenNoProporcionado);
         HandleError(code, error.message, 'middlewares/auth.middleware/ValidateTokenMiddleware', error);
         return res.status(500).json({success: false, message: 'Error interno del servidor--'});
     }

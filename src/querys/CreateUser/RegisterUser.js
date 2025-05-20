@@ -45,7 +45,7 @@ export const CreateUser = async (data) => {
     } catch (error) {
         await transaction.rollback();
 
-        const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoCreado);
+        const code = GenerateCodeError(modules.USUARIOS, typeError.usuarioNoCreado);
         HandleError(code, error.message, 'query/CreateUser/CreateUser', error);
         throw new Error('Error al crear el usuario');
     }
@@ -60,7 +60,7 @@ export const ValidateEmail = async (email) => {
         return result.recordset[0];
         
     } catch (error) {
-        const code = GenerateCodeError(modules.LOGIN, typeError.validarCorreo);
+        const code = GenerateCodeError(modules.USUARIOS, typeError.validarCorreo);
         HandleError(code, error.message, 'query/CreateUser/ValidateEmail', error);
         throw new Error(`Error al validar el correo ${email}`);
     }
@@ -75,7 +75,7 @@ const InsertRolUser = async (idUsuario, idRol) => {
 
         return result.rowsAffected;
     } catch (error) {
-        const code = GenerateCodeError(modules.LOGIN, typeError.insertarRol);
+        const code = GenerateCodeError(modules.USUARIOS, typeError.insertarRol);
         HandleError(code, error.message, 'query/CreateUser/InsertRolUser', error);
         throw new Error(`Error al insertar el rol del usaurio ${idUsuario}`);
     }

@@ -4,6 +4,7 @@ import { HandleError } from '../utils/HandleError.js';
 import { BuildPathFilesServer } from './getFilePath.js';
 import { GenerateCodeError } from '../utils/getCodeError.js';
 import { typeError } from '../dictionary/typeError.js';
+import { modules } from '../dictionary/modules.js';
 
 export const DeleteFile = async (pathFile) =>{
     try {
@@ -26,7 +27,7 @@ export const DeleteFile = async (pathFile) =>{
 
         return true;
     } catch (error) {
-        const code = GenerateCodeError('-', typeError.rutaNoEncontrada);
+        const code = GenerateCodeError(modules.FILE, typeError.rutaNoEncontrada);
         HandleError(code, error.message, 'fileManager/deleteFile/DeleteFile', error);
         throw new Error(`Error al eliminar el archivo`);
     }

@@ -13,7 +13,14 @@ const schemaSuppliersUpd = schemaSuppliers.keys({
 
 export const Mdlware_ValidateDataUpdateSuppliers = (req, res, next) => {
     try {
-        const { error, value } = schemaSuppliersUpd.validate(req.body)
+        const data = req.body; // Obtiene la data del conductor
+        
+        // Valida que los datos del conductor no sean undefined
+        if (!data || !Object.keys(data).length) {
+            return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })
+        }
+
+        const { error, value } = schemaSuppliersUpd.validate(data)
         
         if (error) {
             return res.status(403).json({ success: false, message: error.message });
