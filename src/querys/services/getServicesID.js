@@ -13,17 +13,26 @@ export const GetServicesID = async (id) => {
             .input("ID", sql.VarChar, id)
             .query(`
                     SELECT
-                        [id_servicio_datos],
-                        [id_servicio],
-                        [nombre],
-                        [lugar_origen],
-                        [lugar_destino],
-                        [tarifa]
-                    FROM [Servicios_datos]
-                    WHERE [id_servicio_datos] = @ID
+                        SD.[id_servicio_datos],
+                        S.[nombre],
+                        SD.[lugar_origen],
+                        SD.[lugar_destino],
+                        SD.[tarifa]
+                    FROM [Servicios_datos] SD
+                        JOIN [Servicios] S
+                            ON S.[id_servicio] = SD.[id_servicio]
+                    WHERE SD.[id_servicio] = @ID
                 `);
 
-        return result.recordset[0];
+        // Valida si la consulta tiene datos
+        if (result.recordset === 0) {
+            return [];
+        }
+
+        return {
+            nombre: result.recordset[0].nombre,
+            data: result.recordset.map(({nombre, ...rest}) => rest)
+        }
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.GET);
         HandleError(code, error.message, 'querys/services/getServicesID/GetServicesID', error);
