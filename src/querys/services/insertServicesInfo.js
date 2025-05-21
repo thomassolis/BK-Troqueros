@@ -10,6 +10,7 @@ import { CreateNewService } from './createServices.js';
 export const InsertDataServices = async (service) => {
     let transaction = null;
     try {
+        console.log(service)
         // Valida si el id del servicio es undefined
         if (!service.id_servicio) {
             service.id_servicio = await CreateNewService(service.nombre_servicio);
@@ -31,8 +32,8 @@ export const InsertDataServices = async (service) => {
         let values = []
 
         service.datos_servicio.forEach((item, index) => {            
-            request.input(`Origen${index}`, sql.VarChar, item.origen)
-            request.input(`Destino${index}`, sql.VarChar, item.destino)
+            request.input(`Origen${index}`, sql.VarChar, item.lugar_origen)
+            request.input(`Destino${index}`, sql.VarChar, item.lugar_destino)
             request.input(`Tarifa${index}`, sql.Decimal, item.tarifa)
 
             // Agrega los valores a una lista

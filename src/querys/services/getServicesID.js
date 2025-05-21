@@ -14,6 +14,7 @@ export const GetServicesID = async (id) => {
             .query(`
                     SELECT
                         SD.[id_servicio_datos],
+                        SD.[id_servicio],
                         S.[nombre],
                         SD.[lugar_origen],
                         SD.[lugar_destino],
@@ -31,7 +32,8 @@ export const GetServicesID = async (id) => {
 
         return {
             nombre: result.recordset[0].nombre,
-            data: result.recordset.map(({nombre, ...rest}) => rest)
+            id_servicio: result.recordset[0].id_servicio,
+            datos_servicio: result.recordset.map(({nombre, id_servicio, ...rest}) => rest)
         }
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.GET);
