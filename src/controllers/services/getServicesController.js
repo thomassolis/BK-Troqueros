@@ -1,12 +1,8 @@
-import { parse } from 'dotenv';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetAllServices, GetServicesByFilter } from '../../querys/services/getServices.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
-import { json } from 'express';
-import { stringify } from 'uuid';
-
 
 
 export const Ctr_GetServices = async (req, res) => {
