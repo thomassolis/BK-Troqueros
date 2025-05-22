@@ -5,13 +5,12 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
+//Establece el tamaño de la página
+const PAGE_SIZE = 20;
 
 // Obtuene todos los servicios del sistema
 export const GetAllServices = async (page) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
@@ -74,9 +73,6 @@ export const GetAllServices = async (page) => {
 
 export const GetServicesByFilter = async (page, search) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 1;
-
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("Search", sql.VarChar, search)
