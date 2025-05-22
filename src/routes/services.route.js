@@ -15,5 +15,6 @@ router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr
 router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetServicesByID);
 router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertService, Ctr_InsertServices);
 router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdService, Ctr_UpdateServices);
+router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE));
 
 export default router;
