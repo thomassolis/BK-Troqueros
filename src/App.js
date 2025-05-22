@@ -17,6 +17,7 @@ import { corsOptions } from './security/configCors.js';
 import { sessionConfig } from './security/configExpressSession.js';
 import { sessionMiddleware } from './contexts/sessionContext.js';
 import drivers from './routes/drivers.route.js';
+import services from './routes/services.route.js';
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(session(sessionConfig));
 app.use(sessionMiddleware);
 
 app.use('/api', Auth);
-app.use('/api', registerUser);
+app.use('/api/users', registerUser);
 app.use('/api/clients', client);
 app.use('/api/Chasises', chassis);
 app.use('/api/Cabezales', truckHead);
@@ -38,5 +39,6 @@ app.use('/api/suppliers', supplier);
 app.use('/api/download', download);
 app.use('/api/preview', preview);
 app.use('/api/drivers', drivers);
+app.use('/api/services', services);
 
 export default app;

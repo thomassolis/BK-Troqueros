@@ -46,6 +46,12 @@ export const typeError = {
         PUT: "CONA", //Conductor no actualizado
         DELETE: "CONEL", //Conductor no eliminado
     },
+    SERVICES: {
+        GET: "SENE", //Servicio no encontrado
+        POST: "SENI", //Servicio no insertado
+        PUT: "SENA", //Servicio no actualizado
+        DELETE: "SENEL", //Servicio no eliminado
+    },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
     usuarioNoCreado: "UNC",
@@ -63,4 +69,5 @@ export const typeError = {
     insertarRol: "IRL",
     rutaNoEncontrada: "RNE",
     validarFileExtension: "VFE",
+    tokenNoProporcionado: "TNP",
 }

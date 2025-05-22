@@ -47,7 +47,14 @@ const schemaClient = Joi.object({
 // Valida los datos antes de actualizar la información del cliente
 export const Mdlware_ValidateDataUpdateClient = (req, res, next) => {
     try {
-        const { error, value } = schemaClient.validate(req.body) // Valida la data
+        const data = req.body; // Obtenemos los datos de los vehículos
+
+        // Valida que los datos de los vehículos no sea undefined
+        if (!data || !Object.keys(data).length) {
+            return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })
+        }
+
+        const { error, value } = schemaClient.validate(data) // Valida la data
 
         // Valida si hay un error al momento de validar la información del usuario
         if (error) {
