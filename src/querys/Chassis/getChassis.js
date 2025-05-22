@@ -5,12 +5,12 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
+//Establece el tamaño de la página
+const PAGE_SIZE = 20;
+
 //obtiene todos los chasis 
 export const GetChassis = async (page) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
                                 .input("Page", sql.Int, page)
                                 .input("PageSize", sql.Int, PAGE_SIZE)
@@ -50,9 +50,6 @@ export const GetChassis = async (page) => {
 //obtiene todos los chasis por filtro
 export const GetChassisByFilter = async (page, search) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
                                 .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
                                 .input("Search", sql.VarChar, `%${search}%`)
