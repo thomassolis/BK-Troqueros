@@ -27,6 +27,7 @@ export const GetAllServices = async (page) => {
                         FETCH NEXT @PageSize ROWS ONLY
                     )
                     SELECT
+                        SP.id_servicio,
                         SP.nombre,
                         JSON_QUERY(
                             (
@@ -36,7 +37,6 @@ export const GetAllServices = async (page) => {
                                     SD.lugar_destino,
                                     SD.tarifa
                                 FROM Servicios_datos SD
-                                JOIN Pedido_Servicio PS ON SD.id_servicio_datos = PS.id_servicio_datos
                                 WHERE SD.id_servicio = SP.id_servicio
                                 FOR JSON PATH
                             )
@@ -75,7 +75,7 @@ export const GetAllServices = async (page) => {
 export const GetServicesByFilter = async (page, search) => {
     try {
         //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
+        const PAGE_SIZE = 1;
 
         const result = await pool.request()
             .input("Page", sql.Int, page)
@@ -94,6 +94,7 @@ export const GetServicesByFilter = async (page, search) => {
                         FETCH NEXT @PageSize ROWS ONLY
                     )
                     SELECT
+                        SP.id_servicio,
                         SP.nombre,
                         JSON_QUERY(
                             (
@@ -103,7 +104,6 @@ export const GetServicesByFilter = async (page, search) => {
                                     SD.lugar_destino,
                                     SD.tarifa
                                 FROM Servicios_datos SD
-                                JOIN Pedido_Servicio PS ON SD.id_servicio_datos = PS.id_servicio_datos
                                 WHERE SD.id_servicio = SP.id_servicio
                                 FOR JSON PATH
                             )

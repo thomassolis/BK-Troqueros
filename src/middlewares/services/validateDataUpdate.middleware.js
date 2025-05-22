@@ -21,9 +21,9 @@ export const Mdlware_ValidateDataUpdService = (req, res, next) => {
             console.log(error)
             return res.status(400).json({ success: true, message: error.message })
         }
-        console.log(value)
+        
         req.body = value;
-        //next();
+        next();
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.PUT)
         HandleError(code, error.message, 'middlewares/services/validateDataInsertServices.middleware/Mdlware_ValidateDataInsertService', error);

@@ -10,7 +10,7 @@ export const Ctr_GetServices = async (req, res) => {
         //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
         const search = req.query.search;
         // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = search ? 1 : parseInt(req.query.page) || 1;
+        const page = parseInt(req.query.page) || 1;
 
         let services = null;
 
