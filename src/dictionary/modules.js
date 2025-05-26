@@ -17,4 +17,5 @@ export const modules = {
     FILE: "EFL",
     DRIVERS: "ECO",
     SERVICES: "ESE",
+    REQUESTS: "EPE",
 }

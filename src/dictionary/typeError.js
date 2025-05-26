@@ -52,6 +52,13 @@ export const typeError = {
         PUT: "SENA", //Servicio no actualizado
         DELETE: "SENEL", //Servicio no eliminado
     },
+    REQUESTS: {
+        GET: "PENE", //Peticiones no encontrado
+        POST: "PENI", //Peticiones no insertado
+        PUT: "PENA", //Peticiones no actualizado
+        PATCH: "PENA", //Status no actualizado (Peticiones)
+        DELETE: "PENEL", //Peticiones no eliminado
+    },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
     usuarioNoCreado: "UNC",
