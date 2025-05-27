@@ -7,30 +7,21 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los cabezales que hay en el sistema
 export const CtrGetTruckHead = async (req, res) => {
     try {
-        //obtenemos la palabra a buscar
-        const search = req.query.search;
-        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = search ? 1 : parseInt(req.query.page) || 1;
+        const search = req.query.search; //obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene el número de página
 
-        //Valida si ha ingresado una palabra a buscar
+        let truckHead = null;
+
+        // Valida si está filtrando
         if (search) {
-            //obtiene los cabezales filtrados
-            const truckHead = await GetTruckHeadByFilter(page, search);
-
-            //valida que los truckHead no sea nulo
-            if (!truckHead) {
-                return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
-            }
-
-            return res.status(200).json({success: true, message: 'Data enviada', vehiculos: truckHead});
+            truckHead = await GetTruckHeadByFilter(page, search); //obtiene los cabezales filtrados
+        } else {
+            const truckHead = await GetTruckHead(page); //obtiene toda la data del cabezal
         }
-
-        //obtiene toda la data del cabezal y reduce el anidamiento
-        const truckHead = await GetTruckHead(page);
 
         //valida que truckHead no sea nulo
         if (!truckHead) {
-            return res.status(200).json({success: false, message: 'No hay resultados'});
+            return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
         }
 
         return res.status(200).json({success: true, message: 'Data enviada', vehiculos: truckHead});

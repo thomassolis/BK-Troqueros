@@ -1,15 +1,8 @@
 import { HandleError } from '../../utils/HandleError.js';
-import Joi from 'joi';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { schemaVehicles } from './validateInsertChCaFu.middleware.js';
-
-const schema = schemaVehicles.keys({
-    id: Joi.string().required().messages({
-        'any.required': 'Identificador no proporcionado.'
-    }),
-});
+import { schemaVehiclesUpd } from '../../schema/schemaVehiculo.js';
 
 //valida los datos del request body
 export const ValidateDataUpdateMiddleware = (req, res, next) => {
@@ -22,7 +15,7 @@ export const ValidateDataUpdateMiddleware = (req, res, next) => {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })
         }
 
-        const { error, value } = schema.validate(data);
+        const { error, value } = schemaVehiclesUpd.validate(data);
 
         if (error) {
             return res.status(403).json({ success: false, message: error.message });

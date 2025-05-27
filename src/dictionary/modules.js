@@ -16,4 +16,5 @@ export const modules = {
     DATABASE: "EDB",
     FILE: "EFL",
     DRIVERS: "ECO",
+    SERVICES: "ESE",
 }
