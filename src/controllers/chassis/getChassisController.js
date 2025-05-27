@@ -7,6 +7,7 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassis = async (req, res) => {
     try {
+        console.log(req.query.page)
         //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
         const search = req.query.search;
         // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
