@@ -4,7 +4,6 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
 import { DateConverter } from '../../auxiliary functions/dateConverter.js';
 
 
