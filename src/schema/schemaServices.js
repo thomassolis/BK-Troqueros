@@ -17,7 +17,8 @@ const schemaBaseItem = Joi.object({
     })
 });
 
-const extendedSchemaItem = schemaBaseItem.keys({
+// Esquema para actualizar la ruta de un servicio
+const schemaDataServicesUpd = schemaBaseItem.keys({
     id_servicio_datos: Joi.number().required().messages({
         'any.required': 'El identificador del dato del servicio es requerido.'
     })
@@ -41,11 +42,9 @@ export const schemaDataServices = schemaBaseItem.keys({
 });
 
 export const schemaServiceUpd = schemaService
-  .fork(['nombre_servicio'], (schema) => schema.forbidden())
+  .fork(['datos_servicio'], (schema) => schema.forbidden())
   .keys({
     id_servicio: Joi.number().required().messages({
         'any.required': 'El identificador del servicio es requerido.'
     }),
-    datos_servicio: Joi.array().items(extendedSchemaItem),
-    datos_servicio_nuevo: Joi.array().items(schemaBaseItem).default([])
 });
