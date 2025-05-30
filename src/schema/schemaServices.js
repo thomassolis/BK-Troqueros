@@ -23,17 +23,21 @@ const extendedSchemaItem = schemaBaseItem.keys({
     })
 });
 
+// Esquema base para crear un servicio
 export const schemaService = Joi.object({
-    id_servicio: Joi.alternatives().try(
-        Joi.string(),
-        Joi.number()
-    ).allow(null, '').optional(),
     nombre_servicio: Joi.string().max(20).required().messages({
         'any.required': 'El campo nombre del servicio es requerido',
         'string.empty': 'El campo nombre del servicio no puede estar vacío',
         'string.max': 'El campo nombre del servicio no debe tener más de 20 caracteres.'
     }),
-    datos_servicio: Joi.array().items(schemaBaseItem),    
+    datos_servicio: Joi.array().items(schemaBaseItem).default([]),    
+});
+
+// Esquema para agregar una nueva ruta del servicio
+export const schemaDataServices = schemaBaseItem.keys({
+    id_servicio: Joi.number().required().messages({
+        'any.required': 'El identificador del servicio es requerido.'
+    }),
 });
 
 export const schemaServiceUpd = schemaService
