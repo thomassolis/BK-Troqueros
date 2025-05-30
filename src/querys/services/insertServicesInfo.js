@@ -47,3 +47,32 @@ export const InsertDataServices = async (transaction, infoService, idService) =>
         throw new Error('Ha ocurrido un error al crear el servicio');
     }
 }
+
+
+
+// Agrega una nueva ruta a un servicio ya existente
+export const InsertNewDataServices = async (infoService) => {
+    try {
+        const result = await pool.request()
+            .input("IDServicio", sql.Int, infoService.id_servicio)
+            .input("Origen", sql.VarChar, infoService.lugar_origen)
+            .input("Destino", sql.VarChar, infoService.lugar_destino)
+            .input("Tarifa", sql.Decimal, infoService.tarifa)
+            .query(`
+                    INSERT INTO [Servicios_datos] ([id_servicio], [nombre], 
+                    [lugar_origen], [lugar_destino], [tarifa])
+                        VALUES (@IDServicio, '', @Origen, @Destino, @Tarifa)
+                `);
+
+        // Valida que se haya hecho el insert de la nueva ruta del servicio
+        if (result.rowsAffected > 0) {
+            return true;
+        }
+
+        return false;
+    } catch (error) {
+        const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.POST);
+        HandleError(code, error.message, 'querys/services/insertServicesInfo/InsertNewDataServices', error);
+        throw new Error('Ha ocurrido un error al agregar una nueva ruta al servicio');
+    }
+}

@@ -1,7 +1,6 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { CreateNewService } from '../../querys/services/createServices.js';
-import { InsertDataServices } from '../../querys/services/insertServicesInfo.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
