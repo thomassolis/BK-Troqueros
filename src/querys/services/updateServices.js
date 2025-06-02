@@ -37,11 +37,11 @@ export const UpdateDataServices = async (service) => {
                 MyThrow.message = 'Ha ocurrido un error al actualizar la información del servicio';
             }
 
-            HandleError(code, error.message, 'querys/services/updateServicesInfo/UpdateDataServices', error);
+            HandleError(code, error.message, 'querys/services/updateServices/UpdateDataServices', error);
             throw MyThrow;
         }
 
-        HandleError(code, error.message, 'querys/services/updateServicesInfo/UpdateDataServices', error);
+        HandleError(code, error.message, 'querys/services/updateServices/UpdateDataServices', error);
         throw new Error('Ha ocurrido un error al actualizar la información del servicio');
     }
 }

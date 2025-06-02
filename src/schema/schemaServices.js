@@ -18,7 +18,7 @@ const schemaBaseItem = Joi.object({
 });
 
 // Esquema para actualizar la ruta de un servicio
-const schemaDataServicesUpd = schemaBaseItem.keys({
+export const schemaDataServicesUpd = schemaBaseItem.keys({
     id_servicio_datos: Joi.number().required().messages({
         'any.required': 'El identificador del dato del servicio es requerido.'
     })

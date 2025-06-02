@@ -10,6 +10,8 @@ import { Ctr_UpdateServices } from '../controllers/services/updateServicesContro
 import { Ctr_DeleteService } from '../controllers/services/deleteServicesController.js';
 import { Ctr_InsertInfoService } from '../controllers/services/addInfoServicesController.js';
 import { Mdlware_ValidateDataNewRuta } from '../middlewares/services/validateDataInsertRutaServices.middleware.js';
+import { Mdlware_ValidateDataUpdRutService } from '../middlewares/services/validateDataUpdRuta.middleware.js';
+import { Ctr_UpdRutaService } from '../controllers/services/updateRutaServicesController.js';
 
 const MODULE = 'Servicios';
 const router = express.Router();
@@ -23,7 +25,12 @@ router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE),
 // Crea un nueva ruta del servicio
 router.post('/add/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataNewRuta, Ctr_InsertInfoService);
 
+// Actualiza un servicio
 router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdService, Ctr_UpdateServices);
+
+// Actualiza la ruta de un servicio
+router.put('/update/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRutService, Ctr_UpdRutaService);
+
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
 
 export default router;
