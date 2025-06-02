@@ -31,6 +31,7 @@ router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE
 // Actualiza la ruta de un servicio
 router.put('/update/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRutService, Ctr_UpdRutaService);
 
+// Eliminación de un servicio de manera lógica
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
 
 export default router;

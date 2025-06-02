@@ -5,23 +5,23 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
 
-export const Ctr_DeleteService = async () => {
+export const Ctr_DeleteService = async (req, res) => {
     try {
-        const idService = req.params.id
+        const idService = req.params.id // Obtiene el ID del servicio
         
-        // Valida que id del cliente exista
+        // Valida que id del servicio exista
         if (!idService) {
             return res.status(401).json({ success: false, message: 'No se ha podido eliminar el servicio. Identificador no proporcionado' })
         }
 
-        const deleted = await DeleteServices(idService);
+        const deletedService = await DeleteServices(idService); // Elimina un servicio lógicamente
 
-        // Valida si el cliente ha sido eliminado
-        if (!deleted) {
-            return res.status(401).json({ success: false, message: 'Datos del servicio no encontrado' })
+        // Valida si el servicio ha sido eliminado
+        if (!deletedService) {
+            return res.status(401).json({ success: false, message: 'Servicio no encontrado.' })
         }
 
-        return res.status(200).json({ success: true, message: 'Datos del servicio eliminado satisfactoriamente!' })
+        return res.status(200).json({ success: true, message: 'Servicio eliminado correctamente!' })
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.DELETE);
         HandleError(code, error.message, 'services/deleteServicesController/Ctr_DeleteService', error);
