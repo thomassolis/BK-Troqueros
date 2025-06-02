@@ -7,7 +7,7 @@ import { Mdlware_ValidateDataInsertService } from '../middlewares/services/valid
 import { Ctr_InsertServices } from '../controllers/services/insertServicesController.js';
 import { Mdlware_ValidateDataUpdService } from '../middlewares/services/validateDataUpdate.middleware.js';
 import { Ctr_UpdateServices } from '../controllers/services/updateServicesController.js';
-import { Ctr_DeleteService } from '../controllers/services/deleteServicesController.js';
+import { Ctr_DeleteRutaService, Ctr_DeleteService } from '../controllers/services/deleteServicesController.js';
 import { Ctr_InsertInfoService } from '../controllers/services/addInfoServicesController.js';
 import { Mdlware_ValidateDataNewRuta } from '../middlewares/services/validateDataInsertRutaServices.middleware.js';
 import { Mdlware_ValidateDataUpdRutService } from '../middlewares/services/validateDataUpdRuta.middleware.js';
@@ -33,5 +33,8 @@ router.put('/update/services_data', ValidateTokenMiddleware, VerifyPermissionMid
 
 // Eliminación de un servicio de manera lógica
 router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
+
+// Eliminación de una ruta de servicio lógico
+router.delete('/delete/services_data/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteRutaService);
 
 export default router;
