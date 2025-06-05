@@ -7,16 +7,8 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassis = async (req, res) => {
     try {
-<<<<<<< HEAD
-        console.log(req.query.page)
-        //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
-        const search = req.query.search;
-        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = search ? 1 : parseInt(req.query.page) || 1;
-=======
         const search = req.query.search; //obtenemos la palabra a buscar
         const page = parseInt(req.query.page) || 1; // Obtiene el número de página
->>>>>>> 7817e72553bd108cd42f48c0dd2c4e574d4a3771
 
         let chassis = null;
 
