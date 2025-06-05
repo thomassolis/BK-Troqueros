@@ -5,28 +5,29 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-//Obtiene los cabezales del sistema
-export const GetTruckHead = async (page) => {
-    try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
+const PAGE_SIZE = 20; // Establece el tamaño de la página
 
+//Obtiene los cabezales del sistema
+export const GetTruckHead = async (page, active) => {
+    try {
         const result = await pool.request()
-                                .input("Page", sql.Int, page)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_cabezal,
-                                            placa,
-                                            status,
-                                            CEILING(COUNT(*) OVER()) AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Cabezal]
-                                        ORDER BY id_cabezal
-                                        OFFSET (@Page - 1) * @PageSize ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, page)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_cabezal],
+                        [placa],
+                        [status],
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM [Troqueros].[dbo].[Cabezal]
+                    WHERE [active] = @Active
+                    ORDER BY id_cabezal DESC
+                    OFFSET (@Page - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
         if (result.recordset.length === 0) {
-            return undefined
+            return []
         }
         
         return {
@@ -44,29 +45,27 @@ export const GetTruckHead = async (page) => {
 
 
 //obtiene todos los cabezales por filtro
-export const GetTruckHeadByFilter = async (page, search) => {
+export const GetTruckHeadByFilter = async (page, search, active) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
-                                .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
-                                .input("Search", sql.VarChar, `%${search}%`)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_cabezal,
-                                            placa,
-                                            status,
-                                            COUNT(*) OVER() AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Cabezal]
-                                        WHERE placa LIKE @Search
-                                        ORDER BY id_cabezal
-                                        OFFSET @Page ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
+            .input("Search", sql.VarChar, `%${search}%`)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_cabezal],
+                        [placa],
+                        [status],
+                        COUNT(*) OVER() AS totalRegistros
+                    FROM [Troqueros].[dbo].[Cabezal]
+                    WHERE [placa] LIKE @Search AND [active] = @Active
+                    ORDER BY [id_cabezal]
+                    OFFSET @Page ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
         if (result.recordset.length === 0) {
-            return undefined
+            return []
         }
 
         return {
