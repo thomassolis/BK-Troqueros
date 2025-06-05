@@ -78,7 +78,6 @@ export const GetServices = async (filters) => {
             limite: PAGE_SIZE
         };
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.GET);
         HandleError(code, error.message, 'querys/services/getServices/GetAllServices', error);
         throw new Error('Ha ocurrido un error al obtener los servicios solicitados');

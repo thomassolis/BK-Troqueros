@@ -7,6 +7,10 @@ import { typeError } from '../../dictionary/typeError.js';
 
 
 // Desactiva un servicio del sistema
+/*
+ * Desactiva un servicio en lugar de eliminarlo físicamente.
+ * Esto se por la integridad de los datos que esten relacionados con este servicio.
+*/
 export const DeleteServices = async (id) => {
     try {
         const result = await pool.request()
@@ -24,7 +28,6 @@ export const DeleteServices = async (id) => {
 
         return false;
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.DELETE);
         HandleError(code, error.message, 'querys/services/deleteServices/DeleteServices', error);
         throw new Error('Ha ocurrido un error al eliminar el servicio');
@@ -34,7 +37,8 @@ export const DeleteServices = async (id) => {
 
 // Desactiva la ruta del servicio
 /*
-
+ * Desactiva la ruta del servicio en lugar de eliminarlo físicamente.
+ * Esto se hace por la integridad de los datos, y por que estan relacionados con otros modulos.
 */
 export const DeleteRutaServices = async (id) => {
     try {
@@ -53,7 +57,6 @@ export const DeleteRutaServices = async (id) => {
 
         return false;
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.DELETE);
         HandleError(code, error.message, 'querys/services/deleteServices/DeleteServices', error);
         throw new Error('Ha ocurrido un error al eliminar la ruta del servicio');
