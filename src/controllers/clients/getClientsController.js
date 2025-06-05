@@ -8,18 +8,17 @@ import { typeError } from '../../dictionary/typeError.js';
 // Controlador para obtener los clientes
 export const Ctr_GetClients = async (req, res) => {
     try {
-        //obtenemos la palabra a buscar
-        const search = req.query.search;
-        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = search ? 1 : parseInt(req.query.page) || 1;
+        const search = req.query.search; // Obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene la página actual
+        const active = req.query.active ? req.query.active : true
 
         let clients = null
 
         // Valida que 'search' tenga información a buscar
         if (search) {
-            clients = await GetClientsFilters(page, search) // Obtiene los clientes filtrados
+            clients = await GetClientsFilters(page, search, active) // Obtiene los clientes filtrados
         } else {
-            clients = await GetAllClients(page); // Obtiene todos los clientes del sistema
+            clients = await GetAllClients(page, active); // Obtiene todos los clientes del sistema
         }
 
         // Valida que los clientes no sean undefined

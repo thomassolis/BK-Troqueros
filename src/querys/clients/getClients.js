@@ -6,12 +6,11 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { DateConverter } from '../../auxiliary functions/dateConverter.js';
 
-// Obtiene todos los clientes
-export const GetAllClients = async (page) => {
-    try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
+const PAGE_SIZE = 20; //Establece el tamaño de la página
 
+// Obtiene todos los clientes
+export const GetAllClients = async (page, active) => {
+    try {
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
@@ -27,6 +26,7 @@ export const GetAllClients = async (page) => {
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
+                    WHERE C.[active] = @Active
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],
@@ -62,15 +62,13 @@ export const GetAllClients = async (page) => {
 
 
 // Filtra los clientes por nombre
-export const GetClientsFilters = async (page, nameCustomer) => {
+export const GetClientsFilters = async (page, nameCustomer, active) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
             .input("SearchName", sql.VarChar, nameCustomer)
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
             .query(`
                     SELECT
                         C.[id_cliente],
@@ -83,7 +81,7 @@ export const GetClientsFilters = async (page, nameCustomer) => {
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
-                    WHERE C.[nombre] LIKE '%' + @SearchName + '%'
+                    WHERE C.[nombre] LIKE '%' + @SearchName + '%' AND C.[active] = @Active
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],

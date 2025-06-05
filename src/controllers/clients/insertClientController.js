@@ -12,11 +12,6 @@ export const Ctr_InsertClient = async (req, res) => {
         const newClient  = req.body // Obtenemos los datos del nuevo cliente
         const files = req.files
 
-        // Valida que los datos del nuevo cliente exista
-        if (!newClient) {
-            return res.status(401).json({ success: false, message: 'Ha ocurrido un error al crear al cliente. Intente más tarde' })
-        }
-
         const exist = await ValidateRUC_Client(newClient.ruc) // Valida si el RUC del cliente ya se encuentra registrado en el sistema
 
         // Valida si el RUC del cliente se encuentra en la base de datos

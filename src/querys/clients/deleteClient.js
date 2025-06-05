@@ -6,7 +6,10 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-//Elimina un chasis del sistema
+/*
+ * Desactiva un cliente para mantener la integridad de los datos
+ * El cliente puede estar relacionados con otros modulos
+*/
 export const DeleteClient = async (id) => {
     try {
         //obtenemos las rutas de los archivos
@@ -29,7 +32,8 @@ export const DeleteClient = async (id) => {
         const result = await pool.request()
             .input("Id", sql.VarChar, id)
             .query(`
-                    DELETE [Troqueros].[dbo].[Clientes]
+                    UPDATE [Troqueros].[dbo].[Clientes]
+                        SET [active] = 0
                     WHERE id_cliente = @Id
                 `);
 
