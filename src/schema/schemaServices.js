@@ -17,31 +17,34 @@ const schemaBaseItem = Joi.object({
     })
 });
 
-const extendedSchemaItem = schemaBaseItem.keys({
+// Esquema para actualizar la ruta de un servicio
+export const schemaDataServicesUpd = schemaBaseItem.keys({
     id_servicio_datos: Joi.number().required().messages({
         'any.required': 'El identificador del dato del servicio es requerido.'
     })
 });
 
+// Esquema base para crear un servicio
 export const schemaService = Joi.object({
-    id_servicio: Joi.alternatives().try(
-        Joi.string(),
-        Joi.number()
-    ).allow(null, '').optional(),
-    nombre_servicio: Joi.string().max(20).required().messages({
+    nombre_servicio: Joi.string().max(100).required().messages({
         'any.required': 'El campo nombre del servicio es requerido',
         'string.empty': 'El campo nombre del servicio no puede estar vacío',
-        'string.max': 'El campo nombre del servicio no debe tener más de 20 caracteres.'
+        'string.max': 'El campo nombre del servicio no debe tener más de 100 caracteres.'
     }),
-    datos_servicio: Joi.array().items(schemaBaseItem),    
+    datos_servicio: Joi.array().items(schemaBaseItem).default([]),    
+});
+
+// Esquema para agregar una nueva ruta del servicio
+export const schemaDataServices = schemaBaseItem.keys({
+    id_servicio: Joi.number().required().messages({
+        'any.required': 'El identificador del servicio es requerido.'
+    }),
 });
 
 export const schemaServiceUpd = schemaService
-  .fork(['nombre_servicio'], (schema) => schema.forbidden())
+  .fork(['datos_servicio'], (schema) => schema.forbidden())
   .keys({
     id_servicio: Joi.number().required().messages({
         'any.required': 'El identificador del servicio es requerido.'
     }),
-    datos_servicio: Joi.array().items(extendedSchemaItem),
-    datos_servicio_nuevo: Joi.array().items(schemaBaseItem).default([])
 });

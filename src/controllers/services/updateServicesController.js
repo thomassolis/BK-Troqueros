@@ -16,7 +16,7 @@ export const Ctr_UpdateServices = async (req, res) => {
             return res.status(401).json({ success: false, message: 'No se ha podido actualizar la información del servicio. Inténtelo más tarde' })
         }
 
-        return res.status(200).json({ success: true, message: 'La información del servicio ha sido actualizada' })
+        return res.status(200).json({ success: true, message: 'Servicio actualizado satisfactoriamente!' })
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.PUT);
         HandleError(code, error.message, 'services/updateServicesController/Ctr_UpdateServices', error);
