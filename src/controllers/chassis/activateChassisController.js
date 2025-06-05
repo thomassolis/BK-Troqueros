@@ -2,7 +2,6 @@ import { HandleError } from '../../utils/HandleError.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { UpdateStatusChassis } from '../../querys/Chassis/updateStatus.js';
 import { ActivateChassis } from '../../querys/Chassis/activateChassis.js';
 
 
@@ -15,9 +14,9 @@ export const Ctr_ActivateChassis = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Identificador no proporcionado. Inténtelo más tarde.' })
         }
 
-        const activated = await ActivateChassis(id) // Actualizamos el status
+        const activated = await ActivateChassis(id) // Habilitamos el chasis
 
-        // Validamos que se haya hecho la actualziación del status
+        // Validamos que se haya habilitado el chasis
         if (!activated) {
             return res.status(400).json({ success: false, message: 'No se pudo habilitar el chasis.' })
         }

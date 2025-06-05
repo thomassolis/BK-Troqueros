@@ -25,7 +25,7 @@ export const ActivateChassis = async (id) => {
         return false;
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
-        HandleError(code, error.message, 'querys/Chassis/updateStatus/UpdateStatusChassis', error);
-        throw new Error('Ha ocurrido un error al actualizar el status del chasis');        
+        HandleError(code, error.message, 'querys/Chassis/activateChassis/ActivateChassis', error);
+        throw new Error('Ha ocurrido un error al habilitar el chasis');        
     }
 }
