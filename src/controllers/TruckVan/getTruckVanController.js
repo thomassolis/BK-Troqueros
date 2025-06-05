@@ -7,16 +7,18 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los furgones que hay en el sistema
 export const CtrGetTruckVan = async (req, res) => {
     try {
-        const search = req.query.search; //obtenemos la palabra a buscar
-        const page = parseInt(req.query.page) || 1; // Obtiene el número de página
+        const search = req.query.search; // Obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene la página actual
+        let active = req.query.active ? req.query.active : true;
+        active = active === 'true' || active === true
 
         let truckVan = null;
 
         // Valida si está filtrando
         if (search) {
-            truckVan = await GetTruckVanByFilter(1, search); //obtiene los cabezales filtrados
+            truckVan = await GetTruckVanByFilter(page, search, active); //obtiene los cabezales filtrados
         } else {
-            truckVan = await GetTruckVan(page); //obtiene toda la data del furgones
+            truckVan = await GetTruckVan(page, active); //obtiene toda la data del furgones
         }
 
         //valida que no sea nulo

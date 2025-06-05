@@ -7,16 +7,18 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los cabezales que hay en el sistema
 export const CtrGetTruckHead = async (req, res) => {
     try {
-        const search = req.query.search; //obtenemos la palabra a buscar
-        const page = parseInt(req.query.page) || 1; // Obtiene el número de página
+        const search = req.query.search; // Obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene la página actual
+        let active = req.query.active ? req.query.active : true;
+        active = active === 'true' || active === true
 
         let truckHead = null;
 
         // Valida si está filtrando
         if (search) {
-            truckHead = await GetTruckHeadByFilter(page, search); //obtiene los cabezales filtrados
+            truckHead = await GetTruckHeadByFilter(page, search, active); //obtiene los cabezales filtrados
         } else {
-            const truckHead = await GetTruckHead(page); //obtiene toda la data del cabezal
+            truckHead = await GetTruckHead(page, active); //obtiene toda la data del cabezal
         }
 
         //valida que truckHead no sea nulo

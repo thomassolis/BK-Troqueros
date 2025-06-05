@@ -7,16 +7,18 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los chasis que hay en el sistema
 export const CtrGetChassis = async (req, res) => {
     try {
-        const search = req.query.search; //obtenemos la palabra a buscar
-        const page = parseInt(req.query.page) || 1; // Obtiene el número de página
+        const search = req.query.search; // Obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene la página actual
+        let active = req.query.active ? req.query.active : true;
+        active = active === 'true' || active === true
 
         let chassis = null;
 
         // Valida si está filtrando
         if (search) {
-            chassis = await GetChassisByFilter(page, search); //obtiene los chasis filtrados
+            chassis = await GetChassisByFilter(page, search, active); //obtiene los chasis filtrados
         } else {
-            chassis = await GetChassis(page); //obtiene toda la data del chasis y reduce el anidamiento
+            chassis = await GetChassis(page, active); //obtiene toda la data del chasis y reduce el anidamiento
         }        
 
         //verifica que chasis no este nulo

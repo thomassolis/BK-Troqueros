@@ -9,28 +9,26 @@ import { typeError } from '../../dictionary/typeError.js';
 const PAGE_SIZE = 20;
 
 //obtiene todos los chasis 
-export const GetChassis = async (page) => {
+export const GetChassis = async (page, active) => {
     try {
         const result = await pool.request()
-                                .input("Page", sql.Int, page)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_chasis,
-                                            placa,
-                                            status,
-                                            CEILING(COUNT(*) OVER()) AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Chasis]
-                                        ORDER BY id_chasis
-                                        OFFSET (@Page - 1) * @PageSize ROWS
-        
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, page)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_chasis],
+                        [placa],
+                        [status],
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM [Troqueros].[dbo].[Chasis]
+                    WHERE [active] = @Active
+                    ORDER BY [id_chasis] DESC
+                    OFFSET (@Page - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
                                         
         // Verificar si hay registros en la respuesta
-        const data = result.recordset;
-
-        // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
-            return undefined
+        if (result.recordset.length === 0) {
+            return []
         }
 
         return {
@@ -48,29 +46,27 @@ export const GetChassis = async (page) => {
 
 
 //obtiene todos los chasis por filtro
-export const GetChassisByFilter = async (page, search) => {
+export const GetChassisByFilter = async (page, search, active) => {
     try {
         const result = await pool.request()
-                                .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
-                                .input("Search", sql.VarChar, `%${search}%`)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_chasis,
-                                            placa,
-                                            status,
-                                            COUNT(*) OVER() AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Chasis]
-                                        WHERE placa LIKE @Search
-                                        ORDER BY id_chasis
-                                        OFFSET @Page ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
+            .input("Search", sql.VarChar, `%${search}%`)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_chasis],
+                        [placa],
+                        [status],
+                        COUNT(*) OVER() AS totalRegistros
+                    FROM [Troqueros].[dbo].[Chasis]
+                    WHERE [placa] LIKE @Search AND [active] = @Active
+                    ORDER BY [id_chasis]
+                    OFFSET @Page ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
 
         // Verificar si hay registros en la respuesta
-        const data = result.recordset;
-
-        // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
-        if (data.length === 0) {
-            return undefined
+        if (result.recordset.length === 0) {
+            return []
         }
 
         return {
