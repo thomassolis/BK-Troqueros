@@ -26,10 +26,10 @@ export const schemaDataServicesUpd = schemaBaseItem.keys({
 
 // Esquema base para crear un servicio
 export const schemaService = Joi.object({
-    nombre_servicio: Joi.string().max(20).required().messages({
+    nombre_servicio: Joi.string().max(100).required().messages({
         'any.required': 'El campo nombre del servicio es requerido',
         'string.empty': 'El campo nombre del servicio no puede estar vacío',
-        'string.max': 'El campo nombre del servicio no debe tener más de 20 caracteres.'
+        'string.max': 'El campo nombre del servicio no debe tener más de 100 caracteres.'
     }),
     datos_servicio: Joi.array().items(schemaBaseItem).default([]),    
 });
