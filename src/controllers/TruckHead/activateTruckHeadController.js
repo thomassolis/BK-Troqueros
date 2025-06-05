@@ -24,7 +24,7 @@ export const Ctr_ActivateTruckhead = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Cabezal habilitado.' })
         
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
+        const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);
         HandleError(code, error.message, 'controllers/TruckHead/activateTruckHeadController/Ctr_ActivateTruckhead', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
