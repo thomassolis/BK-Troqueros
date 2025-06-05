@@ -33,6 +33,9 @@ export const DeleteServices = async (id) => {
 
 
 // Desactiva la ruta del servicio
+/*
+
+*/
 export const DeleteRutaServices = async (id) => {
     try {
         const result = await pool.request()
