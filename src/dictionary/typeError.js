@@ -51,6 +51,7 @@ export const typeError = {
         POST: "SENI", //Servicio no insertado
         PUT: "SENA", //Servicio no actualizado
         DELETE: "SENEL", //Servicio no eliminado
+        PATCH: "SENH" //Servicio no habilitado
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
