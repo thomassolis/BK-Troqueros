@@ -33,7 +33,7 @@ router.put('/update_services', ValidateTokenMiddleware, VerifyPermissionMiddlewa
 router.put('/update_services/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRutService, Ctr_UpdRutaService);
 
 // Habilita/Deshabilita el servicio
-router.patch('/activate_service/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateService);
+router.patch('/activate_service', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateService);
 
 // Habilita/Deshabilita la ruta del servicio
 router.patch('/activate_service_data/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
