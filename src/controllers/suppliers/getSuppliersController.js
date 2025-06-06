@@ -7,20 +7,20 @@ import { typeError } from '../../dictionary/typeError.js';
 //Obtiene todos los proveedores que hay en el sistema
 export const CtrGetSuppliers = async (req, res) => {
     try {
-        //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
-        const search = req.query.search;
-        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = search ? 1 : parseInt(req.query.page) || 1;
+        const search = req.query.search; // Obtenemos la palabra a buscar
+        const page = parseInt(req.query.page) || 1; // Obtiene la página actual
+        let active = req.query.active ? req.query.active : true;
+        active = active === 'true' || active === true
 
         let suppliers = null
 
         //Valida si ha ingresado una palabra a buscar
         if (search) {
             //obtiene los proveedores filtrados
-            suppliers = await GetSuppliersByFilter(page, search);
+            suppliers = await GetSuppliersByFilter(page, search, active);
         } else {
             //obtiene toda la data de los proveedores
-            suppliers = await GetSuppliers(page);
+            suppliers = await GetSuppliers(page, active);
         }        
 
         //valida que no sea nulo

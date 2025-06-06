@@ -14,15 +14,17 @@ export const InsertSupplier = async (supplier) => {
             .input("Celular", sql.VarChar, supplier.celular)
             .input("Telefono", sql.VarChar, supplier.telefono)
             .input("Email", sql.VarChar, supplier.email)
+            .input("NumeroYappy", sql.VarChar, supplier.numeroYappy)
+            .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
             .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
             .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
             .query(`DECLARE @NuevoID CHAR(7);
                     EXEC Prc_GenerarIDProveedor @NuevoID OUTPUT
                     
-                    INSERT INTO [Troqueros].[dbo].[Proveedores] (id_proveedor, nombre, persona_contacto, celular, 
-                    telefono, email, numero_cuenta, tipo_Banco)
+                    INSERT INTO [Troqueros].[dbo].[Proveedores] ([id_proveedor], [nombre], [persona_contacto], 
+                        [celular], [telefono], [email], [numero_yappy], [nombre_cuenta], [numero_cuenta], [tipo_Banco])
                     VALUES (@NuevoID, @Nombre, @PersonaContacto, @Celular, @Telefono,
-                    @Email, @NumeroCuenta, @TipoBanco)`);
+                        @Email, @NumeroYappy, @NombreCuenta, @NumeroCuenta, @TipoBanco)`);
         
         return result.rowsAffected[0];  
     } catch (error) {
