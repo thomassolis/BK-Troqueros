@@ -9,6 +9,8 @@ export const Ctr_ActivateRutaService = async (req, res) => {
     try {
         const rutaService = req.body;
 
+        console.log('rutaService', rutaService)
+
         // Validamos que los datos de la ruta del servicio no sea undefined
         if (!rutaService) {
             return res.status(400).json({ success: false, message: 'Datos no proporcionados. Inténtelo más tarde.' })
