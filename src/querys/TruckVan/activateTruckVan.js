@@ -6,13 +6,14 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 // Habilita el furgon en el sistema
-export const ActivateTruckVan = async (id) => {
+export const ActivateTruckVan = async (truckvan) => {
     try {
         const result = await pool.request()
-            .input("ID", sql.VarChar, id)
+            .input("ID", sql.VarChar, truckvan.id_furgon)
+            .input("Active", sql.Bit, truckvan.active)
             .query(`
                     UPDATE [Troqueros].[dbo].[Furgon]
-                        SET [active] = 1,
+                        SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_furgon] = @ID
                 `)
@@ -26,6 +27,8 @@ export const ActivateTruckVan = async (id) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PATCH);
         HandleError(code, error.message, 'querys/TruckVan/activateTruckVan/ActivateTruckVan', error);
-        throw new Error('Ha ocurrido un error al habilitar el furgon');        
+       throw new Error(
+            truckvan.active ? 'Ha ocurrido un error al habilitar el furgon' : 'Ha ocurrido un error al deshabilitar el furgon'
+        );     
     }
 }
