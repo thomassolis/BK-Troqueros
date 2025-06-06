@@ -5,14 +5,15 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-// Habilita el chasis en el sistema
-export const ActivateChassis = async (id) => {
+// Habilita/Deshabilita el chasis en el sistema
+export const ActivateChassis = async (chassis) => {
     try {
         const result = await pool.request()
-            .input("ID", sql.VarChar, id)
+            .input("ID", sql.VarChar, chassis.id_chasis)
+            .input("Active", sql.Bit, chassis.active)
             .query(`
-                    UPDATE Chasis
-                        SET [active] = 1,
+                    UPDATE [Troqueros].[dbo].[Chasis]
+                        SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_chasis] = @ID
                 `)
@@ -26,6 +27,7 @@ export const ActivateChassis = async (id) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
         HandleError(code, error.message, 'querys/Chassis/activateChassis/ActivateChassis', error);
-        throw new Error('Ha ocurrido un error al habilitar el chasis');        
+        throw new Error(
+            chassis.active ? 'Ha ocurrido un error al habilitar el chasis' : 'Ha ocurrido un error al deshabilitar el chasis');        
     }
 }

@@ -7,21 +7,21 @@ import { ActivateChassis } from '../../querys/Chassis/activateChassis.js';
 
 export const Ctr_ActivateChassis = async (req, res) => {
     try {
-        const id = req.params.id; // Obtenemos el ID del chasis
+        const chassis = req.body;
 
-        // Validamos que el ID del chasis no sea undefined
-        if (!id) {
-            return res.status(400).json({ success: false, message: 'Identificador no proporcionado. Inténtelo más tarde.' })
+        // Validamos que el chasis no sea undefined
+        if (!chassis) {
+            return res.status(400).json({ success: false, message: 'Datos no proporcionados. Inténtelo más tarde.' })
         }
 
-        const activated = await ActivateChassis(id) // Habilitamos el chasis
+        const activatedChassis = await ActivateChassis(chassis) // Habilita/Deshabilita el chasis
 
-        // Validamos que se haya habilitado el chasis
-        if (!activated) {
-            return res.status(400).json({ success: false, message: 'No se pudo habilitar el chasis.' })
+        // Validamos que se haya habilitado/deshabilitado el chasis
+        if (!activatedChassis) {
+            return res.status(400).json({ success: false, message: chassis.active ? 'No se pudo habilitar el chasis.' : 'No se pudo deshabilitar el chasis.' })
         }
 
-        return res.status(200).json({ success: true, message: 'Chasis habilitado' })
+        return res.status(200).json({ success: true, message: chassis.active ? 'Chasis habilitado.' : 'Chasis deshabilitado.' })
         
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
