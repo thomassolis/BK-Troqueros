@@ -7,21 +7,21 @@ import { ActivateTruckVan } from '../../querys/TruckVan/activateTruckVan.js';
 
 export const Ctr_ActivateTruckVan = async (req, res) => {
     try {
-        const id = req.params.id; // Obtenemos el ID del chasis
+        const truckvan = req.body;
 
-        // Validamos que el ID del furgon no sea undefined
-        if (!id) {
-            return res.status(400).json({ success: false, message: 'Identificador no proporcionado. Inténtelo más tarde.' })
+        // Validamos que el furgon no sea undefined
+        if (!truckvan) {
+            return res.status(400).json({ success: false, message: 'Datos no proporcionados. Inténtelo más tarde.' })
         }
 
-        const activated = await ActivateTruckVan(id) // Habilitamos el furgon
+        const activated = await ActivateTruckVan(truckvan) // Habilita/Deshabilita el furgon
 
-        // Validamos que se haya habilitado el furgon
+        // Validamos que se haya habilitado/deshabilitado el furgon
         if (!activated) {
-            return res.status(400).json({ success: false, message: 'No se pudo habilitar el furgon.' })
+            return res.status(400).json({ success: false, message: truckvan.active ? 'No se pudo habilitar el furgon.' : 'No se pudo deshabilitar el furgon.' })
         }
 
-        return res.status(200).json({ success: true, message: 'Furgon habilitado.' })
+        return res.status(200).json({ success: true, message: truckvan.active ? 'Furgon habilitado.' : 'Furgon deshabilitado.' })
         
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PATCH);
