@@ -25,6 +25,7 @@ export const GetClientById = async (id) => {
                         [nombre_banco] AS nombreBanco,
                         [copia_cedula_representante_legal] AS cedRepresentanteLegal,
                         [copia_aviso_operaciones] AS avisoOperaciones,
+                        [cedula_persona_natural] AS cedPersonaNatural,
                         [fecha_creacion] AS fechaUltimoPedido
                     FROM Clientes
                     WHERE [id_cliente] = @ID

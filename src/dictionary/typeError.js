@@ -33,6 +33,7 @@ export const typeError = {
         POST: "CLNI", //Cliente no insertado
         PUT: "CLNA", //Cliente no actualizado
         DELETE: "CLNEL", //Cliente no eliminado
+        PATCH: "CLNH", //Cliente no activado/desactivado
     },
     SUPPLIERS: {
         GET: "PRNE", //Proveedor no encontrado

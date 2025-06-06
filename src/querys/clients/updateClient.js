@@ -34,6 +34,7 @@ export const UpdateClient = async (client, files) => {
         //construimos la ruta de las carpetas
         const rutaCed = `clientes/${client.id_cliente}/cedula_representante_legal`;
         const rutaAvisoOpe = `clientes/${client.id_cliente}/aviso_operaciones`;
+        const rutaCedPerNatural = `clientes/${id}/cedula_persona_natural`;
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, client.id_cliente)
@@ -65,11 +66,12 @@ export const UpdateClient = async (client, files) => {
 
         //valida que los archivos exista
         //actualiza los archivos del chasis
-        const fileEliminated = cleanFiles && cleanFiles.cedRepresentanteLegal ? await UpdateFile(rutaCed, cleanFiles.cedRepresentanteLegal) : await UpdateFile(rutaCed, null);
-        const fileEliminated2 = cleanFiles && cleanFiles.avisoOperaciones ? await UpdateFile(rutaAvisoOpe, cleanFiles.avisoOperaciones) : await UpdateFile(rutaAvisoOpe, null);
+        const fileUpdated = cleanFiles && cleanFiles.cedRepresentanteLegal ? await UpdateFile(rutaCed, cleanFiles.cedRepresentanteLegal) : await UpdateFile(rutaCed, null);
+        const fileUpdated2 = cleanFiles && cleanFiles.avisoOperaciones ? await UpdateFile(rutaAvisoOpe, cleanFiles.avisoOperaciones) : await UpdateFile(rutaAvisoOpe, null);
+        const fileUpdated3 = cleanFiles && cleanFiles.cedPersonaNatural ? await UpdateFile(rutaCedPerNatural, cleanFiles.cedPersonaNatural) : await UpdateFile(rutaCedPerNatural, null);
 
         //Valida que se haya guardado los archivos
-        if (!fileEliminated.success || !fileEliminated2.success) {
+        if (!fileUpdated.success || !fileUpdated2.success || !fileUpdated3) {
             await transaction.rollback();
             throw new Error('Error al actualizar los archivos. Se revirtió la transacción.');
         }
@@ -89,6 +91,8 @@ export const UpdateClient = async (client, files) => {
             await transaction.rollback()
         }
 
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
+
         // Valida si el error es por violación a la Unique Key (RUC)
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo actualizar la información del cliente, ${error.message}`);
@@ -99,11 +103,12 @@ export const UpdateClient = async (client, files) => {
             } else {
                 MyThrow.message = 'Ha ocurrido un error al actualizar la información del cliente';
             }
-
+            
+            HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
             throw MyThrow;
         }
 
-        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
+        
         HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cliente');
     }
