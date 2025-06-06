@@ -9,11 +9,12 @@ import { DateConverter } from '../../auxiliary functions/dateConverter.js';
 const PAGE_SIZE = 20; //Establece el tamaño de la página
 
 // Obtiene todos los clientes
-export const GetAllClients = async (page, active) => {
+export const GetAllClients = async (page, active) =>  {
     try {
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Int, active)
             .query(`
                     SELECT
                         C.[id_cliente],

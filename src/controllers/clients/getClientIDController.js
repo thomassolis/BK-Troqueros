@@ -32,7 +32,8 @@ export const Ctr_GetClientsById = async (req, res) => {
             ...client,
             fechaUltimoPedido: DateConverter(client.fechaUltimoPedido),
             cedRepresentanteLegal: GetLinksDownloadFiles(linkDownload, client.cedRepresentanteLegal),
-            avisoOperaciones: GetLinksDownloadFiles(linkDownload, client.avisoOperaciones)
+            avisoOperaciones: GetLinksDownloadFiles(linkDownload, client.avisoOperaciones),
+            cedPersonaNatural: GetLinksDownloadFiles(linkDownload, client.cedPersonaNatural)
         }
 
         return res.status(200).json({ success: true, message: 'Data Enviada', data })

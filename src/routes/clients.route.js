@@ -13,10 +13,16 @@ import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware
 const MODULE = 'Clientes';
 const router = express.Router();
 
-router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClients);
-router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClientsById);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, MdlwareValidateDataInsertClient, Ctr_InsertClient);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdateClient, Ctr_UpdateClient);
-router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteClient);
+// Muestra los clientes
+router.get('/see_clients', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClients);
+router.get('/see_clients_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetClientsById);
+
+// Agrega un nuevo cliente
+router.post('/add_client', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, MdlwareValidateDataInsertClient, Ctr_InsertClient);
+
+// Actualiza la información de un cliente
+router.put('/update_client', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdateClient, Ctr_UpdateClient);
+
+//router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteClient);
 
 export default router;
