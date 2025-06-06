@@ -25,7 +25,7 @@ export const ActivateService = async (service) => {
         return false;
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.PATCH);
-        HandleError(code, error.message, 'querys/services/updateServices/UpdateDataServices', error);
+        HandleError(code, error.message, 'querys/services/activateServices/ActivateService', error);
         throw new Error(
             service.active
                 ? 'Ha ocurrido un error al habilitar el servicio'
