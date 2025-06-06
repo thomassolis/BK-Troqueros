@@ -91,6 +91,8 @@ export const UpdateClient = async (client, files) => {
             await transaction.rollback()
         }
 
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
+
         // Valida si el error es por violación a la Unique Key (RUC)
         if (error.number === 2627) {
             let MyThrow =  new Error(`No se pudo actualizar la información del cliente, ${error.message}`);
@@ -101,11 +103,12 @@ export const UpdateClient = async (client, files) => {
             } else {
                 MyThrow.message = 'Ha ocurrido un error al actualizar la información del cliente';
             }
-
+            
+            HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
             throw MyThrow;
         }
 
-        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PUT);
+        
         HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cliente');
     }

@@ -9,6 +9,7 @@ import { Ctr_DeleteClient } from '../controllers/clients/deleteClientController.
 import { Mdlware_ValidateDataUpdateClient } from '../middlewares/clients/validateDataUpdateClient.middleware.js';
 import { Ctr_UpdateClient } from '../controllers/clients/updateClientController.js';
 import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
+import { Ctr_ActivateClient } from '../controllers/clients/activateClientController.js';
 
 const MODULE = 'Clientes';
 const router = express.Router();
@@ -23,6 +24,8 @@ router.post('/add_client', ValidateTokenMiddleware, VerifyPermissionMiddleware(M
 // Actualiza la información de un cliente
 router.put('/update_client', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdateClient, Ctr_UpdateClient);
 
+// Habilita/Deshabilita un cliente
+router.patch('/activate_client', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateClient);
 //router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteClient);
 
 export default router;
