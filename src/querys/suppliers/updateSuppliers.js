@@ -15,19 +15,23 @@ export const UpdateSuppliers = async (supplier) => {
                                 .input("Celular", sql.VarChar, supplier.celular)
                                 .input("Telefono", sql.VarChar, supplier.telefono)
                                 .input("Email", sql.VarChar, supplier.email)
+                                .input("NumeroYappy", sql.VarChar, supplier.numeroYappy)
+                                .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
                                 .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
                                 .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
                                 .query(`UPDATE [Troqueros].[dbo].[Proveedores]
-                                            SET id_proveedor = @IdProveedor,
-                                                nombre = @Nombre,
-                                                persona_contacto = @PersonaContacto,
-                                                celular = @Celular, 
-                                                telefono = @Telefono,
-                                                email = @Email,
-                                                numero_cuenta = @NumeroCuenta,
-                                                tipo_Banco = @TipoBanco,
-                                                fecha_modificación = GETDATE()
-                                        WHERE id_proveedor = @IdProveedor`);
+                                            SET [id_proveedor] = @IdProveedor,
+                                                [nombre] = @Nombre,
+                                                [persona_contacto] = @PersonaContacto,
+                                                [celular] = @Celular, 
+                                                [telefono] = @Telefono,
+                                                [email] = @Email,
+                                                [numero_yappy] = @NumeroYappy,
+                                                [nombre_cuenta] = @NumeroCuenta,
+                                                [numero_cuenta] = @NumeroCuenta,
+                                                [tipo_Banco] = @TipoBanco,
+                                                [fecha_modificación] = GETDATE()
+                                        WHERE [id_proveedor] = @IdProveedor`);
 
         return result.rowsAffected[0];
     } catch (error) {

@@ -5,27 +5,27 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-//Obtiene los proveedores del sistema
-export const GetSuppliers = async (page) => {
-    try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
 
+const PAGE_SIZE = 20; //Establece el tamaño de la página
+
+//Obtiene los proveedores del sistema
+export const GetSuppliers = async (page, active) => {
+    try {
         const result = await pool.request()
             .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
             .query(`SELECT
-                        id_proveedor,
-                        nombre,
-                        persona_contacto,
-                        celular,
-                        telefono,
-                        email,
-                        numero_cuenta,
-                        tipo_banco,
+                        [id_proveedor],
+                        [nombre],
+                        [persona_contacto],
+                        [celular],
+                        [telefono],
+                        [email],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM [Troqueros].[dbo].[Proveedores]
-                    ORDER BY id_proveedor
+                    WHERE [active] = @Active
+                    ORDER BY [id_proveedor] DESC
                     OFFSET @Page ROWS
                     FETCH NEXT @PageSize ROWS ONLY;`);
         
@@ -52,28 +52,24 @@ export const GetSuppliers = async (page) => {
 
 
 //Obtiene todos los proveedores por filtro
-export const GetSuppliersByFilter = async (page, search) => {
+export const GetSuppliersByFilter = async (page, search, active) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
             .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
             .input("Search", sql.VarChar, `%${search}%`)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
             .query(`SELECT
-                        id_proveedor,
-                        nombre,
-                        persona_contacto,
-                        celular,
-                        telefono,
-                        email,
-                        numero_cuenta,
-                        tipo_banco,
+                        [id_proveedor],
+                        [nombre],
+                        [persona_contacto],
+                        [celular],
+                        [telefono],
+                        [email],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM [Troqueros].[dbo].[Proveedores]
-                    WHERE nombre LIKE @Search
-                    ORDER BY id_proveedor
+                    WHERE [nombre] LIKE @Search AND [Active] = @Active
+                    ORDER BY [id_proveedor]
                     OFFSET @Page ROWS
                     FETCH NEXT @PageSize ROWS ONLY;`);
         

@@ -9,18 +9,20 @@ import { typeError } from '../../dictionary/typeError.js';
 export const GetSuppleirId = async (idSupplier) => {
     try {
         const result = await pool.request()
-                                .input("IdSupplier", sql.Char(7), idSupplier)
-                                .query(`SELECT
-                                            id_proveedor,
-                                            nombre,
-                                            persona_contacto,
-                                            celular,
-                                            telefono,
-                                            email,
-                                            numero_cuenta,
-                                            tipo_banco
-                                        FROM [Troqueros].[dbo].[Proveedores]
-                                        WHERE id_proveedor = @IdSupplier`);
+            .input("IdSupplier", sql.Char(7), idSupplier)
+            .query(`SELECT
+                        [id_proveedor],
+                        [nombre],
+                        [persona_contacto],
+                        [celular],
+                        [telefono],
+                        [email],
+                        [numero_yappy],
+                        [nombre_cuenta],
+                        [numero_cuenta],
+                        [tipo_banco]
+                    FROM [Troqueros].[dbo].[Proveedores]
+                    WHERE id_proveedor = @IdSupplier`);
         
         return result.recordset[0];
     } catch (error) {
