@@ -12,29 +12,36 @@ import { Ctr_InsertInfoService } from '../controllers/services/addInfoServicesCo
 import { Mdlware_ValidateDataNewRuta } from '../middlewares/services/validateDataInsertRutaServices.middleware.js';
 import { Mdlware_ValidateDataUpdRutService } from '../middlewares/services/validateDataUpdRuta.middleware.js';
 import { Ctr_UpdRutaService } from '../controllers/services/updateRutaServicesController.js';
+import { Ctr_ActivateService } from '../controllers/services/activateServicesController.js';
 
 const MODULE = 'Servicios';
 const router = express.Router();
 
-router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetServices);
-router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetServicesByID);
+router.get('/see_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetServices);
+router.get('/see_services_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetServicesByID);
 
 // Crea un nuevo servicio
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertService, Ctr_InsertServices);
+router.post('/add_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertService, Ctr_InsertServices);
 
 // Crea un nueva ruta del servicio
-router.post('/add/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataNewRuta, Ctr_InsertInfoService);
+router.post('/add_services/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataNewRuta, Ctr_InsertInfoService);
 
 // Actualiza un servicio
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdService, Ctr_UpdateServices);
+router.put('/update_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdService, Ctr_UpdateServices);
 
 // Actualiza la ruta de un servicio
-router.put('/update/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRutService, Ctr_UpdRutaService);
+router.put('/update_services/services_data', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRutService, Ctr_UpdRutaService);
+
+// Habilita/Deshabilita el servicio
+router.patch('/activate_service/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateService);
+
+// Habilita/Deshabilita la ruta del servicio
+router.patch('/activate_service_data/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
 
 // Eliminación de un servicio de manera lógica
-router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
+//router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteService);
 
 // Eliminación de una ruta de servicio lógico
-router.delete('/delete/services_data/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteRutaService);
+//router.delete('/delete/services_data/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteRutaService);
 
 export default router;
