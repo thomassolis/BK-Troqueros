@@ -40,6 +40,7 @@ export const typeError = {
         POST: "PRNI", //Proveedor no insertado
         PUT: "PRNA", //Proveedor no actualizado
         DELETE: "PRNEL", //Proveedor no eliminado
+        PATCH: "PRNH", //Proveedor no habilitado/deshabilitado
     },
     DRIVERS: {
         GET: "CONE", //Conductor no encontrado
