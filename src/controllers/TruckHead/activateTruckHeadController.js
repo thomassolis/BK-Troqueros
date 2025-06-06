@@ -7,21 +7,21 @@ import { ActivateTruckHead } from '../../querys/TruckHead/activateTruckHead.js';
 
 export const Ctr_ActivateTruckhead = async (req, res) => {
     try {
-        const id = req.params.id; // Obtenemos el ID del chasis
+        const truckHead = req.body;
 
-        // Validamos que el ID del cabezal no sea undefined
-        if (!id) {
-            return res.status(400).json({ success: false, message: 'Identificador no proporcionado. Inténtelo más tarde.' })
+        // Validamos que el cabezal no sea undefined
+        if (!truckHead) {
+            return res.status(400).json({ success: false, message: 'Datos no proporcionados. Inténtelo más tarde.' })
         }
 
-        const activated = await ActivateTruckHead(id) // Habilitamos el cabezal
+        const activatedTruckHead = await ActivateTruckHead(truckHead) // Habilita/Deshabilita el cabezal
 
-        // Validamos que se haya habilitado el cabezal
-        if (!activated) {
-            return res.status(400).json({ success: false, message: 'No se pudo habilitar el cabezal.' })
+        // Validamos que se haya habilitado/deshabilitado el cabezal
+        if (!activatedTruckHead) {
+            return res.status(400).json({ success: false, message: truckHead.active ? 'No se pudo habilitar el cabezal.' : 'No se pudo deshabilitar el cabezal.' })
         }
 
-        return res.status(200).json({ success: true, message: 'Cabezal habilitado.' })
+        return res.status(200).json({ success: true, message: truckHead.active ? 'Cabezal habilitado.' : 'Cabezal deshabilitado.' })
         
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.PATCH);

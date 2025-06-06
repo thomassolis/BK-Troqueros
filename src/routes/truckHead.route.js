@@ -15,15 +15,22 @@ import { Ctr_ActivateTruckhead } from '../controllers/TruckHead/activateTruckHea
 const MODULE = 'Cabezal';
 const router = express.Router();
 
+// Muestra los cabezales
 router.get('/see_truckhead', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHead);
 router.get('/see_truckhead_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrGetTruckHeadId);
 
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataInsertMiddleware, CtrInsertTruckHead);
+// Agrega un nuevo cabezal
+router.post('/add_truckhead', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataInsertMiddleware, CtrInsertTruckHead);
 
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
-router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusTruckHead);
-router.patch('/activate_truckhead/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateTruckhead);
+// Actualiza la información de un cabezal
+router.put('/update_truckhead', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, ValidateDataUpdateMiddleware, CtrUpdateTruckHead);
 
-router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteTruckHead);
+// Actualiza el estado del cabezal
+router.patch('/update_status_truckhead', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UdpStatusTruckHead);
+
+// Habilita/Deshabilita un cabezal
+router.patch('/activate_truckhead', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateTruckhead);
+
+//router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), CtrDeleteTruckHead);
 
 export default router;
