@@ -7,18 +7,14 @@ import { typeError } from '../../dictionary/typeError.js';
 
 
 // Obtiene las rutas de los servicios
-export const GetRequestDataService = async (id) => {
+export const GetRequestRutaServices = async (id) => {
     try {
         const result = await pool.request()
             .input("ID", sql.VarChar, id)
             .query(`
                     SELECT
                         [id_servicio_datos],
-                        [id_servicio],
-                        [lugar_origen] + ' - ' + [lugar_destino] AS ruta,
-                        [lugar_origen],
-                        [lugar_destino],
-                        [tarifa]
+                        [lugar_origen] + ' - ' + [lugar_destino] AS ruta
                     FROM [Troqueros].[dbo].[Servicios_datos]
                     WHERE [id_servicio] = @ID AND [active] = 1
                 `);
@@ -31,7 +27,7 @@ export const GetRequestDataService = async (id) => {
         return null;
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.SERVICES.GET);
-        HandleError(code, error.message, 'querys/requests/getRequestDataServices/GetRequestDataService', error);
+        HandleError(code, error.message, 'querys/requests/getRequestDataService/GetRequestDataServices', error);
         throw new Error('Ha ocurrido un error al obtener las rutas de los servicios en peticiones');
     }
 }

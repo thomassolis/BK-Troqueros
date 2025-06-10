@@ -6,11 +6,12 @@ import { Ctr_GetRequestsByID } from '../controllers/requests/getRequestsIDContro
 import { Mdlware_ValidateDataInsertRequest } from '../middlewares/requests/validateDataInsertRequest.middleware.js';
 import { Ctr_InsertRequest } from '../controllers/requests/insertRequestController.js';
 import { Ctr_GetRequestsServices } from '../controllers/requests/getRequestsServicesController.js';
-import { Ctr_GetRequestsDataServices } from '../controllers/requests/getRequestDataServiceController.js';
+import { Ctr_GetRequestsDataServicesID } from '../controllers/requests/getRequestDataServiceIDController.js';
 import { Ctr_GetRequestsDrivers } from '../controllers/requests/getRequestDriverController.js';
 import { Ctr_GetRequestsVehicles } from '../controllers/requests/getRequestVehiclesController.js';
 import { Ctr_GetRequestClients } from '../controllers/requests/getRequestClientsController.js';
 import { Ctr_GetRequestSuppliers } from '../controllers/requests/getRequestSuppliersController.js';
+import { Ctr_GetRequestsRutaServices } from '../controllers/requests/getRequestDataServiceController.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -26,7 +27,10 @@ router.get('/get_request_suppliers', ValidateTokenMiddleware, VerifyPermissionMi
 router.get('/get_request_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsServices);
 
 // Muestra las rutas de los servicios
-router.get('/get_request_data_services/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsDataServices);
+router.get('/get_request_ruta_services/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsRutaServices);
+
+// Muestra la información de la ruta de los servicios seleccionada
+router.get('/get_request_data_services_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsDataServicesID);
 
 // Muestra los conductores
 router.get('/get_request_drivers', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsDrivers);
