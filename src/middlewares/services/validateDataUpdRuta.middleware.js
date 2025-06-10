@@ -9,6 +9,7 @@ import { schemaDataServicesUpd } from '../../schema/schemaServices.js';
 export const Mdlware_ValidateDataUpdRutService = (req, res, next) => {
     try {
         const data = req.body; // Obtiene la data del servicio
+        console.log('Data: ', data)
 
         // Valida si la data es undefined
         if (!data || !Object.keys(data).length) {
