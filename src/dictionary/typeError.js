@@ -81,4 +81,5 @@ export const typeError = {
     rutaNoEncontrada: "RNE",
     validarFileExtension: "VFE",
     tokenNoProporcionado: "TNP",
+    vehiculoNoEncontrado: "VHN"
 }

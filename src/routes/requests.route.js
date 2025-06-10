@@ -8,6 +8,7 @@ import { Ctr_InsertRequest } from '../controllers/requests/insertRequestControll
 import { Ctr_GetRequestsServices } from '../controllers/requests/getRequestsServicesController.js';
 import { Ctr_GetRequestsDataServices } from '../controllers/requests/getRequestDataServiceController.js';
 import { Ctr_GetRequestsDrivers } from '../controllers/requests/getRequestDriverController.js';
+import { Ctr_GetRequestsVehicles } from '../controllers/requests/getRequestVehiclesController.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -21,6 +22,9 @@ router.get('/get_request_data_services/:id', ValidateTokenMiddleware, VerifyPerm
 
 // Muestra los conductores
 router.get('/get_request_drivers', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsDrivers);
+
+// Muestra los vehículos
+router.get('/get_request_vehicles', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsVehicles);
 
 // Muestra las peticiones
 router.get('/see_requests', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequests);
