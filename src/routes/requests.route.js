@@ -10,6 +10,7 @@ import { Ctr_GetRequestsDataServices } from '../controllers/requests/getRequestD
 import { Ctr_GetRequestsDrivers } from '../controllers/requests/getRequestDriverController.js';
 import { Ctr_GetRequestsVehicles } from '../controllers/requests/getRequestVehiclesController.js';
 import { Ctr_GetRequestClients } from '../controllers/requests/getRequestClientsController.js';
+import { Ctr_GetRequestSuppliers } from '../controllers/requests/getRequestSuppliersController.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -17,6 +18,9 @@ const router = express.Router();
 // Datos para el el select
 // Muestra los clientes
 router.get('/get_request_clients', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestClients);
+
+// Muestra los proveedores
+router.get('/get_request_suppliers', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestSuppliers);
 
 //Muestra los servicios
 router.get('/get_request_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsServices);

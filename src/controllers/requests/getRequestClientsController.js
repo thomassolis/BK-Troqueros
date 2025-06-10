@@ -1,14 +1,13 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetRequestClients } from '../../querys/requests/getRequestClients.js';
-import { GetRequestDataService } from '../../querys/requests/getRequestDataServices.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
 
 export const Ctr_GetRequestClients = async (req, res) => {
     try {
-        const clients = await GetRequestClients(); // Obtiene las rutas de los servicios
+        const clients = await GetRequestClients(); // Obtiene los clientes
 
         // Valida que los clientes no sean undefined
         if (!clients) {
