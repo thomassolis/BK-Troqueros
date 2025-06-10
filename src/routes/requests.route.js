@@ -6,13 +6,17 @@ import { Ctr_GetRequestsByID } from '../controllers/requests/getRequestsIDContro
 import { Mdlware_ValidateDataInsertRequest } from '../middlewares/requests/validateDataInsertRequest.middleware.js';
 import { Ctr_InsertRequest } from '../controllers/requests/insertRequestController.js';
 import { Ctr_GetRequestsServices } from '../controllers/requests/getRequestsServicesController.js';
+import { Ctr_GetRequestsDataServices } from '../controllers/requests/getRequestDataServiceController.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
 
 // Datos para el el select
 //Muestra los servicios
-router.get('/get_request_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsServices)
+router.get('/get_request_services', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsServices);
+
+// Muestra las rutas de los servicios
+router.get('/get_request_data_services/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsDataServices);
 
 // Muestra las peticiones
 router.get('/see_requests', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequests);
