@@ -1,6 +1,5 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { GetRequests } from '../../querys/requests/getRequests.js'
 import { GetRequestByID } from '../../querys/requests/getRequestsById.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
