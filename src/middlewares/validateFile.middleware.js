@@ -12,16 +12,17 @@ export const Mdlware_ValidateFilesExt = (req, res, next) => {
         
         // Recorre el objeto de files
         // Valida que cada archivo cumpla con las extensiones permitidas
-        Object.entries(files).forEach(([_, file]) => {
-            const name = file.name; // Obtiene el nombre del archivo
-            const extension = name.substring(name.lastIndexOf('.') + 1).toLowerCase(); // Obtiene la extensión del archivo
+        for (const [_, file] of Object.entries(files)) {
+            const name = file.name;
+            const extension = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
 
-            // Valida si la extensión es permitida
             if (!allowedExtension.includes(extension)) {
-                return res.status(404).json({ success: false, message: `La extensión del archivo ${name} no está permitida. Solo se aceptan archivos con extensión: .${allowedExtension.join(', .')}.` })
+                return res.status(400).json({
+                    success: false,
+                    message: `La extensión del archivo ${name} no está permitida. Solo se aceptan archivos con extensión: .${allowedExtension.join(', .')}.`
+                });
             }
-
-        });
+        }
         
         next();
     } catch (error) {
