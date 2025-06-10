@@ -14,6 +14,7 @@ export const GetRequestServices = async () => {
                         [id_servicio],
                         [nombre]
                     FROM [Troqueros].[dbo].[Servicios]
+                    WHERE [active] = 1
                 `);
 
         // Valida si la consulta arrojo datos
