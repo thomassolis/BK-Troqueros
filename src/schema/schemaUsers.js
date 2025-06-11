@@ -14,7 +14,7 @@ export const userSchema = Joi.object({
         'string.min': 'El campo apellido no puede tener más de 50 caracteres.',
         'string.empty': 'El campo apellido no puede estar vacío.'
     }),
-    email: Joi.string().email().trim().max(50).required().messages({
+    email: Joi.string().trim().email().max(50).required().messages({
       'string.email': 'El correo electrónico no tiene un formato válido.',
       'string.max': 'El email del contato no puede tener más de 50 caracteres'
     }),
