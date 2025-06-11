@@ -18,6 +18,7 @@ import { sessionConfig } from './security/configExpressSession.js';
 import { sessionMiddleware } from './contexts/sessionContext.js';
 import drivers from './routes/drivers.route.js';
 import services from './routes/services.route.js';
+import requests from './routes/requests.route.js';
 
 const app = express();
 
@@ -40,5 +41,6 @@ app.use('/api/download', download);
 app.use('/api/preview', preview);
 app.use('/api/drivers', drivers);
 app.use('/api/services', services);
+app.use('/api/requests', requests);
 
 export default app;

@@ -6,7 +6,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 
 
-
+// Verifica si el RUC del cliente ya está registrado en el sistema
 export const ValidateRUC_Client = async (RUC) => {
     try {
         // Valida si el RUC es undefined

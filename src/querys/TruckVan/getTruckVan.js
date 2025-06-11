@@ -9,24 +9,26 @@ import { typeError } from '../../dictionary/typeError.js';
 const PAGE_SIZE = 20;
 
 //Obtiene los furgones del sistema
-export const GetTruckVan = async (page) => {
+export const GetTruckVan = async (page, active) => {
     try {
         const result = await pool.request()
-                                .input("Page", sql.Int, page)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_furgon,
-                                            placa,
-                                            status,
-                                            CEILING(COUNT(*) OVER()) AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Furgon]
-                                        ORDER BY id_furgon
-                                        OFFSET (@Page - 1) * @PageSize ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, page)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_furgon],
+                        [placa],
+                        [status],
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM [Troqueros].[dbo].[Furgon]
+                    WHERE [active] = @Active
+                    ORDER BY [id_furgon] DESC
+                    OFFSET (@Page - 1) * @PageSize ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
         if (result.recordset.length === 0) {
-            return undefined
+            return []
         }
 
         return {
@@ -44,26 +46,27 @@ export const GetTruckVan = async (page) => {
 
 
 //obtiene todos los furgones por filtro
-export const GetTruckVanByFilter = async (page, search) => {
+export const GetTruckVanByFilter = async (page, search, active) => {
     try {
         const result = await pool.request()
-                                .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
-                                .input("Search", sql.VarChar, `%${search}%`)
-                                .input("PageSize", sql.Int, PAGE_SIZE)
-                                .query(`SELECT
-                                            id_furgon,
-                                            placa,
-                                            status,
-                                            CEILING(COUNT(*) OVER()) AS totalRegistros
-                                        FROM [Troqueros].[dbo].[Furgon]
-                                        WHERE placa LIKE @Search
-                                        ORDER BY id_furgon
-                                        OFFSET @Page ROWS
-                                        FETCH NEXT @PageSize ROWS ONLY;`);
+            .input("Page", sql.Int, (page - 1) * PAGE_SIZE)
+            .input("Search", sql.VarChar, `%${search}%`)
+            .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
+            .query(`SELECT
+                        [id_furgon],
+                        [placa],
+                        [status],
+                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                    FROM [Troqueros].[dbo].[Furgon]
+                    WHERE [placa] LIKE @Search AND [active] = @Active
+                    ORDER BY [id_furgon]
+                    OFFSET @Page ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;`);
 
         // Si no hay registros, devolver una respuesta vacía y un mensaje adecuado
         if (result.recordset.length === 0) {
-            return undefined
+            return []
         }
 
         return {

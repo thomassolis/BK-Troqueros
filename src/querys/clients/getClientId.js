@@ -1,4 +1,3 @@
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { pool } from '../../db/db.js';
@@ -6,7 +5,7 @@ import sql from 'mssql';
 import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 
-
+// Obtiene la informacipon de un cliente
 export const GetClientById = async (id) => {
     try {
         const result = await pool.request()
@@ -26,6 +25,7 @@ export const GetClientById = async (id) => {
                         [nombre_banco] AS nombreBanco,
                         [copia_cedula_representante_legal] AS cedRepresentanteLegal,
                         [copia_aviso_operaciones] AS avisoOperaciones,
+                        [cedula_persona_natural] AS cedPersonaNatural,
                         [fecha_creacion] AS fechaUltimoPedido
                     FROM Clientes
                     WHERE [id_cliente] = @ID

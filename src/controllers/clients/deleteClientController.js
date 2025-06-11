@@ -14,7 +14,7 @@ export const Ctr_DeleteClient = async (req, res) => {
             return res.status(401).json({ success: false, message: 'No se ha podido eliminar al cliente. Identificador no proporcionado' })
         }
 
-        const deleted = await DeleteClient(idClient)
+        const deleted = await DeleteClient(idClient) // Elimina un cliente logicamente
 
         // Valida si el cliente ha sido eliminado
         if (!deleted) {

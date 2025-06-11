@@ -36,6 +36,7 @@ export const InsertDriver = async (driver, files) => {
         //construimos la ruta de las carpetas
         const rutaLicencia = `conductores/${idDriver}/licencia`;
         const rutaPazSalvo = `conductores/${idDriver}/paz_a_salvo`;
+        const rutaRecordPolicivo = `conductores/${idDriver}/record_policivo`;
 
         const result = await transaction.request()
             .input("Cedula", sql.VarChar, driver.cedula)
@@ -47,17 +48,19 @@ export const InsertDriver = async (driver, files) => {
             .input("Status", sql.VarChar, driver.status)
             .query(`
                     INSERT INTO [Conductores] ([id_conductor], [cedula], [nombre], [apellido],
-                        [email], [contraseña], [telefono], [foto_licencia], [foto_PazYSalvo], [status])
+                        [email], [contraseña], [telefono], [foto_licencia], [foto_PazYSalvo],
+                        [foto_record_policivo], [status])
                         VALUES ('${idDriver}', @Cedula, @Nombre, @Apellido, @Email, @Contra, @Telefono, 
-                            '${rutaLicencia}', '${rutaPazSalvo}', @Status)                        
+                            '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', @Status)                        
                 `)
         
         //guardamos el archivo
         const fileSaved = files && files.licencia ? await SaveFile(rutaLicencia, files.licencia) : true;
         const fileSaved2 = files && files.pazSalvo ? await SaveFile(rutaPazSalvo, files.pazSalvo) : true;
+        const fileSaved3 = files && files.recordPolicivo ? await SaveFile(rutaRecordPolicivo, files.recordPolicivo) : true;
 
         //Valida que se haya guardado los archivos
-        if (!fileSaved || !fileSaved2) {
+        if (!fileSaved || !fileSaved2 || !fileSaved3) {
             await transaction.rollback();
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }

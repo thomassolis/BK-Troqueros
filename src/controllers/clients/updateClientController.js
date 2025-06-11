@@ -9,12 +9,6 @@ export const Ctr_UpdateClient = async (req, res) => {
     try {
         const data = req.body; // Obtenemos la información del cliente
         const files = req.files || {}; // Obtenemos los archivos del cliente
-console.log('req.body: ',req.body);
-console.log('req.files: ',req.files);
-        // Valida que la data del cliente no sea undefined
-        if (!data) {
-            return res.status(401).json({ success: false, message: 'Ha ocurrido un error al actualizar la información del cliente. Información no proporcionada' })
-        }
 
         const updated = await UpdateClient(data, files) // Actualiza la información del cliente
 

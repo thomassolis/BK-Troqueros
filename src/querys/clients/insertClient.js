@@ -28,6 +28,7 @@ export const InsertClient = async (data, files) => {
         //construimos la ruta de las carpetas
         const rutaCed = `clientes/${id}/cedula_representante_legal`;
         const rutaAvisoOpe = `clientes/${id}/aviso_operaciones`;
+        const rutaCedPerNatural = `clientes/${id}/cedula_persona_natural`;
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, id)
@@ -44,18 +45,19 @@ export const InsertClient = async (data, files) => {
             .query(`
                     INSERT INTO Clientes ([id_cliente], [nombre], [nombre_persona_contacto], [email_persona_contacto],
                                             [telefono_persona_contacto], [ruc_empresa], [direccion], [numero_cuenta],
-                                            [nombre_banco], [tipo_cuenta], [nombre_cuenta], tipo_cliente,
-                                            [copia_cedula_representante_legal], [copia_aviso_operaciones])
+                                            [nombre_banco], [tipo_cuenta], [nombre_cuenta], [tipo_cliente],
+                                            [copia_cedula_representante_legal], [copia_aviso_operaciones], [cedula_persona_natural])
                         VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, 
-                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}')
+                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
                 `)
 
          //guardamos el archivo
         const fileSaved = files && files.cedRepresentanteLegal ? await SaveFile(rutaCed, files.cedRepresentanteLegal) : true;
         const fileSaved2 = files && files.avisoOperaciones ? await SaveFile(rutaAvisoOpe, files.avisoOperaciones) : true;
+        const fileSaved3 = files && files.cedPersonaNatural ? await SaveFile(rutaCedPerNatural, files.cedPersonaNatural) : true;
 
         //Valida que se haya guardado los archivos
-        if (!fileSaved || !fileSaved2) {
+        if (!fileSaved || !fileSaved2 || !fileSaved3) {
             await transaction.rollback();
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }

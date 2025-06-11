@@ -45,6 +45,6 @@ export const CtrGetTruckVanId = async (req, res) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
         HandleError(code, error.message, 'controllers/TruckVan/getTruckVanController/CtrGetTruckVanId', error);
-       return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

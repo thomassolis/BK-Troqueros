@@ -26,7 +26,6 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
 
         //Leer todos los archivos en la carpeta
         const files = fs.readdirSync(directory);
-        console.log(files)
 
         //Validar si hay archivos en la carpeta
         if (files.length === 0) {

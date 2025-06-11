@@ -33,6 +33,7 @@ export const typeError = {
         POST: "CLNI", //Cliente no insertado
         PUT: "CLNA", //Cliente no actualizado
         DELETE: "CLNEL", //Cliente no eliminado
+        PATCH: "CLNH", //Cliente no activado/desactivado
     },
     SUPPLIERS: {
         GET: "PRNE", //Proveedor no encontrado
@@ -46,6 +47,7 @@ export const typeError = {
         POST: "CONI", //Conductor no insertado
         PUT: "CONA", //Conductor no actualizado
         DELETE: "CONEL", //Conductor no eliminado
+        PATCH: "COSN", //Status no actualizado (Conductor) CONH (Conductor no habilitado/deshabilitado)
     },
     SERVICES: {
         GET: "SENE", //Servicio no encontrado
@@ -53,6 +55,13 @@ export const typeError = {
         PUT: "SENA", //Servicio no actualizado
         DELETE: "SENEL", //Servicio no eliminado
         PATCH: "SENH" //Servicio no habilitado
+    },
+    REQUESTS: {
+        GET: "PENE", //Peticiones no encontrado
+        POST: "PENI", //Peticiones no insertado
+        PUT: "PENA", //Peticiones no actualizado
+        PATCH: "PENA", //Status no actualizado (Peticiones)
+        DELETE: "PENEL", //Peticiones no eliminado
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",
@@ -72,4 +81,5 @@ export const typeError = {
     rutaNoEncontrada: "RNE",
     validarFileExtension: "VFE",
     tokenNoProporcionado: "TNP",
+    vehiculoNoEncontrado: "VHN"
 }
