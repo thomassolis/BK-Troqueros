@@ -5,41 +5,44 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
 
-
+// Obtiene la información de una petición
 export const GetRequestByID = async (id) => {
     try {
         const result = await pool.request()
             .input("ID", sql.VarChar, id)
             .query(`
                     SELECT
-                        P.id_peticion,
-                        C.nombre AS cliente,
-                        S.nombre AS servicio,
-                        CO.nombre + ' ' + CO.apellido AS conductor,
-                        CH.placa AS chasis,
-                        CA.placa AS cabezal,
-                        F.placa AS furgon,
-                        P.precio_total AS monto,
-                        SD.lugar_origen,
-                        SD.lugar_destino,
-                        SD.tarifa,
-                        CE.precio AS costoExtra,
-                        CE.descripcion,
-                        P.fecha_creacion,
-                        P.fecha_salida,
-                        P.fecha_finalizacion,
-                        P.status
+                        P.[id_peticion],
+                        PS.[id_Pedido_Servicio],
+                        C.[nombre] AS cliente,
+                        S.[nombre] AS servicio,
+                        CO.[nombre] + ' ' + CO.[apellido] AS conductor,
+                        CH.[placa] AS chasis,
+                        CA.[placa] AS cabezal,
+                        F.[placa] AS furgon,
+                        P.[precio_total] AS monto,
+                        SD.[lugar_origen],
+                        SD.[lugar_destino],
+                        SD.[tarifa],
+                        CE.[precio] AS costoExtra,
+                        CE.[descripcion],
+                        P.[fecha_creacion],
+                        P.[fecha_salida],
+                        P.[fecha_finalizacion],
+                        P.[status]
                     FROM Peticiones P
-                    LEFT JOIN Pedido_Servicio PS ON PS.id_peticion = P.id_peticion
-                    LEFT JOIN Servicios_datos SD ON SD.id_servicio_datos = PS.id_servicio_datos
-                    LEFT JOIN Servicios S ON S.id_servicio = SD.id_servicio
-                    LEFT JOIN Conductores CO ON CO.id_conductor = PS.id_conductor
-                    LEFT JOIN Chasis CH ON CH.id_chasis = PS.id_chasis
-                    LEFT JOIN Cabezal CA ON CA.id_cabezal = PS.id_cabezal
-                    LEFT JOIN Furgon F ON F.id_furgon = PS.id_furgon
-                    LEFT JOIN Clientes C ON C.id_cliente = P.cliente_id
-                    LEFT JOIN Costos_Extras CE ON CE.id_Costos_Extras = PS.id_Pedido_Servicio
+                    LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
+                    LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                    LEFT JOIN Servicios S ON S.[id_servicio] = SD.[id_servicio]
+                    LEFT JOIN Conductores CO ON CO.[id_conductor] = PS.[id_conductor]
+                    LEFT JOIN Chasis CH ON CH.[id_chasis] = PS.[id_chasis]
+                    LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
+                    LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]
+                    LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
+                    LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
+						OR CE.[peticion_id] = P.[id_peticion]
                     WHERE P.id_peticion = @ID
                 `);
 
@@ -48,12 +51,16 @@ export const GetRequestByID = async (id) => {
             return [];
         }
 
-        return result.recordset.map(({fecha_creacion, fecha_salida, fecha_finalizacion, ...rest}) => ({
+        let data = result.recordset.map(({fecha_creacion, fecha_salida, fecha_finalizacion, ...rest}) => ({
             ...rest,
             fecha_creacion: DateConverter(fecha_creacion),
             fecha_salida: DateConverter(fecha_salida),
             fecha_finalizacion: DateConverter(fecha_finalizacion),
         }));
+
+        return {
+            data: GroupServicesByRequets(data)
+        };
         
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.GET);

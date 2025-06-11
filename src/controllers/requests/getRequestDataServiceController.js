@@ -1,11 +1,11 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { GetRequestDataService } from '../../querys/requests/getRequestDataServices.js';
+import { GetRequestRutaServices } from '../../querys/requests/getRequestRutaService.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
 
-export const Ctr_GetRequestsDataServices = async (req, res) => {
+export const Ctr_GetRequestsRutaServices = async (req, res) => {
     try {
         const idService = req.params.id; // Obtiene el ID del servicio
 
@@ -14,7 +14,7 @@ export const Ctr_GetRequestsDataServices = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Identificador no porporcionado. Inténtelo más tarde.' });
         }
 
-        const rutaServices = await GetRequestDataService(idService); // Obtiene las rutas de los servicios
+        const rutaServices = await GetRequestRutaServices(idService); // Obtiene las rutas de los servicios por ID
 
         if (!rutaServices) {
             return res.status(404).json({ success: false, message: 'Ruta no encontrada para el servicio seleccionada.' });
@@ -23,7 +23,7 @@ export const Ctr_GetRequestsDataServices = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Data Enviada', data: rutaServices });
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.SERVICES.GET);
-        HandleError(code, error.message, 'controllers/requests/getRequestDataServicesController/Ctr_GetRequestsDataServices', error);
+        HandleError(code, error.message, 'controllers/requests/getRequestDataServiceIDController/Ctr_GetRequestsDataServices', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }
