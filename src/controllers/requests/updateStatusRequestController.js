@@ -23,7 +23,7 @@ export const Ctr_UpdateStatusRequest = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'Status Actualizado!' });
     } catch (error) {
-        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
+        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PATCH);
         HandleError(code, error.message, 'controllers/requests/updateStatusRequestsController/Ctr_UpdateStatusRequest', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }

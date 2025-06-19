@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertOrderServices } from './insertOrderService.js';
-import { AddExtraCostRequest } from './addExtraCost.js';
+import { AddExtraCostRequestSupplier } from './addExtraCost.js';
 
 
 // Crea una nueva petición
@@ -31,22 +31,16 @@ export const InsertNewRequest = async (request) => {
         let monto = 0; // Declaramos monto con valor inicial de 0
 
         // Suma las tarifas de los servicios
+        // Suma los costos extras de los servicios
         // Obtiene el monto total de los servicios solicitados
-        for (const item of request.servicios_datos) {
-            monto += item.tarifa;
-        }
-
-        // Suma los precios extras de los servicios
-        // Obtiene el monto total de los servicios con los costos extras
-        for (const item of request.pedido_servicio) {
-            monto += item.precio ? item.precio : 0;
+        for (const item of request.servicios) {
+            monto += (item.tarifa ? item.tarifa : 0) + (item.precio ? item.precio : 0);
         }
 
         // Valida si la petición incluye costos extras por parte del proveedor
         if (request?.precio) {
             monto += request.precio;
         }
-        //console.log(monto)
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
@@ -65,9 +59,9 @@ export const InsertNewRequest = async (request) => {
         // Valida si se hizo el insert
         if (result.rowsAffected > 0) {
             // Agrega los servicios de la petición
-            const addedServices = await InsertOrderServices(transaction, request.pedido_servicio, idRequest, request?.tipo_costosExtras);
+            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest, request?.tipo_costosExtras);
             // Agrega los costos extras de la petición en caso de que sea un proveedor el que haga la entrega
-            const addedSupplier = await AddExtraCostRequest(transaction, idRequest, request);
+            const addedSupplier = await AddExtraCostRequestSupplier(transaction, idRequest, request);
 
             // Valida si se agregaron los servicios de las peticiones y los costos extras
             if (addedServices && addedSupplier) {
