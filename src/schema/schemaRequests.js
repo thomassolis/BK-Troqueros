@@ -3,7 +3,7 @@ import Joi from 'joi';
 // Esquema para los servicios de las peticiones
 const schemaOrderService = Joi.object({
     id_servicio_datos: Joi.number().required().messages({
-        'any.required': 'El campo tipo de servicio es requerido.',
+        'any.required': 'El campo tipo de servicio es requerido. jajaja',
         'string.empty': 'El campo tipo de servicio no puede estar vacío.'
     }),
     id_conductor: Joi.string().required().messages({
@@ -22,6 +22,11 @@ const schemaOrderService = Joi.object({
         'any.required': 'El campo furgon es requerido.',
         'string.empty': 'El campo furgon no puede estar vacío.'
     }),
+    tarifa: Joi.number().precision(2).required().greater(0).messages({
+        'any.required': 'El campo tarifa es requerido.',
+        'number.base': 'El campo tarifa debe ser un valor numérico.',
+        'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
+    })
 });
 
 // Esquema cuando el servicio incluye una entrega vacía
@@ -50,9 +55,9 @@ const schemaExtraCostsService = schemaOrderService.keys({
 });
 
 // Esquema que incluye entrega vacio y costos extras
-const schemaOrderService_EntregaVacio_ExtraCosts = schemaOrderServiceEntregaVacio.concat(schemaExtraCostsService);
+//const schemaOrderService_EntregaVacio_ExtraCosts = schemaOrderServiceEntregaVacio.concat(schemaExtraCostsService);
 
-// Esquema general de una petición sin entrega vacía
+// Esquema general de una petición (no incluye un costo extra, no incluye un proveedor, no incluye una entrega vacío)
 export const schemaRequest = Joi.object({
     id_cliente: Joi.string().trim().required().messages({
         'any.required': 'El campo cliente es requerido.',
@@ -65,50 +70,22 @@ export const schemaRequest = Joi.object({
     tipo_entregaVacio: Joi.boolean().default(false),
     tipo_entregaProveedor: Joi.boolean().default(false),
     tipo_costosExtras: Joi.boolean().default(false),
-    servicios_datos: Joi.array().items(
-        Joi.object({
-            id_servicio: Joi.number().required().messages({
-                'any.required': 'El campo tipo de servicio es requerido.',
-                'string.empty': 'El campo tipo de servicio no puede estar vacío.'
-            }),
-            id_servicio_datos: Joi.number().required().messages({
-                'any.required': 'El campo servicio datos es requerido.',
-                'string.empty': 'El campo servicio datos no puede estar vacío.'
-            }),
-            tarifa: Joi.number().precision(2).required().greater(0).messages({
-                'any.required': 'El campo tarifa es requerido.',
-                'number.base': 'El campo tarifa debe ser un valor numérico.',
-                'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
-            })
-        })
-    ).min(1).required().messages({
-        'any.required': 'El campo tipo de servicio es requerido.',
+    servicios: Joi.array().items(schemaOrderService).min(1).required().messages({
+        'any.required': 'Un servicio es requerido.',
         'array.min': 'El campo tipo de servicio no puede estar vacío.'
-    }),
-    pedido_servicio: Joi.array().items(schemaOrderService).min(1).required().messages({
-        'any.required': 'La información del servicio es requerido.',
-        'array.min': 'La información del servicio no puede estar vacío.'
     }),
     status: Joi.string().default('En espera')
 });
 
-// Esquema general de una petición con costos extras de los servicios
-export const schemaRequestExtraCosts = schemaRequest.keys({
-    pedido_servicio: Joi.array().items(schemaExtraCostsService).min(1).required().messages({
-        'any.required': 'La información del servicio es requerido.',
-        'array.min': 'La información del servicio no puede estar vacío.'
-    }),
-});
-
 // Esquema general de una petición con entrega vacía
 export const schameRequestEntregaVacio = schemaRequest.keys({
-    pedido_servicio: Joi.array().items(schemaOrderServiceEntregaVacio).min(1).required().messages({
-        'any.required': 'La información del servicio es requerido.',
-        'array.min': 'La información del servicio no puede estar vacío.'
+    servicios: Joi.array().items(schemaOrderServiceEntregaVacio).min(1).required().messages({
+        'any.required': 'Un servicio es requerido.',
+        'array.min': 'El campo tipo de servicio no puede estar vacío.'
     }),
 });
 
-// Esquema cuando la petición incluye un proveedor
+// Esquema general de una petición con entrega proveedor
 export const schemaEntregaProveedor = schemaRequest.keys({
     id_proveedor: Joi.string().required().messages({
         'any.required': 'El campo proveedor es requerido.',
@@ -124,7 +101,7 @@ export const schemaEntregaProveedor = schemaRequest.keys({
         'string.empty': 'La descripción del costo extra no puede estar vacío.',
         'string.max': 'La descripción no pueder ser más de 50 caracteres.'
     }),
-    pedido_servicio: Joi.array().items(
+    servicios: Joi.array().items(
         Joi.object({
             id_servicio_datos: Joi.number().required().messages({
                 'any.required': 'El campo tipo de servicio es requerido.',
@@ -132,10 +109,18 @@ export const schemaEntregaProveedor = schemaRequest.keys({
             }),
         })
     ).min(1).required().messages({
-        'any.required': 'La información del servicio es requerido.',
-        'array.min': 'La información del servicio no puede estar vacío.'
+        'any.required': 'Un servicio es requerido.',
+        'array.min': 'El campo tipo de servicio no puede estar vacío.'
     }),
 })
+
+// Esquema general de una petición con costos extras de los servicios
+export const schemaRequestExtraCosts = schemaRequest.keys({
+    servicios: Joi.array().items(schemaExtraCostsService).min(1).required().messages({
+        'any.required': 'Un servicio es requerido.',
+        'array.min': 'El campo tipo de servicio no puede estar vacío.'
+    }),
+});
 
 // Esquema cuando la petición incluye entrega vacío y proveedor
 export const schemaEntregaVacio_proveedor = schemaRequest.keys({
@@ -175,8 +160,12 @@ export const schemaEntregaVacio_proveedor = schemaRequest.keys({
 
 // Esquema que incluye una entrega vacía y costos extras
 export const schemaEntregaVacio_ExtraCosts = schemaRequest.keys({
-    pedido_servicio: Joi.array().items(schemaOrderService_EntregaVacio_ExtraCosts).min(1).required().messages({
+    servicios_datos: Joi.array().items(schemaOrderServiceEntregaVacio).min(1).required().messages({
+        'any.required': 'El campo tipo de servicio es requerido.',
+        'array.min': 'El campo tipo de servicio no puede estar vacío.'
+    }),
+    pedido_servicio: Joi.array().items(schemaExtraCostsService).min(1).required().messages({
         'any.required': 'La información del servicio es requerido.',
         'array.min': 'La información del servicio no puede estar vacío.'
-    }),
+    }),    
 });

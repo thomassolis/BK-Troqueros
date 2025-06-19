@@ -6,7 +6,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { BuildArray } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Agrega los costos extras de la petición cuando es entrega por proveedor
-export const AddExtraCostRequest = async (transaction, idRequest, request) => {
+export const AddExtraCostRequestSupplier = async (transaction, idRequest, request) => {
     try {
         // Valida si la petición es entrega proveedor
         if (!request?.tipo_entregaProveedor) {
@@ -35,7 +35,7 @@ export const AddExtraCostRequest = async (transaction, idRequest, request) => {
         return false;
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
-        HandleError(code, error.message, 'querys/requests/addExtraCost/AddExtraCostRequest', error);
+        HandleError(code, error.message, 'querys/requests/addExtraCost/AddExtraCostRequestSupplier', error);
         throw new Error(`Ha ocurrido un error al insertar los costos extras de la petición ${idRequest}`);
     }
 }
@@ -51,7 +51,6 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
 
         // Construye un nuevo array para insertar los costos extras de los servicios
         const newArray = BuildArray(services, idsPedidoServicios);
-        console.log(newArray)
 
         const request = await transaction.request();
 

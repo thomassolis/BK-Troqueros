@@ -46,6 +46,9 @@ router.get('/see_request_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddl
 // Agrega una nueva petición
 router.post('/add_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertRequest, Ctr_InsertRequest);
 
+// Actualiza la información de una petición
+router.post('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertRequest, Ctr_InsertRequest);
+
 // Actualiza el estado de la petición
 router.patch('/update_status_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusRequest);
 

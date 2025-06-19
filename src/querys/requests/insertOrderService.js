@@ -59,8 +59,6 @@ export const InsertOrderServices = async (transaction, services, idRequest, cost
 
         // Valida si se insertaron los servicios de la petición
         if (result.recordset.length > 0 && result.rowsAffected.length > 0 || result.rowsAffected > 0) {
-            console.log(result)
-
             // Agrega los costos extras de los servicios
             const addedExtrasCost = await AddExtraCostsOrderServices(transaction, services, result.recordset, costosExtras)
 
@@ -69,7 +67,6 @@ export const InsertOrderServices = async (transaction, services, idRequest, cost
 
         return false;
     } catch (error) {
-        console.log(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/insertOrderRequests/InsertOrderServices', error);
         throw new Error(`Ha ocurrido un error al insertar los servicios de la petición ${idRequest}`);
