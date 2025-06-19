@@ -8,7 +8,7 @@ import { InitSocket } from './socket/socket.js';
 dotenv.config();
 
 // Configurar el puerto
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Leer los certificados SSL
 const sslOptions = {
