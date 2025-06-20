@@ -10,16 +10,14 @@ const schemaOrderService = Joi.object({
         'any.required': 'El campo conductor es requerido.',
         'string.empty': 'El campo conductor no puede estar vacío.'
     }),
-    id_chasis: Joi.string().required().messages({
-        'any.required': 'El campo chasis es requerido.',
-        'string.empty': 'El campo chasis no puede estar vacío.'
-    }),
     id_cabezal: Joi.string().required().messages({
         'any.required': 'El campo cabezal es requerido.',
         'string.empty': 'El campo cabezal no puede estar vacío.'
+    }),    
+    id_chasis: Joi.string().messages({
+        'string.empty': 'El campo chasis no puede estar vacío.'
     }),
-    id_furgon: Joi.string().required().messages({
-        'any.required': 'El campo furgon es requerido.',
+    id_furgon: Joi.string().messages({
         'string.empty': 'El campo furgon no puede estar vacío.'
     }),
     tarifa: Joi.number().precision(2).required().greater(0).messages({
@@ -27,6 +25,16 @@ const schemaOrderService = Joi.object({
         'number.base': 'El campo tarifa debe ser un valor numérico.',
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
     })
+}).xor('id_chasis', 'id_furgon')
+.error(errors => {
+    for (const err of errors) {
+        if (err.code === 'object.xor') {
+            err.message = 'Solo puede elegir chasis o furgon, no ambos.';
+        } else {
+            err.message = 'Debe especificar sí es chasis o furgon.';
+        }
+    }
+    return errors;
 });
 
 // Esquema cuando el servicio incluye una entrega vacía
@@ -91,21 +99,16 @@ export const schemaEntregaProveedor = schemaRequest.keys({
         'any.required': 'El campo proveedor es requerido.',
         'any.required': 'El campo proveedor no puede estar vacío.'
     }),
-    precio: Joi.number().precision(2).required().greater(0).messages({
-        'any.required': 'El campo costo del proveedor es requerido.',
-        'number.base': 'El campo costo del proveedor debe ser un valor numérico.',
-        'number.greater': 'El costo del proveedor debe ser mayor que cero.'
-    }),
-    descripcion: Joi.string().trim().max(50).required().messages({
-        'any.required': 'La descripción del costo extra es requerido.',
-        'string.empty': 'La descripción del costo extra no puede estar vacío.',
-        'string.max': 'La descripción no pueder ser más de 50 caracteres.'
-    }),
     servicios: Joi.array().items(
         Joi.object({
             id_servicio_datos: Joi.number().required().messages({
                 'any.required': 'El campo tipo de servicio es requerido.',
                 'string.empty': 'El campo tipo de servicio no puede estar vacío.'
+            }),
+            tarifa: Joi.number().precision(2).required().greater(0).messages({
+                'any.required': 'El campo tarifa es requerido.',
+                'number.base': 'El campo tarifa debe ser un valor numérico.',
+                'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
             }),
         })
     ).min(1).required().messages({
