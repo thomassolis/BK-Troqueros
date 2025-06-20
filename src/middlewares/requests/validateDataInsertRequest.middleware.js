@@ -4,11 +4,8 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { 
     schemaRequest, 
-    schemaEntregaProveedor, 
-    schameRequestEntregaVacio, 
-    schemaEntregaVacio_proveedor, 
-    schemaRequestExtraCosts,
-    schemaEntregaVacio_ExtraCosts
+    schemaEntregaProveedor,
+    schemaEntregaVacio_proveedor,
 } from "../../schema/schemaRequests.js";
 
 export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
@@ -25,20 +22,14 @@ export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
         // Valida el schema de la data
         if (data?.tipo_entregaVacio && data?.tipo_entregaProveedor) {
             ({ error, value } = schemaEntregaVacio_proveedor.validate(data));
-        } else if (data?.tipo_costosExtras && data?.tipo_entregaVacio){
-            ({ error, value } = schemaEntregaVacio_ExtraCosts.validate(data));
-        } else if (data?.tipo_costosExtras){
-            ({ error, value } = schemaRequestExtraCosts.validate(data));
-        } else if (data?.tipo_entregaVacio) {
-            ({ error, value } = schameRequestEntregaVacio.validate(data));
         } else if (data?.tipo_entregaProveedor) {
             ({ error, value } = schemaEntregaProveedor.validate(data));
         } else {
-            ({ error, value } = schemaRequest.validate(data));
+            ({ error, value } = schemaRequest.validate(data), { abortEarly: false });
         }
 
         if (error) {
-            return res.status(401).json({ success: true, message: error.message })
+            return res.status(400).json({ success: false, message: error.message });
         }
         
         req.body = value

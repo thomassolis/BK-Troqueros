@@ -53,7 +53,7 @@ export const InsertNewRequest = async (request) => {
         // Valida si se hizo el insert
         if (result.rowsAffected > 0) {
             // Agrega los servicios de la petición
-            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest, request?.tipo_costosExtras);
+            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
 
             // Valida si se agregaron los servicios de las peticiones y los costos extras
             if (addedServices) {

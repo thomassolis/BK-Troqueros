@@ -6,14 +6,8 @@ import { typeError } from '../../dictionary/typeError.js';
 import { BuildArray } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Guarda los costos extras de los servicios
-export const AddExtraCostsOrderServices = async (transaction, services, idsPedidoServicios, costosExtras) => {
+export const AddExtraCostsOrderServices = async (transaction, services, idsPedidoServicios) => {
     try {
-        //console.log(services, idsPedidoServicios)
-        // Valida si la petición incluye costos extras en los servicios
-        if (!costosExtras) {
-            return true; // En caso de ser false, retorna true
-        }
-
         // Construye un nuevo array para insertar los costos extras de los servicios
         const newArray = BuildArray(services, idsPedidoServicios);
 
@@ -27,6 +21,10 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
         const values = [];
 
         newArray.forEach((item, index) => {
+            // Valida si el servicio incuye costos extras
+            if (!item?.precio && !item?.descripcion) {
+                return; // Continua con la otra iteración
+            }
             request.input(`Id_Pedido_Servicio${index}`, sql.Int, item.id_Pedido_Servicio);
             request.input(`Precio${index}`, sql.Float, item.precio);
             request.input(`Descripcion${index}`, sql.VarChar, item.descripcion);
@@ -47,7 +45,6 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
 
         return false;
     } catch (error) {
-        //console.log(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/addExtraCost/AddExtraCostsOrderServices', error);
         throw new Error(`Ha ocurrido un error al insertar los costos extras de los servicios`);
