@@ -24,7 +24,8 @@ const schemaOrderService = Joi.object({
         'any.required': 'El campo tarifa es requerido.',
         'number.base': 'El campo tarifa debe ser un valor numérico.',
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
-    })
+    }),
+    entrega_vacio: Joi.boolean().optional().default(false)
 }).xor('id_chasis', 'id_furgon')
 .error(errors => {
     for (const err of errors) {
@@ -100,9 +101,6 @@ export const schemaRequest = Joi.object({
         'any.required': 'El campo fecha de salida es requerido.',
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    tipo_entregaVacio: Joi.boolean().default(false),
-    tipo_entregaProveedor: Joi.boolean().default(false),
-    tipo_costosExtras: Joi.boolean().default(false),
     servicios: Joi.array().items(servicioFlexible).min(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
         'array.min': 'Debe incluir al menos un servicio.',
