@@ -25,7 +25,8 @@ const schemaOrderService = Joi.object({
         'number.base': 'El campo tarifa debe ser un valor numérico.',
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
     }),
-    entrega_vacio: Joi.boolean().optional().default(false)
+    entrega_vacio: Joi.boolean().optional().default(false),
+    status: Joi.string().default('No Disponible'),
 }).xor('id_chasis', 'id_furgon')
 .error(errors => {
     for (const err of errors) {

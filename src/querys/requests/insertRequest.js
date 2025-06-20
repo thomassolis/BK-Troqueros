@@ -5,6 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertOrderServices } from './insertOrderService.js';
+import { UpdStatusVehicleDriverRequest } from './updateStatusVehicleDriverRequest.js';
 
 
 // Crea una nueva petición
@@ -55,8 +56,12 @@ export const InsertNewRequest = async (request) => {
             // Agrega los servicios de la petición
             const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
 
-            // Valida si se agregaron los servicios de las peticiones y los costos extras
-            if (addedServices) {
+            // Actualiza el status de los vehiculos y conductor
+            const updatedStatus = await UpdStatusVehicleDriverRequest(transaction, request.servicios)
+
+            // Valida si se agregaron los servicios de la petición
+            // Valida si se actualizó el status del conductor y vehículo
+            if (addedServices && updatedStatus) {
                 await transaction.commit();
                 return true;
             }
