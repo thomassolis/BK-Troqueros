@@ -64,27 +64,28 @@ const schemaExtraCostsService = schemaOrderService.keys({
     }),
 });
 
-// Esquema que incluye entrega vacio y costos extras
-//const schemaOrderService_EntregaVacio_ExtraCosts = schemaOrderServiceEntregaVacio.concat(schemaExtraCostsService);
 
-const servicioFlexible = Joi.custom((value, helpers) => {
-    const tieneEntregaVacio = 'entrega_vacio' in value;
-    const tieneExtras = 'precio' in value || 'descripcion' in value;
+// Función que valida las posibles entradas de los datos de los servicios
+const ValidateSchema = Joi.custom((value, helpers) => {
+    const hasEntregaVacion = 'entrega_vacio' in value && value.entrega_vacio === true; // Comprueba si el servicio tiene entrega vacío
+    const hasExtraCosts = 'precio' in value || 'descripcion' in value; // Comprueba si el servicio tiene costos extras
 
-    // Detectar esquema correspondiente
     let schema;
-    if (tieneEntregaVacio && tieneExtras) {
+
+    // Comprueba el tipo de esquema dependiendo del servicio
+    if (hasEntregaVacion && hasExtraCosts) { // Valida si el servicio incluye entrega vacío y costos extras
         schema = schemaOrderServiceEntregaVacio.concat(schemaExtraCostsService);
-    } else if (tieneEntregaVacio) {
+    } else if (hasEntregaVacion) { // Valida si el servicio incluye entrega vacio
         schema = schemaOrderServiceEntregaVacio;
-    } else if (tieneExtras) {
+    } else if (hasExtraCosts) { // Valaida si el servicio incluye costos extras
         schema = schemaExtraCostsService;
-    } else {
+    } else { // Valida si el servicio no incluye entrega vacio o costos extras
         schema = schemaOrderService;
     }
 
     const result = schema.validate(value, { abortEarly: false });
 
+    // En caso de error retornar el mensaje
     if (result.error) {
         return helpers.error('any.custom', { message: result.error.details[0].message });
     }
@@ -102,7 +103,7 @@ export const schemaRequest = Joi.object({
         'any.required': 'El campo fecha de salida es requerido.',
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
-    servicios: Joi.array().items(servicioFlexible).min(1).required().messages({
+    servicios: Joi.array().items(ValidateSchema).min(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
         'array.min': 'Debe incluir al menos un servicio.',
         'any.custom': '{{#message}}'

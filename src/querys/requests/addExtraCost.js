@@ -35,11 +35,17 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
             )`);
         });
 
+        // Valida si hay costos por agregar en los servicios
+        if (values.length === 0) {
+            return true;
+        }
+
         query += values.join(', ');
         console.log('Query to insert extra costs:', query);
         
         const result = await request.query(query);
 
+        // Valida que se haya insertado los costos extras
         if (result.rowsAffected > 0) {
             return true;
         }
