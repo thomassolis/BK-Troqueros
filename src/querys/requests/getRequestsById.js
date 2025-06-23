@@ -42,7 +42,6 @@ export const GetRequestByID = async (id) => {
                     LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]
                     LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
                     LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
-						OR CE.[peticion_id] = P.[id_peticion]
                     WHERE P.id_peticion = @ID
                 `);
 

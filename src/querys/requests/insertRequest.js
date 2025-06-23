@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertOrderServices } from './insertOrderService.js';
-import { AddExtraCostRequestSupplier } from './addExtraCost.js';
+import { UpdStatusVehicleDriverRequest } from './updateStatusVehicleDriverRequest.js';
 
 
 // Crea una nueva petición
@@ -37,11 +37,6 @@ export const InsertNewRequest = async (request) => {
             monto += (item.tarifa ? item.tarifa : 0) + (item.precio ? item.precio : 0);
         }
 
-        // Valida si la petición incluye costos extras por parte del proveedor
-        if (request?.precio) {
-            monto += request.precio;
-        }
-
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)
@@ -59,12 +54,14 @@ export const InsertNewRequest = async (request) => {
         // Valida si se hizo el insert
         if (result.rowsAffected > 0) {
             // Agrega los servicios de la petición
-            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest, request?.tipo_costosExtras);
-            // Agrega los costos extras de la petición en caso de que sea un proveedor el que haga la entrega
-            const addedSupplier = await AddExtraCostRequestSupplier(transaction, idRequest, request);
+            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
 
-            // Valida si se agregaron los servicios de las peticiones y los costos extras
-            if (addedServices && addedSupplier) {
+            // Actualiza el status de los vehiculos y conductor
+            const updatedStatus = await UpdStatusVehicleDriverRequest(transaction, request.servicios)
+
+            // Valida si se agregaron los servicios de la petición
+            // Valida si se actualizó el status del conductor y vehículo
+            if (addedServices && updatedStatus) {
                 await transaction.commit();
                 return true;
             }
