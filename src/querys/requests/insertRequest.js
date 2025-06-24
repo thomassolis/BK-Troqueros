@@ -31,10 +31,16 @@ export const InsertNewRequest = async (request) => {
         let monto = 0; // Declaramos monto con valor inicial de 0
 
         // Suma las tarifas de los servicios
-        // Suma los costos extras de los servicios
         // Obtiene el monto total de los servicios solicitados
         for (const item of request.servicios) {
-            monto += (item.tarifa ? item.tarifa : 0) + (item.precio ? item.precio : 0);
+            monto += item.tarifa ? item.tarifa : 0;
+
+            // Suma los precios de los costos extras si existen
+            if (Array.isArray(item.costos_extras)) {
+                for (const costo of item.costos_extras) {
+                    monto += costo.precio ? costo.precio : 0;
+                }
+            }
         }
 
         const result = await transaction.request()
@@ -69,13 +75,13 @@ export const InsertNewRequest = async (request) => {
         await transaction.rollback();
         return false;
     } catch (error) {
+        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
+        HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
+
         // En caso de error revertimos la transaction
         if (transaction) {
             await transaction.rollback();
         }
-
-        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
-        HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
         throw new Error('Ha ocurrido un error al crear una nueva petición');
     }
 }

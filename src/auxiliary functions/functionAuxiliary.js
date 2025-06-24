@@ -19,12 +19,10 @@ export const GroupServicesByRequets = (requests) => {
     } catch (error) {
         throw new Error(`Error al agrupar los servicios de las peticiones, ${error}`);        
     }
-}
+} 
 
 // Construye el array para los costros extras por servicios
 export const BuildArray = (arrayServices, arrayServicesInserted) => {
-    const camposDeseados = ['precio', 'descripcion'];
-
     // Define los campos en común que usarás como clave compuesta
     const camposClave = ['id_conductor', 'id_chasis', 'id_cabezal', 'id_furgon'];
 
@@ -36,18 +34,23 @@ export const BuildArray = (arrayServices, arrayServicesInserted) => {
         arrayServices.map(item => [construirClave(item), item])
     );
 
-    return arrayServicesInserted.map(item => {
+    const resultado = [];
+
+    arrayServicesInserted.forEach(item => {
         const clave = construirClave(item);
         const original = mapOriginales.get(clave) || {};
 
-        const combinado = {
-            id_Pedido_Servicio: item.id_Pedido_Servicio
-        };
-
-        camposDeseados.forEach(campo => {
-            combinado[campo] = original[campo];
-        });
-
-        return combinado;
+        // Solo agregamos si el servicio tiene costos extras
+        if (Array.isArray(original.costos_extras) && original.costos_extras.length > 0) {
+            original.costos_extras.forEach(costo => {
+                resultado.push({
+                    id_Pedido_Servicio: item.id_Pedido_Servicio,
+                    precio: costo.precio,
+                    descripcion: costo.descripcion
+                });
+            });
+        }
     });
+
+    return resultado;
 };
