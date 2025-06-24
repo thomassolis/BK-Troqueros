@@ -19,6 +19,7 @@ export const Ctr_InsertRequest = async (req, res) => {
         return res.status(201).json({success: true, message: 'Petición creada satisfactoriamente!.'});
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
+        console.error(error);
         HandleError(code, error.message, 'controllers/requests/insertRequestsController/Ctr_InsertRequest', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }

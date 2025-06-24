@@ -42,13 +42,12 @@ export const InsertNewRequest = async (request) => {
             .input("Cliente", sql.VarChar, request.id_cliente)
             .input("Proveedor", sql.VarChar, request.id_proveedor)
             .input("Monto", sql.Float, monto)
-            .input("EntregaVacio", sql.Bit, request.entrega_vacio || false)
             .input("FechaSalida", sql.Date, request.fecha_salida)
             .input("Status", sql.VarChar, request.status || 'En espera')
             .query(`
                     INSERT INTO [Troqueros].[dbo].[Peticiones] ([id_peticion], [cliente_id], 
-                    [proveedor_id], [precio_total], [entrega_vacio], [fecha_salida], [status])
-                        VALUES (@ID, @Cliente, @Proveedor, @Monto, @EntregaVacio, @FechaSalida, @Status)
+                    [proveedor_id], [precio_total], [fecha_salida], [status])
+                        VALUES (@ID, @Cliente, @Proveedor, @Monto, @FechaSalida, @Status)
                 `);
         
         // Valida si se hizo el insert

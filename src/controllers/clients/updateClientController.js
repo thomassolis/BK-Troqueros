@@ -9,7 +9,7 @@ export const Ctr_UpdateClient = async (req, res) => {
     try {
         const data = req.body; // Obtenemos la información del cliente
         const files = req.files || {}; // Obtenemos los archivos del cliente
-
+        console.log('Data a actulizar', data);
         const updated = await UpdateClient(data, files) // Actualiza la información del cliente
 
         // Valida que se haya actualizado la información del cliente
