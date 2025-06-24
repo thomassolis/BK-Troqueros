@@ -3,12 +3,8 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { 
-    schemaRequest, 
-    schemaEntregaProveedor, 
-    schameRequestEntregaVacio, 
-    schemaEntregaVacio_proveedor, 
-    schemaRequestExtraCosts,
-    schemaEntregaVacio_ExtraCosts
+    schemaUpdRequest,
+    schemaUpdEntregaProveedor
 } from "../../schema/schemaRequests.js";
 
 export const Mdlware_ValidateDataUpdRequest = (req, res, next) =>{
@@ -23,18 +19,10 @@ export const Mdlware_ValidateDataUpdRequest = (req, res, next) =>{
         let error, value;
 
         // Valida el schema de la data
-        if (data?.tipo_entregaVacio && data?.tipo_entregaProveedor) {
-            ({ error, value } = schemaEntregaVacio_proveedor.validate(data));
-        } else if (data?.tipo_costosExtras && data?.tipo_entregaVacio){
-            ({ error, value } = schemaEntregaVacio_ExtraCosts.validate(data));
-        } else if (data?.tipo_costosExtras){
-            ({ error, value } = schemaRequestExtraCosts.validate(data));
-        } else if (data?.tipo_entregaVacio) {
-            ({ error, value } = schameRequestEntregaVacio.validate(data));
-        } else if (data?.tipo_entregaProveedor) {
-            ({ error, value } = schemaEntregaProveedor.validate(data));
+        if (data?.id_proveedor) {
+            ({ error, value } = schemaUpdEntregaProveedor.validate(data), { abortEarly: false });
         } else {
-            ({ error, value } = schemaRequest.validate(data));
+            ({ error, value } = schemaUpdRequest.validate(data), { abortEarly: false });
         }
 
         if (error) {
