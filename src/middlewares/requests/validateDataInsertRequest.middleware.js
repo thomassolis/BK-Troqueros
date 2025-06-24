@@ -5,7 +5,6 @@ import { typeError } from '../../dictionary/typeError.js';
 import { 
     schemaRequest, 
     schemaEntregaProveedor,
-    schemaEntregaVacio_proveedor,
 } from "../../schema/schemaRequests.js";
 
 export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
@@ -20,10 +19,8 @@ export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
         let error, value;
 
         // Valida el schema de la data
-        if (data?.tipo_entregaVacio && data?.tipo_entregaProveedor) {
-            ({ error, value } = schemaEntregaVacio_proveedor.validate(data));
-        } else if (data?.tipo_entregaProveedor) {
-            ({ error, value } = schemaEntregaProveedor.validate(data));
+        if (data?.id_proveedor) {
+            ({ error, value } = schemaEntregaProveedor.validate(data), { abortEarly: false });
         } else {
             ({ error, value } = schemaRequest.validate(data), { abortEarly: false });
         }
