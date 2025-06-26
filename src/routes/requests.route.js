@@ -13,6 +13,7 @@ import { Ctr_GetRequestClients } from '../controllers/requests/getRequestClients
 import { Ctr_GetRequestSuppliers } from '../controllers/requests/getRequestSuppliersController.js';
 import { Ctr_GetRequestsRutaServices } from '../controllers/requests/getRequestDataServiceController.js';
 import { Ctr_UpdateStatusRequest } from '../controllers/requests/updateStatusRequestController.js';
+import { Mdlware_ValidateDataUpdRequest } from '../middlewares/requests/validateDataUpdRequest.middleware.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -47,7 +48,7 @@ router.get('/see_request_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddl
 router.post('/add_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertRequest, Ctr_InsertRequest);
 
 // Actualiza la información de una petición
-router.post('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertRequest, Ctr_InsertRequest);
+router.put('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRequest);
 
 // Actualiza el estado de la petición
 router.patch('/update_status_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusRequest);
