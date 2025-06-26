@@ -17,12 +17,15 @@ export const GetRequestByID = async (id) => {
                         P.[id_peticion],
                         PS.[id_Pedido_Servicio],
                         C.[nombre] AS cliente,
+                        PR.[nombre] AS proveedor,
                         S.[nombre] AS servicio,
                         CO.[nombre] + ' ' + CO.[apellido] AS conductor,
                         CH.[placa] AS chasis,
                         CA.[placa] AS cabezal,
                         F.[placa] AS furgon,
                         P.[precio_total] AS monto,
+                        P.[precio_proveedor],
+                        P.[profit],
                         SD.[lugar_origen],
                         SD.[lugar_destino],
                         SD.[tarifa],
@@ -30,6 +33,7 @@ export const GetRequestByID = async (id) => {
                         CE.[descripcion],
                         P.[fecha_creacion],
                         P.[fecha_salida],
+                        P.[hora_salida],
                         P.[fecha_finalizacion],
                         P.[status]
                     FROM Peticiones P
@@ -41,6 +45,7 @@ export const GetRequestByID = async (id) => {
                     LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
                     LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]
                     LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
+                    LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]
                     LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
                     WHERE P.id_peticion = @ID
                 `);
