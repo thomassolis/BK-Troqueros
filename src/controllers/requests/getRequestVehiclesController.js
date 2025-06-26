@@ -1,3 +1,4 @@
+import { ValidateDate } from '../../auxiliary functions/dateConverter.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetRequestChassis, GetRequestTruckHead, GetRequestTruckVan } from '../../querys/requests/getRequestVehicles.js';
@@ -7,9 +8,19 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_GetRequestsVehicles = async (req, res) => {
     try {
-        const chassis = await GetRequestChassis(); // Obtiene los chasis
-        const truckhead = await GetRequestTruckHead(); // Obtiene los cabezal
-        const truckvan = await GetRequestTruckVan(); // Obtiene los furgon
+        let filters = req.query; // Obtiene la fecha y hora de salida de la petición
+        
+        const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
+
+        if (!isValid) {
+            return res.status(403).json({ success: false, message: isValid.msg });
+        }
+
+        filters = isValid.dateTime; // Obtiene la fecha de salida y hora de salida validadas
+
+        const chassis = await GetRequestChassis(filters); // Obtiene los chasis
+        const truckhead = await GetRequestTruckHead(filters); // Obtiene los cabezal
+        const truckvan = await GetRequestTruckVan(filters); // Obtiene los furgon
 
         // Valida que conductores no sean undefined
         if (!chassis || !truckhead || !truckvan) {
