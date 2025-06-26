@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
 
 
 //Establece el tamaño de la página
@@ -144,10 +144,11 @@ export const GetRequests = async (filters) => {
             return [];
         }
 
-        let data = result.recordset.map(({totalRegistros, fecha_creacion, fecha_salida, fecha_finalizacion, ...rest}) => ({
+        let data = result.recordset.map(({totalRegistros, fecha_creacion, fecha_salida, hora_salida, fecha_finalizacion, ...rest}) => ({
             ...rest,
             fecha_creacion: DateConverter(fecha_creacion),
             fecha_salida: DateConverter(fecha_salida),
+            hora_salida: ParseTime(hora_salida),
             fecha_finalizacion: DateConverter(fecha_finalizacion),
         }));
 

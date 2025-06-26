@@ -83,3 +83,12 @@ export const ValidateDate = (dateTime) => {
 
     return { scs: true, dateTime };
 }
+
+// Convierte la hora a string
+export const ParseTime = (time) => {
+    const horas = String(time.getUTCHours()).padStart(2, '0');
+    const minutos = String(time.getUTCMinutes()).padStart(2, '0');
+    const segundos = String(time.getUTCSeconds()).padStart(2, '0');
+
+    return `${horas}:${minutos}:${segundos}`;
+}
