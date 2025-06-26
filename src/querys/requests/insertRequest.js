@@ -5,13 +5,13 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertOrderServices } from './insertOrderService.js';
-import { UpdStatusVehicleDriverRequest } from './updateStatusVehicleDriverRequest.js';
-
+import { GetTime } from '../../auxiliary functions/dateConverter.js';
 
 // Crea una nueva petición
 export const InsertNewRequest = async (request) => {
     let transaction = null; // Declaramos transaction null
     try {
+        request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
         transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
         await transaction.begin() // Iniciamos la transaction
 
@@ -29,6 +29,7 @@ export const InsertNewRequest = async (request) => {
         }
 
         let monto = 0; // Declaramos monto con valor inicial de 0
+        let profit = 0 // Declaramos el profit con valor inicial de 0
 
         // Suma las tarifas de los servicios
         // Obtiene el monto total de los servicios solicitados
@@ -43,17 +44,26 @@ export const InsertNewRequest = async (request) => {
             }
         }
 
+        // Valida si la petición es por proveedor
+        // Calcula el profit
+        if (request?.precio_proveedor) {
+            profit = request.servicios[0].tarifa - request.precio_proveedor;
+        }
+        console.log(request.hora_salida)
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)
-            .input("Proveedor", sql.VarChar, request.id_proveedor)
+            .input("Proveedor", sql.VarChar, request.id_proveedor || null)
+            .input("PrecioProveedor", sql.Float, request.precio_proveedor || 0)
+            .input("Profit", sql.Float, profit)
             .input("Monto", sql.Float, monto)
             .input("FechaSalida", sql.Date, request.fecha_salida)
+            .input("HoraSalida", sql.Time, request.hora_salida)
             .input("Status", sql.VarChar, request.status || 'En espera')
             .query(`
                     INSERT INTO [Troqueros].[dbo].[Peticiones] ([id_peticion], [cliente_id], 
-                    [proveedor_id], [precio_total], [fecha_salida], [status])
-                        VALUES (@ID, @Cliente, @Proveedor, @Monto, @FechaSalida, @Status)
+                    [proveedor_id], [precio_proveedor], [profit], [precio_total], [fecha_salida], [hora_salida], [status])
+                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @Profit, @Monto, @FechaSalida, @HoraSalida, @Status)
                 `);
         
         // Valida si se hizo el insert
@@ -61,12 +71,9 @@ export const InsertNewRequest = async (request) => {
             // Agrega los servicios de la petición
             const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
 
-            // Actualiza el status de los vehiculos y conductor
-            const updatedStatus = await UpdStatusVehicleDriverRequest(transaction, request.servicios)
-
             // Valida si se agregaron los servicios de la petición
             // Valida si se actualizó el status del conductor y vehículo
-            if (addedServices && updatedStatus) {
+            if (addedServices) {
                 await transaction.commit();
                 return true;
             }

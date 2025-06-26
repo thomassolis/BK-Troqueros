@@ -60,7 +60,7 @@ const schemaExtraCostsService = schemaOrderService.keys({
             precio: Joi.number().precision(2).required().greater(0).messages({
                 'any.required': 'El precio del costo extra es requerido.',
                 'number.base': 'El precio del costo extra debe ser un valor numérico.',
-                'number.greater': 'El precio del costo extra debe ser mayor que cero.'
+                'number.greater': 'El precio del costo extra debe ser mayor a cero.'
             }),
             descripcion: Joi.string().trim().max(50).required().messages({
                 'any.required': 'La descripción del costo extra es requerido.',
@@ -162,6 +162,25 @@ export const schemaRequest = Joi.object({
         'any.required': 'El campo fecha de salida es requerido.',
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
     }),
+    hora_salida: Joi.string().custom((value, helpers) => {
+        const [hora, minuto, segundo] = value.split(':').map(Number);
+
+        if (hora < 0 || hora > 23) {
+            return helpers.message('La hora debe ser un valor entre 00 y 23.');
+        }
+        if (minuto < 0 || minuto > 59) {
+            return helpers.message('Los minutos deben ser un valor entre 00 y 59.');
+        }
+        if (segundo < 0 || segundo > 59) {
+            return helpers.message('Los segundos deben ser un valor entre 00 y 59.');
+        }
+
+        return value;
+    }).pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/).required().messages({
+        'any.required': 'El campo hora de salida es requerido.',
+        'string.pattern.base': 'La hora de salida debe tener el formato HH:mm:ss.',
+        'string.empty': 'La hora de salida no puede estar vacía.'
+    }),
     servicios: Joi.array().items(ValidateSchema).min(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
         'array.min': 'Debe incluir al menos un servicio.',
@@ -178,9 +197,15 @@ export const schemaEntregaProveedor = schemaRequest.keys({
         'any.required': 'El campo proveedor es requerido.',
         'any.required': 'El campo proveedor no puede estar vacío.'
     }),
-    servicios: Joi.array().items(ValidateSchemaSupplier).min(1).required().messages({
+    precio_proveedor: Joi.number().precision(2).required().greater(0).messages({
+        'any.required': 'El precio del proveedor es requerido.',
+        'number.base': 'El precio del proveedor debe ser un valor numérico.',
+        'number.greater': 'El precio del proveedor debe ser mayor a cero.'
+    }),
+    servicios: Joi.array().items(ValidateSchemaSupplier).min(1).max(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
         'array.min': 'Debe incluir al menos un servicio.',
+        'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
 }).unknown(false).messages({

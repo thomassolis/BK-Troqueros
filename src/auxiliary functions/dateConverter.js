@@ -1,6 +1,4 @@
-import Joi from 'joi';
 import { GenerateCodeError } from '../utils/getCodeError.js';
-import { modules } from '../dictionary/modules.js';
 import { typeError } from '../dictionary/typeError.js';
 import { HandleError } from '../utils/HandleError.js';
 
@@ -51,7 +49,12 @@ export const DateTimeConverter = (date) => {
     }    
 }
 
-const schema = Joi.object({
-    //fecha: Joi.date().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
-    fecha1: Joi.date().required
-});
+export const GetTime = (time) => {
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+
+    // Crear un objeto Date con solo la parte de la hora
+    const horaDate = new Date();
+    horaDate.setHours(hours, minutes, seconds, 0);
+
+    return horaDate;
+}
