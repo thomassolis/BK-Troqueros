@@ -49,12 +49,14 @@ export const DateTimeConverter = (date) => {
     }    
 }
 
+// Obtiene la hora de la petición en Objeto Date
 export const GetTime = (time) => {
+    // Separa la hora en: horas, minutos y segundos
     const [hours, minutes, seconds] = time.split(':').map(Number);
 
     // Crear un objeto Date con solo la parte de la hora
     const horaDate = new Date();
-    horaDate.setHours(hours, minutes, seconds, 0);
+    horaDate.setUTCHours(hours, minutes, seconds, 0);
 
     return horaDate;
 }
