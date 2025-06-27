@@ -13,11 +13,13 @@ export const UpdRutaService = async (service) => {
             .input("Origen", sql.VarChar, service.lugar_origen)
             .input("Destino", sql.VarChar, service.lugar_destino)
             .input("Tarifa", sql.Decimal, service.tarifa)
+            .input("TiempoEstimado", sql.Float, service.tiempo_estimado)
             .query(`
                     UPDATE [Troqueros].[dbo].[Servicios_datos]
                         SET [lugar_origen] = @Origen,
                             [lugar_destino] = @Destino,
-                            [tarifa] = @Tarifa
+                            [tarifa] = @Tarifa,
+                            [tiempo_estimado] = @TiempoEstimado
                     WHERE [id_servicio_datos] = @ID
                 `);
         

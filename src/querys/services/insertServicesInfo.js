@@ -14,7 +14,7 @@ export const InsertDataServices = async (transaction, infoService, idService) =>
         }
         
         let query = `
-            INSERT INTO [Servicios_datos] ([id_servicio], [nombre], [lugar_origen], [lugar_destino], [tarifa])
+            INSERT INTO [Servicios_datos] ([id_servicio], [nombre], [lugar_origen], [lugar_destino], [tarifa], [tiempo_estimado])
             VALUES 
         `;
 
@@ -27,9 +27,10 @@ export const InsertDataServices = async (transaction, infoService, idService) =>
             request.input(`Origen${index}`, sql.VarChar, item.lugar_origen)
             request.input(`Destino${index}`, sql.VarChar, item.lugar_destino)
             request.input(`Tarifa${index}`, sql.Decimal, item.tarifa)
+            request.input(`TiempoEstimado${index}`, sql.Float, item.tiempo_estimado)
 
             // Agrega los valores a una lista
-            values.push(`(@IDServicio, '', @Origen${index}, @Destino${index}, @Tarifa${index})`)
+            values.push(`(@IDServicio, '', @Origen${index}, @Destino${index}, @Tarifa${index}, @TiempoEstimado${index})`)
         });
 
         query += values.join(', '); // Construye la consulta con los valores a insertar
@@ -58,10 +59,11 @@ export const InsertNewDataServices = async (infoService) => {
             .input("Origen", sql.VarChar, infoService.lugar_origen)
             .input("Destino", sql.VarChar, infoService.lugar_destino)
             .input("Tarifa", sql.Decimal, infoService.tarifa)
+            .input("TiempoEstimado", sql.Float, infoService.tiempo_estimado)
             .query(`
                     INSERT INTO [Servicios_datos] ([id_servicio], [nombre], 
-                    [lugar_origen], [lugar_destino], [tarifa])
-                        VALUES (@IDServicio, '', @Origen, @Destino, @Tarifa)
+                    [lugar_origen], [lugar_destino], [tarifa], [tiempo_estimado])
+                        VALUES (@IDServicio, '', @Origen, @Destino, @Tarifa, @TiempoEstimado)
                 `);
 
         // Valida que se haya hecho el insert de la nueva ruta del servicio
