@@ -34,12 +34,13 @@ export const UpdateClient = async (client, files) => {
         //construimos la ruta de las carpetas
         const rutaCed = `clientes/${client.id_cliente}/cedula_representante_legal`;
         const rutaAvisoOpe = `clientes/${client.id_cliente}/aviso_operaciones`;
-        const rutaCedPerNatural = `clientes/${id}/cedula_persona_natural`;
+        const rutaCedPerNatural = `clientes/${client.id_cliente}/cedula_persona_natural`;
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, client.id_cliente)
             .input("Nombre", sql.VarChar, client.nombre)
             .input("Ruc", sql.VarChar, client.ruc)
+            .input("DV", sql.VarChar, client.dv)
             .input("Direccion", sql.VarChar, client.direccion)
             .input("NombreContacto", sql.VarChar, client.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, client.telPersonaContacto)
@@ -52,6 +53,7 @@ export const UpdateClient = async (client, files) => {
                     UPDATE Clientes
                         SET [nombre] = @Nombre,
                             [ruc_empresa] = @Ruc,
+                            [DV] = @DV,
                             [direccion] = @Direccion,
                             [nombre_persona_contacto] = @NombreContacto,
                             [telefono_persona_contacto] = @TelContacto,
@@ -107,7 +109,6 @@ export const UpdateClient = async (client, files) => {
             HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
             throw MyThrow;
         }
-
         
         HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cliente');

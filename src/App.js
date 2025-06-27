@@ -23,8 +23,12 @@ import requests from './routes/requests.route.js';
 const app = express();
 
 app.use(morgan('dev'));
+
 app.use(express.json());
+
 app.use(fileUpload());
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(session(sessionConfig));
