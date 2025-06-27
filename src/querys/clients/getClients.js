@@ -34,8 +34,9 @@ export const GetAllClients = async (page, active) =>  {
                         C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
-                        C.[email_persona_contacto]
-                    ORDER BY C.[id_cliente]
+                        C.[email_persona_contacto],
+                        C.[fecha_creacion]
+                    ORDER BY C.[fecha_creacion] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY
                 `)
@@ -89,8 +90,9 @@ export const GetClientsFilters = async (page, nameCustomer, active) => {
                         C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
-                        C.[email_persona_contacto]
-                    ORDER BY C.[id_cliente]
+                        C.[email_persona_contacto],
+                        C.[fecha_creacion]
+                    ORDER BY C.[fecha_creacion] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY
                 `)

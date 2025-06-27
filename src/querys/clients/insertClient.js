@@ -7,6 +7,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 
 
+// Agrega un nuevo cliente
 export const InsertClient = async (data, files) => {
     let transaction = null
     try {
@@ -34,6 +35,7 @@ export const InsertClient = async (data, files) => {
             .input("ID", sql.VarChar, id)
             .input("Nombre", sql.VarChar, data.nombre)
             .input("Ruc", sql.VarChar, data.ruc)
+            .input("DV", sql.Int, data.dv)
             .input("Direccion", sql.VarChar, data.direccion)
             .input("NombreContacto", sql.VarChar, data.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, data.telPersonaContacto)
@@ -44,10 +46,10 @@ export const InsertClient = async (data, files) => {
             .input("NombreCuenta", sql.VarChar, data.nombreCuenta)
             .query(`
                     INSERT INTO Clientes ([id_cliente], [nombre], [nombre_persona_contacto], [email_persona_contacto],
-                                            [telefono_persona_contacto], [ruc_empresa], [direccion], [numero_cuenta],
+                                            [telefono_persona_contacto], [ruc_empresa], [DV], [direccion], [numero_cuenta],
                                             [nombre_banco], [tipo_cuenta], [nombre_cuenta], [tipo_cliente],
                                             [copia_cedula_representante_legal], [copia_aviso_operaciones], [cedula_persona_natural])
-                        VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, 
+                        VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, @DV,
                             @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
                 `)
 
@@ -71,13 +73,14 @@ export const InsertClient = async (data, files) => {
         await transaction.rollback()
         return false
     } catch (error) {
-        // En caso de error revierte la transaction
-        if (transaction) {
-            await transaction.rollback()
-        }
-
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'querys/Clients/insertClient/InsertClient', error);
+
+        // En caso de error revierte la transaction
+        if (transaction) {
+            await transaction.rollback();
+        }
+
         throw new Error('Ha ocurrido un error al crear al cliente');
     }
 }
