@@ -23,7 +23,7 @@ export const GetAllDrivers = async (page) => {
                         status,
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM [Troqueros].[dbo].[Conductores]
-                    ORDER BY id_conductor
+                    ORDER BY fecha_creacion DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY;`);
 
@@ -66,7 +66,7 @@ export const GetDriversByFilter = async (page, search) => {
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM [Troqueros].[dbo].[Conductores]
                     WHERE nombre LIKE @Search
-                    ORDER BY id_conductor
+                    ORDER BY fecha_creacion DESC
                     OFFSET @Page ROWS
                     FETCH NEXT @PageSize ROWS ONLY;`);
 

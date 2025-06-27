@@ -7,7 +7,6 @@ import { ActivateDriver } from '../../querys/drivers/activateDriver.js';
 export const Ctr_ActivateDriver = async (req, res) => {
     try {
         const driver = req.body;
-        console.log(driver)
 
         // Validamos que el conductor no sea undefined
         if (!driver || !Object.keys(driver).length) {
