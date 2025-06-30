@@ -54,3 +54,77 @@ export const BuildArray = (arrayServices, arrayServicesInserted) => {
 
     return resultado;
 };
+
+
+export const transformarDatos = (arrayPlano) => {
+    console.log('entro')
+    if (arrayPlano.length === 0) return null;
+
+    const primerRegistro = arrayPlano[0];
+
+    const estructura = {
+        id_peticion: primerRegistro.id_peticion,
+        id_cliente: primerRegistro.id_cliente,
+        id_proveedor: primerRegistro.id_proveedor,
+        cliente: primerRegistro.cliente,
+        proveedor: primerRegistro.proveedor,
+        monto: primerRegistro.monto,
+        precio_proveedor: primerRegistro.precio_proveedor,
+        profit: primerRegistro.profit,
+        fecha_salida: primerRegistro.fecha_salida,
+        hora_salida: primerRegistro.hora_salida,
+        servicios: []
+    };
+
+    const serviciosMap = new Map();
+
+    // Si ya existe el servicio en el map, solo agregas costos extras si aplica
+    arrayPlano.forEach(item => {
+        const idServicio = item.id_Pedido_Servicio;
+
+        if (serviciosMap.has(idServicio)) {
+            const servicioExistente = serviciosMap.get(idServicio);
+
+            if (item.id_Costos_Extras) {
+                servicioExistente.costos_extras.push({
+                    id_costos_extras: item.id_Costos_Extras,
+                    precio: item.costoExtra,
+                    descripcion: item.descripcion
+                });
+            }
+        } else {
+            // Construyes el servicio
+            const servicio = {
+                id_pedidoServicio: item.id_Pedido_Servicio,
+                id_servicio_datos: item.id_servicio_datos,
+                id_conductor: item.conductor,
+                id_chasis: item.chasis,
+                id_cabezal: item.cabezal,
+                id_furgon: item.furgon,
+                tarifa: item.tarifa,
+            };
+
+            // Si existe entrega_vacio o fecha_limite, los agregas
+            if (item.entrega_vacio && item.fecha_limite) {
+                servicio.entrega_vacio = item.entrega_vacio;
+                servicio.fecha_limite = item.fecha_limite;
+            }
+
+            // Si tiene costos extras, inicializas el array
+            if (item.id_Costos_Extras) {
+                servicio.costos_extras = [{
+                    id_costos_extras: item.id_Costos_Extras,
+                    precio: item.costoExtra,
+                    descripcion: item.descripcion
+                }];
+            }
+
+            serviciosMap.set(idServicio, servicio);
+        }
+    });
+
+    // Al final, conviertes el map a array
+    estructura.servicios = Array.from(serviciosMap.values());
+
+    return estructura;
+}

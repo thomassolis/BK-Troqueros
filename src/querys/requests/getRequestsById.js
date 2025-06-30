@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
-import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
+import { GroupServicesByRequets, transformarDatos } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Obtiene la información de una petición
 export const GetRequestByID = async (id) => {
@@ -16,6 +16,10 @@ export const GetRequestByID = async (id) => {
                     SELECT
                         P.[id_peticion],
                         PS.[id_Pedido_Servicio],
+                        SD.[id_servicio_datos],
+                        CE.[id_Costos_Extras],
+                        PR.[id_proveedor],
+                        C.[id_cliente],
                         C.[nombre] AS cliente,
                         PR.[nombre] AS proveedor,
                         S.[nombre] AS servicio,
@@ -29,13 +33,12 @@ export const GetRequestByID = async (id) => {
                         SD.[lugar_origen],
                         SD.[lugar_destino],
                         SD.[tarifa],
+                        PS.[entrega_vacio],
+                        PS.[fecha_limite],
                         CE.[precio] AS costoExtra,
                         CE.[descripcion],
-                        P.[fecha_creacion],
                         P.[fecha_salida],
-                        P.[hora_salida],
-                        P.[fecha_finalizacion],
-                        P.[status]
+                        P.[hora_salida]
                     FROM Peticiones P
                     LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
                     LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
@@ -55,16 +58,17 @@ export const GetRequestByID = async (id) => {
             return [];
         }
 
-        let data = result.recordset.map(({fecha_creacion, fecha_salida, hora_salida, fecha_finalizacion, ...rest}) => ({
+        let data = result.recordset.map(({fecha_creacion, fecha_salida, fecha_limite, hora_salida, fecha_finalizacion, ...rest}) => ({
             ...rest,
             fecha_creacion: DateConverter(fecha_creacion),
             fecha_salida: DateConverter(fecha_salida),
             hora_salida: ParseTime(hora_salida),
             fecha_finalizacion: DateConverter(fecha_finalizacion),
+            fecha_limite: DateConverter(fecha_limite)
         }));
 
         return {
-            data: GroupServicesByRequets(data)
+            data: transformarDatos(data)
         };
         
     } catch (error) {
