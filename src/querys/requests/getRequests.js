@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
 
 
 //Establece el tamaño de la página
@@ -29,9 +29,13 @@ export const GetRequests = async (filters) => {
                 SELECT
                     P.[id_peticion],
                     P.[cliente_id],
+                    P.[proveedor_id],
                     P.[precio_total] AS monto,
+                    P.[precio_proveedor],
+                    P.[profit],
                     P.[fecha_creacion],
                     P.[fecha_salida],
+                    P.[hora_salida],
                     P.[fecha_finalizacion],
                     P.[status],
                     PS.[id_Pedido_Servicio],
@@ -86,9 +90,13 @@ export const GetRequests = async (filters) => {
                 SELECT DISTINCT
                     [id_peticion],
                     [cliente_id],
+                    [proveedor_id],
                     [monto],
+                    [precio_proveedor],
+                    [profit],
                     [fecha_creacion],
                     [fecha_salida],
+                    [hora_salida],
                     [fecha_finalizacion],
                     [status]
                 FROM ServiciosFiltrados
@@ -105,23 +113,28 @@ export const GetRequests = async (filters) => {
                 FETCH NEXT @PageSize ROWS ONLY
             )
             SELECT
-                PF.[id_peticion],
+                PP.[id_peticion],
                 C.[nombre] AS cliente,
+                P.[nombre] AS proveedor,
                 SF.[servicio],
                 SF.[conductor],
                 SF.[chasis],
                 SF.[cabezal],
                 SF.[furgon],
-                PF.[monto],
-                PF.[fecha_creacion],
-                PF.[fecha_salida],
-                PF.[fecha_finalizacion],
-                PF.[status],
-                PF.[totalRegistros]
-            FROM PeticionesPaginadas PF
-            JOIN ServiciosFiltrados SF ON SF.[id_peticion] = PF.[id_peticion]
-            LEFT JOIN Clientes C ON C.[id_cliente] = PF.[cliente_id]
-            ORDER BY PF.[fecha_creacion] DESC
+                PP.[monto],
+                PP.[precio_proveedor],
+                PP.[profit],
+                PP.[fecha_creacion],
+                PP.[fecha_salida],
+                PP.[hora_salida],
+                PP.[fecha_finalizacion],
+                PP.[status],
+                PP.[totalRegistros]
+            FROM PeticionesPaginadas PP
+            JOIN ServiciosFiltrados SF ON SF.[id_peticion] = PP.[id_peticion]
+            LEFT JOIN Clientes C ON C.[id_cliente] = PP.[cliente_id]
+            LEFT JOIN Proveedores P ON P.[id_proveedor] = PP.[proveedor_id]
+            ORDER BY PP.[fecha_creacion] DESC
         `;
 
         const result = await request.query(query);
@@ -131,10 +144,11 @@ export const GetRequests = async (filters) => {
             return [];
         }
 
-        let data = result.recordset.map(({totalRegistros, fecha_creacion, fecha_salida, fecha_finalizacion, ...rest}) => ({
+        let data = result.recordset.map(({totalRegistros, fecha_creacion, fecha_salida, hora_salida, fecha_finalizacion, ...rest}) => ({
             ...rest,
             fecha_creacion: DateConverter(fecha_creacion),
             fecha_salida: DateConverter(fecha_salida),
+            hora_salida: ParseTime(hora_salida),
             fecha_finalizacion: DateConverter(fecha_finalizacion),
         }));
 

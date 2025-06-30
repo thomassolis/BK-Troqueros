@@ -49,12 +49,46 @@ export const DateTimeConverter = (date) => {
     }    
 }
 
+// Obtiene la hora de la petición en Objeto Date
 export const GetTime = (time) => {
+    // Separa la hora en: horas, minutos y segundos
     const [hours, minutes, seconds] = time.split(':').map(Number);
 
     // Crear un objeto Date con solo la parte de la hora
     const horaDate = new Date();
-    horaDate.setHours(hours, minutes, seconds, 0);
+    horaDate.setUTCHours(hours, minutes, seconds, 0);
 
     return horaDate;
+}
+
+// Valida que la fecha sea una fecha valida
+// Valida que la fecha cumpla el formato (YYYY-MM-DD)
+export const ValidateDate = (dateTime) => {
+    // Validar el formato con regex
+    const regex = /^\d{4}-(0[1-9]|1[0-2])-([0-2]\d|3[01])$/;
+    if (!regex.test(dateTime.fecha_salida)) {
+        return { scs: false, msg: 'La fecha debe tener el formato YYYY-MM-DD.' };
+    }
+
+    // Convertir a objeto Date y validar si es una fecha válida
+    const dateSalida = new Date(dateTime.fecha_salida); // Parsea la fecha a un Objeto Date
+    const currentDate = new Date(); // Obtiene la fecha actual
+
+    // Valida que la fecha de salida no sea menor a la fecha actual
+    if (currentDate > dateSalida) {
+        return { scs: false, msg: 'La fecha de salida debe ser mayor a la fecha de actual.' };
+    }
+
+    dateTime.hora_salida = GetTime(dateTime.hora_salida); // Obtiene la hora en Objeto Date
+
+    return { scs: true, dateTime };
+}
+
+// Convierte la hora a string
+export const ParseTime = (time) => {
+    const horas = String(time.getUTCHours()).padStart(2, '0');
+    const minutos = String(time.getUTCMinutes()).padStart(2, '0');
+    const segundos = String(time.getUTCSeconds()).padStart(2, '0');
+
+    return `${horas}:${minutos}:${segundos}`;
 }

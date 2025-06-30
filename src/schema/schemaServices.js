@@ -2,18 +2,21 @@ import Joi from 'joi';
 
 const schemaBaseItem = Joi.object({
     lugar_origen: Joi.string().trim().max(30).required().messages({
-        'any.required': 'El campo lugar de salida es requerido',
-        'string.empty': 'El campo lugar de salida no puede estar vacío',
+        'any.required': 'El campo lugar de salida es requerido.',
+        'string.empty': 'El campo lugar de salida no puede estar vacío.',
         'string.max': 'El campo lugar de salida no debe tener más de 30 caracteres.'
     }),
     lugar_destino: Joi.string().trim().max(30).required().messages({
-        'any.required': 'El campo lugar de llegada es requerido',
-        'string.empty': 'El campo lugar de llegada no puede estar vacío',
+        'any.required': 'El campo lugar de llegada es requerido.',
+        'string.empty': 'El campo lugar de llegada no puede estar vacío.',
         'string.max': 'El campo lugar de llegada no debe tener más de 30 caracteres.'
     }),
     tarifa: Joi.number().precision(2).required().messages({
-        'any.required': 'El campo tarifa es requerido',
-        'string.empty': 'El campo tarifa no puede estar vacío'
+        'any.required': 'El campo tarifa es requerido.',
+        'string.empty': 'El campo tarifa no puede estar vacío.'
+    }),
+    tiempo_estimado: Joi.number().precision(2).strict().optional().default(1.5).messages({
+        'number.base': 'El campo tiempo estimado debe ser un valor numérico.'
     })
 });
 
@@ -27,8 +30,8 @@ export const schemaDataServicesUpd = schemaBaseItem.keys({
 // Esquema base para crear un servicio
 export const schemaService = Joi.object({
     nombre_servicio: Joi.string().max(100).required().messages({
-        'any.required': 'El campo nombre del servicio es requerido',
-        'string.empty': 'El campo nombre del servicio no puede estar vacío',
+        'any.required': 'El campo nombre del servicio es requerido.',
+        'string.empty': 'El campo nombre del servicio no puede estar vacío.',
         'string.max': 'El campo nombre del servicio no debe tener más de 100 caracteres.'
     }),
     datos_servicio: Joi.array().items(schemaBaseItem).default([]),    

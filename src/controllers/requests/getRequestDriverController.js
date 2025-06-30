@@ -1,3 +1,4 @@
+import { ValidateDate } from '../../auxiliary functions/dateConverter.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetRequestDrivers } from '../../querys/requests/getRequestDrivers.js';
@@ -7,7 +8,17 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_GetRequestsDrivers = async (req, res) => {
     try {
-        const drivers = await GetRequestDrivers(); // Obtiene los conductores
+        let filters = req.query; // Obtiene la fecha y hora de salida de la petición
+
+        const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
+
+        if (!isValid) {
+            return res.status(403).json({ success: false, message: isValid.msg });
+        }
+
+        filters = isValid.dateTime; // Obtiene la fecha de salida y hora de salida validadas
+        
+        const drivers = await GetRequestDrivers(filters); // Obtiene los conductores
 
         // Valida que conductores no sean undefined
         if (!drivers) {

@@ -23,7 +23,6 @@ export const GetServices = async (filters) => {
 
         // Valida si esta filtrando por el nombre del servicio
         if (filters.search) {
-            console.log('entro')
             query += `S.[nombre] LIKE '%' + @Search + '%' AND `
         }
 
@@ -42,7 +41,8 @@ export const GetServices = async (filters) => {
                             SD.[id_servicio_datos],
                             SD.[lugar_origen],
                             SD.[lugar_destino],
-                            SD.[tarifa]
+                            SD.[tarifa],
+                            SD.[tiempo_estimado]
                         FROM [Troqueros].[dbo].[Servicios_datos] SD
                         WHERE SD.[id_servicio] = SP.[id_servicio] AND [active] = @Active
                         FOR JSON PATH
