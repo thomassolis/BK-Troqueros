@@ -5,7 +5,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
-import { GroupServicesByRequets, transformarDatos } from '../../auxiliary functions/functionAuxiliary.js';
+import { ChangeStructureRequest } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Obtiene la información de una petición
 export const GetRequestByID = async (id) => {
@@ -68,7 +68,7 @@ export const GetRequestByID = async (id) => {
         }));
 
         return {
-            data: transformarDatos(data)
+            data: ChangeStructureRequest(data)
         };
         
     } catch (error) {
