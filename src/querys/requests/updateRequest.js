@@ -22,7 +22,7 @@ export const UpdateRequest = async (request) => {
 
         // Suma las tarifas de los servicios
         // Obtiene el monto total de los servicios solicitados
-        for (const item of request.servicios) {
+        for (const item of request.servicios || []) {
             monto += item.tarifa ? item.tarifa : 0;
 
             // Suma los precios de los costos extras si existen
@@ -32,24 +32,26 @@ export const UpdateRequest = async (request) => {
                 }
             }
         }
-
-        for (const item of request.nuevos_servicios) {
-            monto += item.tarifa ? item.tarifa : 0;
+        
+        for (const item of request.nuevos_servicios || []) {
+            monto += (item.tarifa ? item.tarifa : 0);
 
             // Suma los precios de los costos extras si existen
             if (Array.isArray(item.costos_extras)) {
                 for (const costo of item.costos_extras) {
-                    monto += costo.precio ? costo.precio : 0;
+                    monto += (costo.precio ? costo.precio : 0);
                 }
             }
         }
-
+        
         // Valida si la petición es por proveedor
         // Calcula el profit
         if (request?.precio_proveedor) {
-            profit = request.servicios[0].tarifa - request.precio_proveedor;
+            profit = request.servicios && request.servicios.length > 0 
+                ? (request.servicios[0].tarifa - request.precio_proveedor)
+                : (request.nuevos_servicios[0].tarifa - request.precio_proveedor);
         }
-
+        console.log(request)
         const result = await transaction.request()
             .input("ID", sql.VarChar, request.id_peticion)
             .input("Cliente", sql.VarChar, request.id_cliente)
@@ -75,7 +77,10 @@ export const UpdateRequest = async (request) => {
         // Valida que se haya actualizado la petición
         if (result.rowsAffected > 0) {
             // Actualiza los servicios
-            const updatedServices = await UpdOrderServiceRequest(transaction, request.servicios);
+            // Valida si los servicios estan vacíos
+            const updatedServices = request.servicios && request.servicios.length > 0
+                ? await UpdOrderServiceRequest(transaction, request.servicios)
+                : true;
 
             // Agrega los nuevos servicios de la petición
             // Valida si los nuevos servicios estan vacíos

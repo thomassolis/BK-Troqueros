@@ -12,7 +12,7 @@ export const Ctr_UpdRequest = async (req, res) => {
 
         // Valida que se haya actualizado la petición
         if (!updatedRequest) {
-            return res.status(404).json({ success: true, message: 'Petición no actualziada.' });
+            return res.status(404).json({ success: true, message: 'Petición no actualizada.' });
         }
 
         return res.status(200).json({ success: true, message: 'Petición actualizada.' })

@@ -225,14 +225,23 @@ const schemaUpdOrderService = schemaOrderService.keys({
     })
 })
 
+// Esquema de servicios con costos extras
 const schemaUpdExtraCostsServices = schemaExtraCostsServices.keys({
     id_costos_extras: Joi.number().required().messages({
         'any.required': 'El identificador del costo extra es requerido'
     })
 })
 
+// Esquema que de servicios con costos extras (la diferencia es que encapsula los costos extras dentro de un array)
 const schemaUpdExtraCostsService = Joi.object({
     costos_extras: Joi.array().items(schemaUpdExtraCostsServices)
+});
+
+// Esquema de un servicio con proveedor
+const schemaUpdServiceSupplier = schemaServiceSupplier.keys({
+    id_pedidoServicio: Joi.number().required().messages({
+        'any.required': 'El identificador del servicio es requerido'
+    })
 });
 
 // Función que valida las posibles entradas de los datos de los servicios a actualizar
@@ -264,6 +273,30 @@ const ValidateSchemaUpdServices = Joi.custom((value, helpers) => {
     return result.value;
 });
 
+
+// Valida el esquema cuando la petición es con proveedor
+const ValidateSchemaUpdSupplier = Joi.custom((value, helpers) => {
+    const hasEntregaVacio = 'entrega_vacio' in value && value.entrega_vacio === true; // Comprueba si el servicio tiene entrega vacío
+
+    let schema;
+
+    // Comprueba el tipo de esquema dependiendo del servicio
+    if (hasEntregaVacio) { // Valida si el servicio incluye entrega vacío
+        schema = schemaUpdServiceSupplier.concat(schemaServiceSupplierEntregaVacio);
+    } else {
+        schema = schemaUpdServiceSupplier;
+    }
+
+    const result = schema.validate(value, { abortEarly: false });
+
+    // En caso de error retornar el mensaje
+    if (result.error) {
+        return helpers.error('any.custom', { message: result.error.details[0].message });
+    }
+
+    return result.value;
+});
+
 // Esquema general para actualizar una petición
 export const schemaUpdRequest = schemaRequest
 .fork(['status'], (schema) => schema.forbidden())
@@ -283,14 +316,18 @@ export const schemaUpdRequest = schemaRequest
 });
 
 // Esquema general de una petición con entrega proveedor
-export const schemaUpdEntregaProveedor = schemaUpdRequest.keys({
-    servicios: Joi.array().items(ValidateSchemaUpdServices).max(1).required().messages({
-        'any.required': 'Debe incluir al menos un servicio.',
+export const schemaUpdEntregaProveedor = schemaEntregaProveedor.keys({
+    id_peticion: Joi.string().required().messages({
+        'any.required': 'El identificados de la petición es requerido',
+        'string.empty': 'El identificador de la petición es requerido'
+    }),
+    servicios: Joi.array().items(ValidateSchemaUpdSupplier).min(1).max(1).optional().messages({
+        'array.min': 'Debe incluir al menos un servicio.',
         'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
-    nuevos_servicios: Joi.array().items(ValidateSchemaSupplier).max(1).required().messages({
-        'any.required': 'Debe incluir al menos un servicio.',
+    nuevos_servicios: Joi.array().items(ValidateSchemaSupplier).min(1).max(1).optional().messages({
+        'array.min': 'Debe incluir al menos un servicio.',
         'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
