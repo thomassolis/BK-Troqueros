@@ -77,7 +77,7 @@ export const GetRequests = async (filters) => {
         if (status) {
             request.input("Status", sql.VarChar, status);
 
-            conditions.push(`PP.[status] LIKE '%' + @Status + '%'`);
+            conditions.push(`P.[status] LIKE '%' + @Status + '%'`);
         }
 
         // Construye las condiciones de la consulta
