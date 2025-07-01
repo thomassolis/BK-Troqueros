@@ -55,12 +55,9 @@ export const BuildArray = (arrayServices, arrayServicesInserted) => {
     return resultado;
 };
 
-
-export const transformarDatos = (arrayPlano) => {
-    console.log('entro')
-    if (arrayPlano.length === 0) return null;
-
-    const primerRegistro = arrayPlano[0];
+// Cambia la estructura del Objeto (Petición)
+export const ChangeStructureRequest = (request) => {
+    const primerRegistro = request[0];
 
     const estructura = {
         id_peticion: primerRegistro.id_peticion,
@@ -78,10 +75,11 @@ export const transformarDatos = (arrayPlano) => {
 
     const serviciosMap = new Map();
 
-    // Si ya existe el servicio en el map, solo agregas costos extras si aplica
-    arrayPlano.forEach(item => {
+    
+    request.forEach(item => {
         const idServicio = item.id_Pedido_Servicio;
 
+        // Si ya existe el servicio en el map, solo agregas costos extras si aplica
         if (serviciosMap.has(idServicio)) {
             const servicioExistente = serviciosMap.get(idServicio);
 
@@ -104,7 +102,7 @@ export const transformarDatos = (arrayPlano) => {
                 tarifa: item.tarifa,
             };
 
-            // Si existe entrega_vacio o fecha_limite, los agregas
+            // Si existe entrega_vacio y fecha_limite, los agregas
             if (item.entrega_vacio && item.fecha_limite) {
                 servicio.entrega_vacio = item.entrega_vacio;
                 servicio.fecha_limite = item.fecha_limite;
