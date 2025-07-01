@@ -51,7 +51,7 @@ export const UpdateRequest = async (request) => {
                 ? (request.servicios[0].tarifa - request.precio_proveedor)
                 : (request.nuevos_servicios[0].tarifa - request.precio_proveedor);
         }
-        console.log(request)
+        
         const result = await transaction.request()
             .input("ID", sql.VarChar, request.id_peticion)
             .input("Cliente", sql.VarChar, request.id_cliente)
