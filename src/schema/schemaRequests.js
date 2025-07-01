@@ -26,7 +26,6 @@ const schemaOrderService = Joi.object({
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
     }),
     entrega_vacio: Joi.boolean().optional().default(false),
-    status: Joi.string().default('No Disponible'),
 }).xor('id_chasis', 'id_furgon')
 .error(errors => {
     for (const err of errors) {
@@ -53,22 +52,23 @@ const schemaOrderServiceEntregaVacio = schemaOrderService.keys({
     }),
 });
 
+// Esquema cuando el servicio incluye costos extras
+const schemaExtraCostsServices = Joi.object({
+    precio: Joi.number().precision(2).required().greater(0).messages({
+        'any.required': 'El precio del costo extra es requerido.',
+        'number.base': 'El precio del costo extra debe ser un valor numérico.',
+        'number.greater': 'El precio del costo extra debe ser mayor a cero.'
+    }),
+    descripcion: Joi.string().trim().max(50).required().messages({
+        'any.required': 'La descripción del costo extra es requerido.',
+        'string.empty': 'La descripción del costo extra no puede estar vacío.',
+        'string.max': 'La descripción no pueder ser más de 50 caracteres.'
+    }),
+});
+
 // Esquema que incluye costos extras por servicio
 const schemaExtraCostsService = schemaOrderService.keys({
-    costos_extras: Joi.array().items(
-        Joi.object({
-            precio: Joi.number().precision(2).required().greater(0).messages({
-                'any.required': 'El precio del costo extra es requerido.',
-                'number.base': 'El precio del costo extra debe ser un valor numérico.',
-                'number.greater': 'El precio del costo extra debe ser mayor a cero.'
-            }),
-            descripcion: Joi.string().trim().max(50).required().messages({
-                'any.required': 'La descripción del costo extra es requerido.',
-                'string.empty': 'La descripción del costo extra no puede estar vacío.',
-                'string.max': 'La descripción no pueder ser más de 50 caracteres.'
-            }),
-        }),
-    ),    
+    costos_extras: Joi.array().items(schemaExtraCostsServices)
 });
 
 // Esquema de servicio para proveedor
@@ -202,9 +202,8 @@ export const schemaEntregaProveedor = schemaRequest.keys({
         'number.base': 'El precio del proveedor debe ser un valor numérico.',
         'number.greater': 'El precio del proveedor debe ser mayor a cero.'
     }),
-    servicios: Joi.array().items(ValidateSchemaSupplier).min(1).max(1).required().messages({
+    servicios: Joi.array().items(ValidateSchemaSupplier).max(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
-        'array.min': 'Debe incluir al menos un servicio.',
         'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
@@ -226,20 +225,31 @@ const schemaUpdOrderService = schemaOrderService.keys({
     })
 })
 
+const schemaUpdExtraCostsServices = schemaExtraCostsServices.keys({
+    id_costos_extras: Joi.number().required().messages({
+        'any.required': 'El identificador del costo extra es requerido'
+    })
+})
+
+const schemaUpdExtraCostsService = Joi.object({
+    costos_extras: Joi.array().items(schemaUpdExtraCostsServices)
+});
+
 // Función que valida las posibles entradas de los datos de los servicios a actualizar
 const ValidateSchemaUpdServices = Joi.custom((value, helpers) => {
-    const hasEntregaVacion = 'entrega_vacio' in value && value.entrega_vacio === true; // Comprueba si el servicio tiene entrega vacío
-    const hasExtraCosts = 'precio' in value || 'descripcion' in value; // Comprueba si el servicio tiene costos extras
+    const hasEntregaVacio = 'entrega_vacio' in value && value.entrega_vacio === true; // Comprueba si el servicio tiene entrega vacío
+    // Comprueba si el servicio tiene costos extras
+    const hasExtraCosts = Array.isArray(value.costos_extras) && value.costos_extras.length > 0;
 
     let schema;
 
     // Comprueba el tipo de esquema dependiendo del servicio
-    if (hasEntregaVacion && hasExtraCosts) { // Valida si el servicio incluye entrega vacío y costos extras
-        schema = schemaOrderServiceEntregaVacio.concat(schemaExtraCostsService).concat(schemaUpdOrderService);
-    } else if (hasEntregaVacion) { // Valida si el servicio incluye entrega vacio
+    if (hasEntregaVacio && hasExtraCosts) { // Valida si el servicio incluye entrega vacío y costos extras
+        schema = schemaOrderServiceEntregaVacio.concat(schemaUpdExtraCostsService).concat(schemaUpdOrderService);
+    } else if (hasEntregaVacio) { // Valida si el servicio incluye entrega vacio
         schema = schemaOrderServiceEntregaVacio.concat(schemaUpdOrderService);
     } else if (hasExtraCosts) { // Valaida si el servicio incluye costos extras
-        schema = schemaExtraCostsService.concat(schemaUpdOrderService);
+        schema = schemaUpdOrderService.concat(schemaUpdExtraCostsService);
     } else { // Valida si el servicio no incluye entrega vacio o costos extras
         schema = schemaUpdOrderService;
     }
@@ -267,20 +277,32 @@ export const schemaUpdRequest = schemaRequest
         'array.min': 'Debe incluir al menos un servicio.',
         'any.custom': '{{#message}}'
     }),
-    nuevos_servicios: Joi.array().items(ValidateSchema).min(1).optional().messages({
+    nuevos_servicios: Joi.array().items(ValidateSchema).optional().messages({
         'any.custom': '{{#message}}'
     }),
 });
 
 // Esquema general de una petición con entrega proveedor
 export const schemaUpdEntregaProveedor = schemaUpdRequest.keys({
-    servicios: Joi.array().items(ValidateSchemaUpdServices).min(1).required().messages({
+    servicios: Joi.array().items(ValidateSchemaUpdServices).max(1).required().messages({
         'any.required': 'Debe incluir al menos un servicio.',
-        'array.min': 'Debe incluir al menos un servicio.',
+        'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
-    nuevos_servicios: Joi.array().items(ValidateSchemaSupplier).min(1).optional().messages({
+    nuevos_servicios: Joi.array().items(ValidateSchemaSupplier).max(1).required().messages({
+        'any.required': 'Debe incluir al menos un servicio.',
+        'array.max': 'Solo se permite un servicio por proveedor.',
         'any.custom': '{{#message}}'
     }),
+}).xor('servicios', 'nuevos_servicios')
+.error(errors => {
+    for (const err of errors) {
+        if (err.code === 'object.xor') {
+            err.message = 'Solo se permite un servicio por proveedor';
+        } else if (err.code === 'object.missing') {
+            err.message = 'Debe incluir al menos un servicio';
+        }
+    }
+    return errors;
 })
 

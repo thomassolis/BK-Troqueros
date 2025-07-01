@@ -6,7 +6,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { AddExtraCostsOrderServices } from './addExtraCost.js';
 
 // Inserta los servicios de las peticiones
-export const InsertOrderServices = async (transaction, services, idRequest, costosExtras) => {
+export const InsertOrderServices = async (transaction, services, idRequest) => {
     try {
         const request = await transaction.request();
         request.input("IDPeticion", sql.VarChar, idRequest);
@@ -60,7 +60,7 @@ export const InsertOrderServices = async (transaction, services, idRequest, cost
         // Valida si se insertaron los servicios de la petición
         if (result.recordset.length > 0 && result.rowsAffected.length > 0 || result.rowsAffected > 0) {
             // Agrega los costos extras de los servicios
-            const addedExtrasCost = await AddExtraCostsOrderServices(transaction, services, result.recordset, costosExtras)
+            const addedExtrasCost = await AddExtraCostsOrderServices(transaction, services, result.recordset)
 
             return addedExtrasCost;
         }
