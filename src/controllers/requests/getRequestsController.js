@@ -9,6 +9,7 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_GetRequests = async (req, res) => {
     try {
         const filters = req.query; // Obtiene los filtros
+        console.log('filters', filters);
 
         const requests = await GetRequests(filters); // Obtiene las peticiones del sistema
 
