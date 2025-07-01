@@ -14,6 +14,7 @@ const PAGE_SIZE = 20;
 export const GetRequests = async (filters) => {
     try {
         const page = filters.page ? parseInt(filters.page) : 1;
+        const idPeticion = filters.idPeticion ? filters.idPeticion : null;
         const nameService = filters.nameService ? filters.nameService : null;
         const nameDriver = filters.nameDriver ? filters.nameDriver : null;
         const nameCustomer = filters.nameCustomer ? filters.nameCustomer : null;
@@ -56,28 +57,29 @@ export const GetRequests = async (filters) => {
             
         `;
         const conditions = [];
+        if (idPeticion) {
+            request.input("IdPeticion", sql.VarChar, idPeticion);
+            conditions.push(`P.[id_peticion] = @IdPeticion`);
+        }
+
         if (nameService) {
             request.input("NameService", sql.VarChar, nameService);
-
             conditions.push(`S.[nombre] LIKE '%' + @NameService + '%'`);
         }
 
         if (nameDriver) {
             request.input("NameDriver", sql.VarChar, nameDriver);
-
             conditions.push(`CO.[nombre] LIKE '%' + @NameDriver + '%'`);
         }
 
         if (nameCustomer) {
             request.input("NameCustomer", sql.VarChar, nameCustomer);
-
             conditions.push(`C.[nombre] LIKE '%' + @NameCustomer + '%'`);
         }
 
         if (status) {
             request.input("Status", sql.VarChar, status);
-
-            conditions.push(`P.[status] LIKE '%' + @Status + '%'`);
+            conditions.push(`P.[status] = @Status`);
         }
 
         // Construye las condiciones de la consulta
