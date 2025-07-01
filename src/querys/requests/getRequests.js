@@ -46,6 +46,7 @@ export const GetRequests = async (filters) => {
                     F.[placa] AS furgon
                 FROM Peticiones P
                 LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
+                LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
                 LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
                 LEFT JOIN Servicios S ON S.[id_servicio] = SD.[id_servicio]
                 LEFT JOIN Conductores CO ON CO.[id_conductor] = PS.[id_conductor]
