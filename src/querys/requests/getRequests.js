@@ -59,7 +59,7 @@ export const GetRequests = async (filters) => {
         const conditions = [];
         if (idPeticion) {
             request.input("IdPeticion", sql.VarChar, idPeticion);
-            conditions.push(`P.[id_peticion] = @IdPeticion`);
+            conditions.push(`P.[id_peticion] LIKE '%' + @IdPeticion + '%'`);
         }
 
         if (nameService) {
