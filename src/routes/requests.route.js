@@ -16,6 +16,7 @@ import { Ctr_UpdateStatusRequest } from '../controllers/requests/updateStatusReq
 import { Mdlware_ValidateDataUpdRequest } from '../middlewares/requests/validateDataUpdRequest.middleware.js';
 import { Ctr_UpdRequest } from '../controllers/requests/updateRequestController.js';
 import { Ctr_DeleteServiceRequest } from '../controllers/requests/deleteServiceRequestController.js';
+import { Ctr_DeleteExtraCostsRequest } from '../controllers/requests/deleteExtraCostsController.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -56,6 +57,9 @@ router.put('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddlewar
 router.patch('/update_status_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusRequest);
 
 // Elimina un servicio de la petición (incluye costos extras)
-router.delete('/delete_service_request/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteServiceRequest)
+router.delete('/delete_service_request/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteServiceRequest);
+
+// Elimina los costos extras de un servicio
+router.delete('/delete_extra_costs_request/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteExtraCostsRequest);
 
 export default router;

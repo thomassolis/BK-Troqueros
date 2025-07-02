@@ -22,8 +22,8 @@ export const Ctr_DeleteServiceRequest = async (req, res) => {
 
         return res.status(200).json({  success: true, message: 'Servicio eliminado correctamente.'})
     } catch (error) {
-        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
-        HandleError(code, error.message, 'controllers/requests/insertRequestsController/Ctr_InsertRequest', error);
+        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.DELETE);
+        HandleError(code, error.message, 'controllers/requests/deleteServiceRequestController/Ctr_DeleteServiceRequest', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde.` });
     }
 }
