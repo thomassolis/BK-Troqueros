@@ -9,7 +9,7 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_GetRequestsDrivers = async (req, res) => {
     try {
         let filters = req.query; // Obtiene la fecha y hora de salida de la petición
-
+        console.log(filters)
         const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
         if (!isValid) {
@@ -27,6 +27,7 @@ export const Ctr_GetRequestsDrivers = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'Data Enviada', data: drivers });
     } catch (error) {
+        console.error(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.DRIVERS.GET);
         HandleError(code, error.message, 'controllers/requests/getRequestDriversController/Ctr_GetRequestsDrivers', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
