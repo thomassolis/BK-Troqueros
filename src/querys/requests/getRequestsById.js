@@ -20,6 +20,7 @@ export const GetRequestByID = async (id) => {
                         CE.[id_Costos_Extras],
                         PR.[id_proveedor],
                         C.[id_cliente],
+                        S.[id_servicio],
                         C.[nombre] AS cliente,
                         PR.[nombre] AS proveedor,
                         S.[nombre] AS servicio,
