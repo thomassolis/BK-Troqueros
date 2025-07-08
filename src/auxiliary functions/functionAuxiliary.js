@@ -97,6 +97,8 @@ export const ChangeStructureRequest = (request) => {
                 id_servicio_datos: item.id_servicio_datos,
                 id_servicio: item.id_servicio,
                 servicio: item.servicio,
+                lugar_origen: item.lugar_origen,
+                lugar_destino: item.lugar_destino,
                 id_conductor: item.conductor,
                 id_chasis: item.chasis,
                 id_cabezal: item.cabezal,
