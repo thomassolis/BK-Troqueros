@@ -59,13 +59,11 @@ export const GetRequestByID = async (id) => {
             return [];
         }
 
-        let data = result.recordset.map(({fecha_creacion, fecha_salida, fecha_limite, hora_salida, fecha_finalizacion, ...rest}) => ({
+        let data = result.recordset.map(({fecha_salida, fecha_limite, hora_salida, ...rest}) => ({
             ...rest,
-            fecha_creacion: DateConverter(fecha_creacion),
-            fecha_salida: DateConverter(fecha_salida),
+            fecha_salida: fecha_salida.toISOString().split('T')[0], // Obtine la fecha (YYYY-MM-DD)
             hora_salida: ParseTime(hora_salida),
-            fecha_finalizacion: DateConverter(fecha_finalizacion),
-            fecha_limite: DateConverter(fecha_limite)
+            fecha_limite: fecha_salida ? fecha_salida.toISOString().split('T')[0] : null
         }));
 
         return {
