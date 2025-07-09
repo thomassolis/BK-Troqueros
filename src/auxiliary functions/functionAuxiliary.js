@@ -99,10 +99,14 @@ export const ChangeStructureRequest = (request) => {
                 servicio: item.servicio,
                 lugar_origen: item.lugar_origen,
                 lugar_destino: item.lugar_destino,
-                id_conductor: item.conductor,
-                id_chasis: item.chasis,
-                id_cabezal: item.cabezal,
-                id_furgon: item.furgon,
+                id_conductor: item.id_conductor,
+                id_chasis: item.id_chasis,
+                id_cabezal: item.id_cabezal,
+                id_furgon: item.id_furgon,
+                conductor: item.conductor,
+                chasis: item.chasis,
+                cabezal: item.cabezal,
+                furgon: item.furgon,
                 tarifa: item.tarifa,
             };
 
