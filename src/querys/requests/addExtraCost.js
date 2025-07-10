@@ -22,7 +22,7 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
 
         newArray.forEach((item, index) => {
             // Valida si el servicio incuye costos extras
-            if (!item?.precio && !item?.descripcion) {
+            if (!item?.precio || !item?.descripcion) {
                 return; // Continua con la otra iteración
             }
             request.input(`Id_Pedido_Servicio${index}`, sql.Int, item.id_Pedido_Servicio);
@@ -54,5 +54,58 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/addExtraCost/AddExtraCostsOrderServices', error);
         throw new Error(`Ha ocurrido un error al insertar los costos extras de los servicios`);
+    }
+}
+
+
+// Agrega nuevos costos extras a los servicios existentes (pedidos)
+export const AddNewExtraCostsOrderSrvices = async (transaction, services) => {
+    try {
+        const request = await transaction.request();
+
+        let query = `
+            INSERT INTO [Troqueros].[dbo].[Costos_Extras] ([id_Pedido_Servicio], [precio], [descripcion])
+                VALUES 
+        `;
+
+        const values = [];
+
+        services.forEach((item, index) => {
+            // Valida si el servicio tiene nuevos costos extras
+            if (!Array.isArray(item.nuevos_costos_extras)) {
+                return;
+            }
+
+            for (const newExtraCost of item.nuevos_costos_extras) {
+                request.input(`Id_Pedido_Servicio${index}`, sql.Int, item.id_pedidoServicio);
+                request.input(`Precio${index}`, sql.Float, newExtraCost.precio);
+                request.input(`Descripcion${index}`, sql.VarChar, newExtraCost.descripcion);
+
+                // Agrega los valores a una lista
+                values.push(`(
+                    @Id_Pedido_Servicio${index}, @Precio${index}, @Descripcion${index}
+                )`);
+            }
+        });
+
+        // Valida si hay costos por agregar en los servicios
+        if (values.length === 0) {
+            return true;
+        }
+
+        query += values.join(', ');
+        
+        const result = await request.query(query);
+
+        // Valida que se haya insertado los costos extras
+        if (result.rowsAffected > 0) {
+            return true;
+        }
+
+        return false;
+    } catch (error) {
+        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
+        HandleError(code, error.message, 'querys/requests/addExtraCost/AddNewExtraCostsOrderSrvices', error);
+        throw new Error(`Ha ocurrido un error al agregar los nuevos costos del servicio`);
     }
 }

@@ -7,6 +7,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { UpdOrderServiceRequest } from './updateOrderServices.js';
 import { InsertOrderServices } from './insertOrderService.js';
 import { GetTime } from '../../auxiliary functions/dateConverter.js';
+import { GetTotalPricePerService } from '../../auxiliary functions/functionAuxiliary.js';
 
 
 // Actualiza la información de una petición
@@ -17,32 +18,11 @@ export const UpdateRequest = async (request) => {
         transaction = new sql.Transaction(pool); // Instanciamos un objeto Transaction
         await transaction.begin(); // Iniciamos la transaction
 
-        let monto = 0; // Declaramos monto con valor inicial de 0
+        // Obtiene el monto total de la petición
+        let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto de los servicios registrados
+        monto += GetTotalPricePerService(request.nuevos_servicios || []); // Obtiene el monto de los servicios nuevos
+
         let profit = 0; // Declaramos profit con valor inicial de 0
-
-        // Suma las tarifas de los servicios
-        // Obtiene el monto total de los servicios solicitados
-        for (const item of request.servicios || []) {
-            monto += item.tarifa ? item.tarifa : 0;
-
-            // Suma los precios de los costos extras si existen
-            if (Array.isArray(item.costos_extras)) {
-                for (const costo of item.costos_extras) {
-                    monto += costo.precio ? costo.precio : 0;
-                }
-            }
-        }
-        
-        for (const item of request.nuevos_servicios || []) {
-            monto += (item.tarifa ? item.tarifa : 0);
-
-            // Suma los precios de los costos extras si existen
-            if (Array.isArray(item.costos_extras)) {
-                for (const costo of item.costos_extras) {
-                    monto += (costo.precio ? costo.precio : 0);
-                }
-            }
-        }
         
         // Valida si la petición es por proveedor
         // Calcula el profit

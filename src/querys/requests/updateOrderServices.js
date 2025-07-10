@@ -5,6 +5,7 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { UpdExtraCostsRequest } from './updateExtraCosts.js';
 import { request } from 'express';
+import { AddExtraCostsOrderServices, AddNewExtraCostsOrderSrvices } from './addExtraCost.js';
 
 // Actualiza os datos de la petición
 export const UpdOrderServiceRequest = async (transaction, services) => {
@@ -40,8 +41,14 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
         const result = await request.query(query);
         if (result.rowsAffected > 0 || result.rowsAffected.length > 0) {
             // Actualiza los costos extras
+            // Agrega nuevos costos extras
             const updatedExtraCosts = await UpdExtraCostsRequest(transaction, services);
-            return updatedExtraCosts;
+            const addExtraCosts = await AddNewExtraCostsOrderSrvices(transaction, services)
+
+            // Valida que se haya actualizado los costos extras y se hayan guardado los nuevos costos extras
+            if (updatedExtraCosts && addExtraCosts) {
+                return true;
+            }
         }
         
         return false;

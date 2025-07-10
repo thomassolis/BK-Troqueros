@@ -134,3 +134,40 @@ export const ChangeStructureRequest = (request) => {
 
     return estructura;
 }
+
+
+// Obtiene el precio total de los servicios
+export const GetTotalPricePerService = (services) => {
+    try {
+        // Valida que el servicio sea un array
+        if (!Array.isArray(services)) {
+            return 0; // De lo contrario retorna 0
+        }
+
+        let monto = 0;
+
+        // Suma las tarifas de los servicios
+        // Obtiene el monto total de los servicios solicitados
+        // Suma los costos extras
+        for (const item of services || []) {
+            monto += (item.tarifa ? item.tarifa : 0);
+            
+            // Suma los precios de los costos extras si existen
+            if (Array.isArray(item.costos_extras)) {
+                for (const costo of item.costos_extras) {
+                    monto += (costo.precio ? costo.precio : 0);
+                }
+            }
+
+            if (Array.isArray(item.nuevos_costos_extras)) {
+                for (const costo of item.nuevos_costos_extras) {
+                    monto += (costo.precio ? costo.precio : 0);
+                }
+            }
+        }
+
+        return monto;
+    } catch (error) {
+        throw new Error(`Error al obtener el total de los costos extras, ${error}`);        
+    }
+}
