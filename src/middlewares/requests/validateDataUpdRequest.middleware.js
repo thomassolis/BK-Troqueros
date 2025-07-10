@@ -10,6 +10,9 @@ import {
 export const Mdlware_ValidateDataUpdRequest = (req, res, next) =>{
     try {
         const data = req.body; // Obtenemos los datos de la petición
+        console.dir(data, { depth: null });
+
+        // console.log('Ctr_UpdRequest', data)
 
         // Valida que los datos de la petición no sea undefined
         if (!data || !Object.keys(data).length) {
