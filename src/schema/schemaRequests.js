@@ -1,5 +1,21 @@
 import Joi from 'joi';
 
+// Valida que las fechas no sean menores a la fecha actual
+const ValidateNotPastDate = (value, helpers) => {
+    const selectedDate = new Date(value);
+        const currentDate = new Date();
+
+        // Limpiar la hora para comparar solo la fecha
+        selectedDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < currentDate) {
+            return helpers.error('date.minToday');
+        }
+
+        return value;
+}
+
 // Esquema para los servicios de las peticiones
 const schemaOrderService = Joi.object({
     id_servicio_datos: Joi.number().required().messages({
@@ -45,10 +61,11 @@ const schemaOrderServiceEntregaVacio = schemaOrderService.keys({
     entrega_vacio: Joi.boolean().required().messages({
         'any.required': 'El campo entrega vacío es requerido.'
     }),
-    fecha_limite: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().messages({
+    fecha_limite: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().custom(ValidateNotPastDate).messages({
         'any.required': 'El campo fecha limite es requerido.',
         'string.empty': 'El campo fecha limite no puede estar vacío.',
-        'string.pattern.base': 'La fecha limite debe tener el formato año-mes-dia.'
+        'string.pattern.base': 'La fecha limite debe tener el formato año-mes-dia.',
+        'date.minToday': 'La fecha limite no puede ser menor a la fecha actual.'
     }),
 });
 
@@ -91,10 +108,11 @@ const schemaServiceSupplierEntregaVacio = schemaServiceSupplier.keys({
     entrega_vacio: Joi.boolean().required().messages({
         'any.required': 'El campo entrega vacío es requerido.'
     }),
-    fecha_limite: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().messages({
+    fecha_limite: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().custom(ValidateNotPastDate).messages({
         'any.required': 'El campo fecha limite es requerido.',
         'string.empty': 'El campo fecha limite no puede estar vacío.',
-        'string.pattern.base': 'La fecha limite debe tener el formato año-mes-dia.'
+        'string.pattern.base': 'La fecha limite debe tener el formato año-mes-dia.',
+        'date.minToday': 'La fecha limite no puede ser menor a la fecha actual.'
     }),
 })
 
@@ -158,9 +176,10 @@ export const schemaRequest = Joi.object({
         'any.required': 'El campo cliente es requerido.',
         'string.empty': 'El campo cliente no puede estar vacío.'
     }),
-    fecha_salida: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().messages({
+    fecha_salida: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().custom(ValidateNotPastDate).messages({
         'any.required': 'El campo fecha de salida es requerido.',
-        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.'
+        'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.',
+        'date.minToday': 'La fecha de salida no puede ser menor a la fecha actual.'
     }),
     hora_salida: Joi.string().custom((value, helpers) => {
         const [hora, minuto, segundo] = value.split(':').map(Number);
