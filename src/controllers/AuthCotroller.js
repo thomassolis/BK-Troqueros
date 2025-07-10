@@ -75,11 +75,11 @@ export const ctrAuthentication = async (req, res) => {
         }
 
         // Enviar el token en las cookies
-        res.cookie('token', token, {
+        res.cookie('Troquero-Token', token, {
             httpOnly: true,        // La cookie no puede ser accedida por JavaScript
             secure: true,          // La cookie solo se enviará a través de HTTPS
             sameSite: 'Strict',    // La cookie solo se enviará para solicitudes del mismo dominio
-            maxAge: 36000000        // La cookie expirará en 10 hora
+            maxAge: 32400000       // La cookie expirará en 9 hora
         });
 
         //Actualiza el numero de intentos
