@@ -6,6 +6,7 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertOrderServices } from './insertOrderService.js';
 import { GetTime } from '../../auxiliary functions/dateConverter.js';
+import { GetTotalPricePerService } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Crea una nueva petición
 export const InsertNewRequest = async (request) => {
@@ -28,28 +29,15 @@ export const InsertNewRequest = async (request) => {
             throw new Error('Ha ocurrido un error al crear la petición');
         }
 
-        let monto = 0; // Declaramos monto con valor inicial de 0
+        let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto total de los servicios
         let profit = 0 // Declaramos el profit con valor inicial de 0
-
-        // Suma las tarifas de los servicios
-        // Obtiene el monto total de los servicios solicitados
-        for (const item of request.servicios) {
-            monto += item.tarifa ? item.tarifa : 0;
-
-            // Suma los precios de los costos extras si existen
-            if (Array.isArray(item.costos_extras)) {
-                for (const costo of item.costos_extras) {
-                    monto += costo.precio ? costo.precio : 0;
-                }
-            }
-        }
 
         // Valida si la petición es por proveedor
         // Calcula el profit
         if (request?.precio_proveedor) {
             profit = request.servicios[0].tarifa - request.precio_proveedor;
         }
-        console.log(request.hora_salida)
+        
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)

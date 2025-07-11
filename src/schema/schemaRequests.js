@@ -234,7 +234,8 @@ const schemaUpdExtraCostsServices = schemaExtraCostsServices.keys({
 
 // Esquema que de servicios con costos extras (la diferencia es que encapsula los costos extras dentro de un array)
 const schemaUpdExtraCostsService = Joi.object({
-    costos_extras: Joi.array().items(schemaUpdExtraCostsServices)
+    costos_extras: Joi.array().items(schemaUpdExtraCostsServices),
+    nuevos_costos_extras: Joi.array().items(schemaExtraCostsServices),
 });
 
 // Esquema de un servicio con proveedor
@@ -248,7 +249,10 @@ const schemaUpdServiceSupplier = schemaServiceSupplier.keys({
 const ValidateSchemaUpdServices = Joi.custom((value, helpers) => {
     const hasEntregaVacio = 'entrega_vacio' in value && value.entrega_vacio === true; // Comprueba si el servicio tiene entrega vacío
     // Comprueba si el servicio tiene costos extras
-    const hasExtraCosts = Array.isArray(value.costos_extras) && value.costos_extras.length > 0;
+    const hasExtraCosts =
+        (Array.isArray(value.costos_extras) && value.costos_extras.length > 0) ||
+        (Array.isArray(value.nuevos_costos_extras) && value.nuevos_costos_extras.length > 0);
+
 
     let schema;
 
