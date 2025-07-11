@@ -13,33 +13,41 @@ export const GetRequestDrivers = async (filters) => {
             .input("FechaSalida", sql.Date, filters.fecha_salida)
             .input("HoraSalida", sql.Time, filters.hora_salida)
             .query(`
+                    WITH ServiciosPorConductor AS (
+                        SELECT 
+                            PS.[id_conductor],
+                            P.[fecha_salida],
+                            MIN(P.[hora_salida]) AS hora_salida,
+                            SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
+                        FROM Pedido_Servicio PS
+                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion] AND P.[fecha_salida] = @FechaSalida
+                        INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                        GROUP BY
+                            PS.[id_conductor], 
+                            P.[fecha_salida]
+                    )
+
                     SELECT 
                         C.[id_conductor],
                         C.[nombre] + ' ' + C.[apellido] +
                         CASE
-                            WHEN P.[fecha_salida] = @FechaSalida AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SUM(SD.[tiempo_estimado]), MIN(P.[hora_salida])))
-                                THEN 
-                                    ' (' 
-                                    + CONVERT(varchar(5), MIN(P.[hora_salida]), 108) + ' - ' 
-                                    + CONVERT(varchar(5), DATEADD(HOUR, SUM(SD.[tiempo_estimado]), MIN(P.[hora_salida])), 108) 
-                                    + ')'
-                                ELSE ''
+                            WHEN SPC.[fecha_salida] IS NOT NULL 
+                                AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]))
+                            THEN 
+                                ' (' 
+                                + CONVERT(varchar(5), SPC.[hora_salida], 108) + ' - ' 
+                                + CONVERT(varchar(5), DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]), 108) 
+                                + ')'
+                            ELSE ''
                         END AS nombre,
-                        IIF(P.[fecha_salida] = @FechaSalida
-                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SUM(SD.[tiempo_estimado]), MIN(P.[hora_salida]))), 
+                        IIF(SPC.[fecha_salida] = @FechaSalida
+                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida])), 
                             1, 
                             0
                         ) AS success
-                    FROM [Troqueros].[dbo].[Conductores] C
-                        LEFT JOIN Pedido_Servicio PS ON PS.[id_conductor] = C.[id_conductor]
-                        LEFT JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion] AND P.[fecha_salida] = @FechaSalida
-                        LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                    FROM Conductores C
+                    LEFT JOIN ServiciosPorConductor SPC ON C.[id_conductor] = SPC.[id_conductor]
                     WHERE C.[status] = 'Disponible' AND C.[active] = 1
-                    GROUP BY 
-                        C.[id_conductor], 
-                        C.[nombre], 
-                        C.[apellido],
-                        P.[fecha_salida]
                 `);
 
         // Valida si la consulta arrojo datos
