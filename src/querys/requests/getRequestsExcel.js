@@ -14,6 +14,13 @@ export const GetRequestsExcel = async (filters) => {
         const nameDriver = filters.nameDriver ? filters.nameDriver : null;
         const nameCustomer = filters.nameCustomer ? filters.nameCustomer : null;
         const status = filters.status ? filters.status : null;
+        const startDate = filters.startDate ? filters.startDate : null;
+        let endDate = (filters.endDate && startDate) ? filters.endDate : null;
+
+        // Valida si la fecha startDate tiene fecha y si endDate es undefined
+        if (startDate && !endDate) {
+            endDate = new Date().toISOString().split('T')[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+        }
 
         const request = await pool.request();
 
@@ -47,6 +54,8 @@ export const GetRequestsExcel = async (filters) => {
         `;
 
         const conditions = [];
+
+        // Valida si hay filtros ha aplicar en la consulta
         if (idPeticion) {
             request.input("IdPeticion", sql.VarChar, idPeticion);
             conditions.push(`P.[id_peticion] LIKE '%' + @IdPeticion + '%'`);
@@ -70,6 +79,12 @@ export const GetRequestsExcel = async (filters) => {
         if (status) {
             request.input("Status", sql.VarChar, status);
             conditions.push(`P.[status] = @Status`);
+        }
+
+        if (startDate && endDate) {
+            request.input("StartDate", sql.Date, startDate);
+            request.input("EndDate", sql.Date, endDate);
+            conditions.push(`P.[fecha_salida] BETWEEN @StartDate AND @EndDate`);
         }
 
         // Construye las condiciones de la consulta
