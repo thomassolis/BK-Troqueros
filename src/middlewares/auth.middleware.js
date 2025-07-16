@@ -6,11 +6,12 @@ import { typeError } from '../dictionary/typeError.js';
 
 // Middleware para validar el token en las cookies
 export const ValidateTokenMiddleware = async (req, res, next) => {
-    console.log('Entraaaaa')
+
     console.log(req.params.id);
     try {
         // Leer el token desde las cookies
-        const token = req.cookies.token;
+        const token = req.cookies['Troquero-Token'];
+
         //Valida que el token exista
         if (!token) {
             return res.status(401).json({success: false, message: 'Token no proporcionado'});

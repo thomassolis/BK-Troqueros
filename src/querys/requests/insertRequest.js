@@ -34,7 +34,9 @@ export const InsertNewRequest = async (request) => {
 
         // Valida si la petición es por proveedor
         // Calcula el profit
+        console.log('request',request?.precio_proveedor)
         if (request?.precio_proveedor) {
+            console.log('Entre en profit')
             profit = request.servicios[0].tarifa - request.precio_proveedor;
         }
         
