@@ -38,7 +38,7 @@ export const UpdateRequest = async (request) => {
             .input("Proveedor", sql.VarChar, request.id_proveedor)
             .input("Monto", sql.Float, monto)
             .input("PrecioProveedor", sql.Float, request.precio_proveedor)
-            .input("Profit", sql.Float, request.profit || 0)
+            .input("Profit", sql.Float, profit || 0)
             .input("FechaSalida", sql.Date, request.fecha_salida)
             .input("HoraSalida", sql.Time, request.hora_salida)
             .query(`
