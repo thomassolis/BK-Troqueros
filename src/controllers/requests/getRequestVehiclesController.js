@@ -16,8 +16,6 @@ export const Ctr_GetRequestsVehicles = async (req, res) => {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
 
-        filters = isValid.dateTime; // Obtiene la fecha de salida y hora de salida validadas
-
         const chassis = await GetRequestChassis(filters); // Obtiene los chasis
         const truckhead = await GetRequestTruckHead(filters); // Obtiene los cabezal
         const truckvan = await GetRequestTruckVan(filters); // Obtiene los furgon
