@@ -9,7 +9,7 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_DownloadFileRequest = async (req, res) => {
     try {
         const filters = req.query; // Obtiene los filtros
-
+        console.log('Filters', filters);
         const requests = await GetRequestsExcel(filters) // Obtiene las peticiones del sistema
 
         // Valida que las peticiones no sean undefined
@@ -18,7 +18,7 @@ export const Ctr_DownloadFileRequest = async (req, res) => {
         }
 
         const buffer = await CreateTableExcelRequest(requests); // Crea la tabla con los datos de las peticiones filtrados
-        
+        console.log('buffer: ',buffer)
         if (!buffer) {
             return res.status(400).json({success: false, message: 'Ha ocurrido un error al crear el archivo. Inténtelo más tarde.'});
         }
