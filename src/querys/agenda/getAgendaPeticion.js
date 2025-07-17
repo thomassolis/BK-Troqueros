@@ -12,13 +12,16 @@ export const GetAgendaPeticion = async () => {
                 SELECT
                     'Peticion: ' + C.[nombre] AS title,
                     CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS DATETIME) AS [start],
-                    NULL AS [end],
+                    DATEADD(HOUR, ISNULL(SUM(SD.[tiempo_estimado]), 0), 
+						CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS DATETIME)
+					) AS [end],
                     CAST(0 AS BIT) AS allDay,
                     'Peticion' AS [type],
                     P.[id_peticion] AS peticion,
                     COUNT(PS.[id_Pedido_Servicio]) AS CantServicios
                 FROM [Troqueros].[dbo].[Peticiones] P
                 LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
+                LEFT JOIN [Troqueros].[dbo].[Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
                 LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
                 WHERE 
                     P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
@@ -29,7 +32,7 @@ export const GetAgendaPeticion = async () => {
                     P.[fecha_salida],
                     P.[hora_salida],
                     P.[fecha_creacion]
-                ORDER BY P.[fecha_creacion]
+                ORDER BY P.[fecha_salida]
             `);
 
         // Valida que hayan datos para mostrar
