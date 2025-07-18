@@ -81,7 +81,7 @@ export const ValidateDate = (dateTime) => {
     const currentDate = new Date(); // Obtiene la fecha actual
 
     // Valida que la fecha de salida no sea menor a la fecha actual
-    if (currentDate > dateSalida) {
+    if (currentDate >= dateSalida) {
         return { scs: false, msg: 'La fecha de salida debe ser mayor a la fecha de actual.' };
     }
 
