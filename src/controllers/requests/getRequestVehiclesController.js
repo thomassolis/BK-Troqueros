@@ -12,7 +12,7 @@ export const Ctr_GetRequestsVehicles = async (req, res) => {
         
         const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
-        // Valida que la fecha
+        // Valida que la fecha de salida no sea menor a la fecha actual
         if (!isValid) {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
