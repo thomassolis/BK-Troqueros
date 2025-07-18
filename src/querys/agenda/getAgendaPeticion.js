@@ -11,12 +11,15 @@ export const GetAgendaPeticion = async () => {
             .query(`
                 SELECT
                     'Peticion: ' + C.[nombre] AS title,
-                    CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS DATETIME) AS [start],
-                    DATEADD(HOUR, ISNULL(SUM(SD.[tiempo_estimado]), 0), 
-						CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS DATETIME)
-					) AS [end],
+                    CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS VARCHAR) AS [start],
+                    CONVERT(VARCHAR(19), 
+                        DATEADD(HOUR, ISNULL(SUM(SD.[tiempo_estimado]), 0), 
+                            CAST(CONVERT(VARCHAR(10), P.[fecha_salida], 120) + ' ' + CONVERT(VARCHAR(8), P.[hora_salida], 108) AS DATETIME)
+                        ), 120
+                    ) AS [end],
                     CAST(0 AS BIT) AS allDay,
                     'Peticion' AS [type],
+                    C.[nombre] AS cliente,
                     P.[id_peticion] AS peticion,
                     COUNT(PS.[id_Pedido_Servicio]) AS CantServicios
                 FROM [Troqueros].[dbo].[Peticiones] P
@@ -41,9 +44,10 @@ export const GetAgendaPeticion = async () => {
         }
 
         // Agrupamos los detalles de las peticiones
-        const data = result.recordset.map(({peticion, CantServicios, ...rest}) => ({
+        const data = result.recordset.map(({peticion, CantServicios, cliente, ...rest}) => ({
             ...rest,
             details: {
+                cliente,
                 peticion,
                 CantServicios
             }
