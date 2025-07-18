@@ -195,7 +195,7 @@ export const schemaRequest = Joi.object({
         }
 
         return value;
-    }).pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/).required().messages({
+    }).pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/).optional().messages({
         'any.required': 'El campo hora de salida es requerido.',
         'string.pattern.base': 'La hora de salida debe tener el formato HH:mm:ss.',
         'string.empty': 'La hora de salida no puede estar vacía.'
