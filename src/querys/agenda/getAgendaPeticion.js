@@ -26,8 +26,8 @@ export const GetAgendaPeticion = async () => {
                 LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
                 LEFT JOIN [Troqueros].[dbo].[Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
                 LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
-                WHERE 
-                    P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
+                WHERE P.[proveedor_id] IS NULL
+                    AND P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
                     AND P.[fecha_salida] < DATEADD(MONTH, 3, EOMONTH(GETDATE(), -1))
                 GROUP BY 
                     P.[id_peticion],
