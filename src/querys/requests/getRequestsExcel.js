@@ -76,7 +76,7 @@ export const GetRequestsExcel = async (filters) => {
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
         }
-
+        console.log(query)
         const result = await request.query(query);
 
         // Valida si la consulta tiene datos
