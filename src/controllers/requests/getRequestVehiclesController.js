@@ -1,4 +1,4 @@
-import { ValidateDate } from '../../auxiliary functions/dateConverter.js';
+import { GetTime, ValidateDate } from '../../auxiliary functions/dateConverter.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetRequestChassis, GetRequestTruckHead, GetRequestTruckVan } from '../../querys/requests/getRequestVehicles.js';
@@ -12,9 +12,12 @@ export const Ctr_GetRequestsVehicles = async (req, res) => {
         
         const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
+        // Valida que la fecha
         if (!isValid) {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
+
+        filters.hora_salida = GetTime(filters.hora_salida);
 
         const chassis = await GetRequestChassis(filters); // Obtiene los chasis
         const truckhead = await GetRequestTruckHead(filters); // Obtiene los cabezal
