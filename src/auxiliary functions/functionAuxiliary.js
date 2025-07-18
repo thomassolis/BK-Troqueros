@@ -130,3 +130,31 @@ export const ChangeStructureRequest = (request) => {
 
     return estructura;
 }
+
+// Verifica que si hay una entrega vacio con la misma fecha de inicio
+export const OrganizeEmptyDeliveryDates = (array) => {
+    // objeto vacio
+    const fechas = {};
+
+    return array.map(item => {
+        let cant = 1; // Suma las cantidades que se repite una misma fecha
+        const auxDate = item.start; // Obtiene la hora inicial del servicio
+
+        // Valida si la fecha está incluida dentro de la lista
+        if (auxDate in fechas) {
+            cant += fechas[auxDate];
+        }
+
+        // Convertir a objeto Date y sumar minutos
+        const endDate = new Date(auxDate);
+        endDate.setMinutes(endDate.getMinutes() + (cant * 30));
+
+        fechas[auxDate] = cant; // Guarda la cantidad de repeticiones de esa fecha
+
+        return {
+            ...item,
+            start: item.start.toISOString().replace('T', ' ').substring(0, 19),
+            end: endDate.toISOString().replace('T', ' ').substring(0, 19)
+        };  
+    });
+}

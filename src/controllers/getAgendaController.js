@@ -13,8 +13,6 @@ export const Ctr_GetAgenda = async (req, res) => {
             ...(await GetAgendaPeticion()) // Obtiene la agenda de las peticiones
         ]
 
-        console.log(agenda)
-
         return res.status(200).json({ success: true, message: 'Data Enviada', data: agenda })
     } catch (error) {
         const code = GenerateCodeError(modules.AGENDA, typeError.agendaNoEncontrada);
