@@ -4,11 +4,15 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
+import { GetTime } from '../../auxiliary functions/dateConverter.js';
 
 
 // Obtiene los conductores disponibles y activos del sistema
 export const GetRequestDrivers = async (filters) => {
     try {
+        // Parsea la hora en formato de fecha
+        filters.hora_salida = GetTime(filters.hora_salida);
+
         const result = await pool.request()
             .input("FechaSalida", sql.Date, filters.fecha_salida)
             .input("HoraSalida", sql.Time, filters.hora_salida)

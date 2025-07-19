@@ -51,11 +51,17 @@ export const DateTimeConverter = (date) => {
 
 // Obtiene la hora de la petición en Objeto Date
 export const GetTime = (time) => {
-    // Separa la hora en: horas, minutos y segundos
-    const [hours, minutes, seconds] = time.split(':').map(Number);
-
     // Crear un objeto Date con solo la parte de la hora
     const horaDate = new Date();
+
+    // Valida si la hora es undefined o vacia
+    if (!time) {
+        horaDate.setUTCHours(9, 0, 0, 0);
+        return horaDate;
+    }
+    
+    // Separa la hora en: horas, minutos y segundos
+    const [hours, minutes, seconds] = time.split(':').map(Number);    
     horaDate.setUTCHours(hours, minutes, seconds, 0);
 
     return horaDate;
@@ -79,9 +85,7 @@ export const ValidateDate = (dateTime) => {
         return { scs: false, msg: 'La fecha de salida debe ser mayor a la fecha de actual.' };
     }
 
-    dateTime.hora_salida = GetTime(dateTime.hora_salida); // Obtiene la hora en Objeto Date
-
-    return { scs: true, dateTime };
+    return { scs: true };
 }
 
 // Convierte la hora a string

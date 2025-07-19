@@ -19,7 +19,7 @@ const ValidateNotPastDate = (value, helpers) => {
 // Esquema para los servicios de las peticiones
 const schemaOrderService = Joi.object({
     id_servicio_datos: Joi.number().required().messages({
-        'any.required': 'El campo tipo de servicio es requerido. jajaja',
+        'any.required': 'El campo tipo de servicio es requerido.',
         'string.empty': 'El campo tipo de servicio no puede estar vacío.'
     }),
     id_conductor: Joi.string().required().messages({

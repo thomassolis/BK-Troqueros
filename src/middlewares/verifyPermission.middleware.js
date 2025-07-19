@@ -6,8 +6,7 @@ import { modules } from '../dictionary/modules.js';
 import { typeError } from '../dictionary/typeError.js';
 
 //controlador para verificar los permisos del usuario
-export const VerifyPermissionMiddleware = (module) => {    
-    console.log('Entra2')
+export const VerifyPermissionMiddleware = (module) => {        
     return async (req, res, next) => {
         try {
             const rol = GetSessionUserInfo().rol; //obtenemos el rol del usuario

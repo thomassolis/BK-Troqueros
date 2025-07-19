@@ -82,5 +82,6 @@ export const typeError = {
     validarFileExtension: "VFE",
     tokenNoProporcionado: "TNP",
     vehiculoNoEncontrado: "VHN",
-    fileNoDescargado: "FND"
+    fileNoDescargado: "FND",
+    agendaNoEncontrada: "ANE"
 }

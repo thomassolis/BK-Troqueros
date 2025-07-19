@@ -9,14 +9,12 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_GetRequestsVehicles = async (req, res) => {
     try {
         let filters = req.query; // Obtiene la fecha y hora de salida de la petición
-        
+        console.log('filters', filters)
         const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
         if (!isValid) {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
-
-        filters = isValid.dateTime; // Obtiene la fecha de salida y hora de salida validadas
 
         const chassis = await GetRequestChassis(filters); // Obtiene los chasis
         const truckhead = await GetRequestTruckHead(filters); // Obtiene los cabezal

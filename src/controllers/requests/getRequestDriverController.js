@@ -9,14 +9,12 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_GetRequestsDrivers = async (req, res) => {
     try {
         let filters = req.query; // Obtiene la fecha y hora de salida de la petición
-        console.log(filters)
-        const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
+        
+        const isValidDate = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
-        if (!isValid) {
+        if (!isValidDate) {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
-
-        filters = isValid.dateTime; // Obtiene la fecha de salida y hora de salida validadas
         
         const drivers = await GetRequestDrivers(filters); // Obtiene los conductores
 

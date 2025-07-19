@@ -18,4 +18,5 @@ export const modules = {
     DRIVERS: "ECO",
     SERVICES: "ESE",
     REQUESTS: "EPE",
+    AGENDA: "EAG",
 }
