@@ -8,7 +8,7 @@ import { schemaClient } from '../../schema/schemaClients.js';
 export const MdlwareValidateDataInsertClient = (req, res, next) => {
     try {
         const data = req.body; // Obtenemos los datos de los vehículos
-
+        console.log('Data', data);
         // Valida que los datos de los vehículos no sea undefined
         if (!data || !Object.keys(data).length) {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })

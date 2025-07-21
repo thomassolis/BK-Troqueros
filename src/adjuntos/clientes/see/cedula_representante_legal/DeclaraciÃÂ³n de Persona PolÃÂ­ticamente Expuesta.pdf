@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/download/clientes/see/cedula_representante_legal/Declaraci%C3%83%C2%B3n%20de%20Persona%20Pol%C3%83%C2%ADticamente%20Expuesta.pdf</pre>
+</body>
+</html>

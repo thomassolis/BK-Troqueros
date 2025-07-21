@@ -13,6 +13,8 @@ export const Ctr_InsertClient = async (req, res) => {
         const newClient  = req.body; // Obtenemos los datos del nuevo cliente
         const files = req.files;
 
+        console.log('newClient',newClient);
+        console.log('newClient',files);
         // Valida si el RUC del cliente se encuentra en la base de datos
         const existRUC = await ValidateRUC_Client(newClient.ruc);
         if (existRUC) {
