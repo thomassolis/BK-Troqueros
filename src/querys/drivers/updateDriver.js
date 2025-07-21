@@ -38,6 +38,7 @@ export const UpdateDriverInfo = async (driver, files) => {
             .input("Email", sql.VarChar, driver.email)
             .input("Contra", sql.VarChar, driver.pass)
             .input("Telefono", sql.VarChar, driver.telefono)
+            .input("Tipo_licencia", sql.VarChar, driver.tipo_licencia)
             .query(`
                     UPDATE [Conductores]
                         SET [cedula] = @Cedula,
@@ -46,6 +47,7 @@ export const UpdateDriverInfo = async (driver, files) => {
                             [email] = @Email,
                             [contraseña] = @Contra,
                             [telefono] = @Telefono,
+                            [tipo_licencia] = @Tipo_licencia,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_conductor] = @ID
                 `)
