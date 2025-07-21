@@ -46,12 +46,13 @@ export const InsertDriver = async (driver, files) => {
             .input("Contra", sql.VarChar, driver.pass)
             .input("Telefono", sql.VarChar, driver.telefono)
             .input("Status", sql.VarChar, driver.status)
+            .input("Tipo_licencia", sql.Char, driver.tipo_licencia)
             .query(`
                     INSERT INTO [Conductores] ([id_conductor], [cedula], [nombre], [apellido],
                         [email], [contraseña], [telefono], [foto_licencia], [foto_PazYSalvo],
-                        [foto_record_policivo], [status])
+                        [foto_record_policivo], [status], [tipo_licencia])
                         VALUES ('${idDriver}', @Cedula, @Nombre, @Apellido, @Email, @Contra, @Telefono, 
-                            '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', @Status)                        
+                            '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', @Status, @Tipo_licencia)                        
                 `)
         
         //guardamos el archivo
