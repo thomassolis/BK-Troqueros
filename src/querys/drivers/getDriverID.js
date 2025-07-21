@@ -20,7 +20,8 @@ export const GetDriverByID = async (id) => {
                         [telefono],
                         [foto_licencia] AS licencia,
                         [foto_PazYSalvo] AS pazSalvo,
-                        [status]
+                        [status],
+                        [tipo_licencia]
                     FROM [Conductores]
                     WHERE [id_conductor] = @ID
                 `)
