@@ -26,7 +26,6 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
 
         //Leer todos los archivos en la carpeta
         const files = fs.readdirSync(directory);
-        console.log(files)
 
         //Validar si hay archivos en la carpeta
         if (files.length === 0) {
@@ -46,6 +45,50 @@ export const GetLinksDownloadFiles = (linkDownload, linkComplementary) => {
     } catch (error) {
         const code = GenerateCodeError(modules.FILE, typeError.general);
         HandleError(code, error.message, 'auxiliary functions/getFiles/GetLinksDownloadFiles', error);
-        throw new Error('Error al obtener lso links de descargas de los archivos.');        
+        throw new Error('Error al obtener los links de descargas de los archivos.');        
+    }
+}
+
+// Obtiene el link para previsualizar el archivo
+export const GetLinksPreviewFiles = (linkPreview, linkComplementary) => {
+    try {
+        //valida que la ruta fisica exista
+        if (!linkComplementary) {
+            return null;
+        }
+
+        //obtiene la ruta base
+        const BASE_PATHS = BuildPathFilesServer();
+
+        //construimos la ruta completa
+        const directory = path.join(BASE_PATHS, linkComplementary);
+
+        //Validar que el directorio exista
+        if (!fs.existsSync(directory)) {
+            return null;
+        }
+
+        //Leer todos los archivos en la carpeta
+        const files = fs.readdirSync(directory);
+
+        //Validar si hay archivos en la carpeta
+        if (files.length === 0) {
+            return null;
+        }
+
+        //Generar los enlaces de descarga
+        const downloadLinks = files.map((file, index) => ({
+            [`link${index + 1}`]: {
+                name: file, // Nombre del archivo
+                ext: path.extname(file), // Extensión del archivo
+                url: `${linkPreview}/${linkComplementary}/${file}` // URL de previsualización
+            }
+        }));
+
+        return downloadLinks;
+    } catch (error) {
+        const code = GenerateCodeError(modules.FILE, typeError.general);
+        HandleError(code, error.message, 'auxiliary functions/getFiles/GetLinksPreviewFiles', error);
+        throw new Error('Error al obtener los links de previsualización de los archivos.');        
     }
 }

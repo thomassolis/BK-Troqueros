@@ -1,6 +1,6 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { GetLinksDownloadFiles } from '../../fileManager/getFiles.js';
+import { GetLinksPreviewFiles } from '../../fileManager/getFiles.js';
 import { GetDriverByID } from '../../querys/drivers/getDriverID.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
@@ -11,7 +11,7 @@ export const Ctr_GetDriverById = async (req, res) => {
     try {
         const protocol = req.protocol; //protocolo => http ó https
         const host = req.get('host'); //localhost:puerto
-        const linkDownload = `${protocol}://${host}/api/download`; // Construimos el link de descarga
+        const linkPreview = `${protocol}://${host}/api/preview`; // Construimos el link de descarga
         const idDriver = req.params.id; // Obtiene el ID del conductor
 
         // Valida que el Id del cliente exista
@@ -28,8 +28,9 @@ export const Ctr_GetDriverById = async (req, res) => {
 
         const data = {
             ...driver,
-            licencia: GetLinksDownloadFiles(linkDownload, driver.licencia),
-            pazSalvo: GetLinksDownloadFiles(linkDownload, driver.pazSalvo)
+            licencia: GetLinksPreviewFiles(linkPreview, driver.licencia),
+            pazSalvo: GetLinksPreviewFiles(linkPreview, driver.pazSalvo),
+            record_policivo: GetLinksPreviewFiles(linkPreview, driver.record_policivo)
         }
 
         return res.status(200).json({ success: true, message: 'Data enviada.', data })
