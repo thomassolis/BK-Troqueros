@@ -20,6 +20,7 @@ import drivers from './routes/drivers.route.js';
 import services from './routes/services.route.js';
 import requests from './routes/requests.route.js';
 import agenda from './routes/agenda.route.js';
+import { decodeFileNames } from './middlewares/decodeFileNames.js';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use(fileUpload());
+app.use(decodeFileNames);
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use(cookieParser());
