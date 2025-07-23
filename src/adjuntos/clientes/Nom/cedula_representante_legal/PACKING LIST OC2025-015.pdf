@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/download/clientes/Nom/cedula_representante_legal/PACKING%20LIST%20OC2025-015.pdf</pre>
+</body>
+</html>

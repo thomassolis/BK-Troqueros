@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/download/clientes/Nom/aviso_operaciones/Grupo%20Maquinarias%20de%20Panama%20S.A..pdf</pre>
+</body>
+</html>

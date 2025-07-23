@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/download/clientes/yyy/cedula_representante_legal/BitBug%20-%20Propuesta%20T%C3%83%C2%A9cnica%20y%20Comercial.pdf</pre>
+</body>
+</html>
