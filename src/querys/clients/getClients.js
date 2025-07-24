@@ -4,17 +4,17 @@ import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { DateConverterSQL } from '../../auxiliary functions/dateConverter.js';
+
+const PAGE_SIZE = 20; //Establece el tamaño de la página
 
 // Obtiene todos los clientes
-export const GetAllClients = async (page) => {
+export const GetAllClients = async (page, active) =>  {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
             .query(`
                     SELECT
                         C.[id_cliente],
@@ -27,14 +27,16 @@ export const GetAllClients = async (page) => {
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
+                    WHERE C.[active] = @Active
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],
                         C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
-                        C.[email_persona_contacto]
-                    ORDER BY C.[id_cliente]
+                        C.[email_persona_contacto],
+                        C.[fecha_creacion]
+                    ORDER BY C.[fecha_creacion] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY
                 `)
@@ -47,7 +49,7 @@ export const GetAllClients = async (page) => {
         return {
             data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
                 ...rest,
-                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+                fechaUltimoPedido: DateConverterSQL(fechaUltimoPedido)
             })), // Excluir totalRegistros del array de datos
             paginaActual: page,
             totalRegistros: result.recordset[0].totalRegistros,
@@ -62,15 +64,13 @@ export const GetAllClients = async (page) => {
 
 
 // Filtra los clientes por nombre
-export const GetClientsFilters = async (page, nameCustomer) => {
+export const GetClientsFilters = async (page, nameCustomer, active) => {
     try {
-        //Establece el tamaño de la página
-        const PAGE_SIZE = 20;
-
         const result = await pool.request()
             .input("SearchName", sql.VarChar, nameCustomer)
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
+            .input("Active", sql.Bit, active)
             .query(`
                     SELECT
                         C.[id_cliente],
@@ -83,15 +83,16 @@ export const GetClientsFilters = async (page, nameCustomer) => {
                         CEILING(COUNT(*) OVER()) AS totalRegistros
                     FROM Clientes C LEFT JOIN Peticiones P
                         ON C.[id_cliente] = P.[cliente_id]
-                    WHERE C.[nombre] LIKE '%' + @SearchName + '%'
+                    WHERE C.[nombre] LIKE '%' + @SearchName + '%' AND C.[active] = @Active
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],
                         C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
-                        C.[email_persona_contacto]
-                    ORDER BY C.[id_cliente]
+                        C.[email_persona_contacto],
+                        C.[fecha_creacion]
+                    ORDER BY C.[fecha_creacion] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
                     FETCH NEXT @PageSize ROWS ONLY
                 `)
@@ -104,7 +105,7 @@ export const GetClientsFilters = async (page, nameCustomer) => {
         return {
             data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
                 ...rest,
-                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+                fechaUltimoPedido: DateConverterSQL(fechaUltimoPedido)
             })), // Excluir totalRegistros del array de datos
             paginaActual: page,
             totalRegistros: result.recordset[0].totalRegistros,

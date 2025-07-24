@@ -33,6 +33,7 @@ export const typeError = {
         POST: "CLNI", //Cliente no insertado
         PUT: "CLNA", //Cliente no actualizado
         DELETE: "CLNEL", //Cliente no eliminado
+        PATCH: "CLNH", //Cliente no activado/desactivado
     },
     SUPPLIERS: {
         GET: "PRNE", //Proveedor no encontrado
@@ -51,6 +52,13 @@ export const typeError = {
         POST: "SENI", //Servicio no insertado
         PUT: "SENA", //Servicio no actualizado
         DELETE: "SENEL", //Servicio no eliminado
+    },
+    REQUESTS: {
+        GET: "PENE", //Peticiones no encontrado
+        POST: "PENI", //Peticiones no insertado
+        PUT: "PENA", //Peticiones no actualizado
+        PATCH: "PENA", //Status no actualizado (Peticiones)
+        DELETE: "PENEL", //Peticiones no eliminado
     },
     usuarioNoAutenticado: "UNA",
     usuarioNoEncontrado: "UNE",

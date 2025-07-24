@@ -18,7 +18,6 @@ export const Mdlware_ValidateDataUpdService = (req, res, next) => {
         const { error, value } = schemaServiceUpd.validate(data); // Valida que los datos proporcionados cumplan con el esquema
 
         if (error) {
-            console.log(error)
             return res.status(400).json({ success: true, message: error.message })
         }
         
@@ -27,6 +26,6 @@ export const Mdlware_ValidateDataUpdService = (req, res, next) => {
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.PUT)
         HandleError(code, error.message, 'middlewares/services/validateDataInsertServices.middleware/Mdlware_ValidateDataInsertService', error);
-        return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información del servicio. Intente más tarde' });
+        return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información de la ruta del servicio. Intente más tarde' });
     }
 }

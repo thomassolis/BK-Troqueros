@@ -1,6 +1,6 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { InsertDataServices } from '../../querys/services/insertServicesInfo.js';
+import { CreateNewService } from '../../querys/services/createServices.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
@@ -10,7 +10,7 @@ export const Ctr_InsertServices = async (req, res) => {
     try {
         const service = req.body; // Obtiene la data del servicio
 
-        const created = await InsertDataServices(service);
+        const created = await CreateNewService(service); // Crea un nuevo servicio
 
         // Valida que se haya creado el servicio
         if (!created) {
@@ -20,6 +20,13 @@ export const Ctr_InsertServices = async (req, res) => {
         return res.status(201).json({ success: true, message: 'Servicio creado satisfactoriamente!' })
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.POST);
+
+        //Valida si el error ocurrido es por insertar un servicio que ya existe
+        if (error.ErrorCode === 2627) {
+            HandleError(code, error.message, 'services/insertServicesController/Ctr_InsertServices', error);
+            return res.status(500).json({success: false, message: error.message});
+        }
+
         HandleError(code, error.message, 'services/insertServicesController/Ctr_InsertServices', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }

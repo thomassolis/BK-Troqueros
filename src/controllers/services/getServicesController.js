@@ -1,24 +1,15 @@
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { GetAllServices, GetServicesByFilter } from '../../querys/services/getServices.js';
+import { GetServices } from '../../querys/services/getServices.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 
 
 export const Ctr_GetServices = async (req, res) => {
     try {
-        //obtenemos la palabra a buscar, sino existe se le asigna una cadena vacía
-        const search = req.query.search;
-        // Obtiene el número de página (si no hay búsqueda, mantiene la paginación actual)
-        const page = parseInt(req.query.page) || 1;
+        const filters = req.query; // Obtiene los filtros de busqueda
 
-        let services = null;
-
-        if (search) {
-            services = await GetServicesByFilter(page, search); // Obtiene los servicios filtrados
-        } else {
-            services = await GetAllServices(page); // Obtiene todos los servicios
-        }
+        const services = await GetServices(filters); // Obtiene los servicios del sistema
 
         // Valida que los services no sean undefined
         if (!services) {

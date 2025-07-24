@@ -35,19 +35,35 @@ export const DateConverter = (date) => {
     }
 };
 
-//Convierte la fecha en formato (YYYY-MM-DD HH:mm:ss)
-export const DateTimeConverter = (date) => {
+//Convierte la fecha (YYYY-MM-DD HH:mm:ss) a (YYYY-MM-DD)
+export const DateConverterSQL = (date) => {
     try {
-        // Separar la fecha y la hora
-        const [fecha, hora] = date.split(" ");
-        
-        // Separar día, mes y año
-        const [dia, mes, anio] = fecha.split(":").map(Number);
-        
-        // Devolver el formato compatible con SQL Server
-        return `${anio}-${mes.toString().padStart(2, "0")}-${dia.toString().padStart(2, "0")} ${hora}`;
+        if (!date) {
+            return null;
+        }
+
+        // Si es un objeto Date, conviértelo a string con formato YYYY-MM-DD
+        if (date instanceof Date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Si es una cadena tipo ISO, extraer solo la parte de la fecha
+        if (typeof date === 'string' && date.includes('T')) {
+            return date.split('T')[0];
+        }
+
+        // Si ya está en formato YYYY-MM-DD, devuélvelo tal cual
+        if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            return date;
+        }
+
+        return null;
     } catch (error) {
-        throw new Error('Error al convertir la fecha al formato (YYYY-MM-DD HH:mm:ss) de SQL');
+        console.log(error)
+        throw new Error('Error al convertir la fecha al formato (YYYY-MM-DD) de SQL');
     }    
 }
 

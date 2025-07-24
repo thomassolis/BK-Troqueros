@@ -5,7 +5,7 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { GetClientById } from '../../querys/clients/getClientId.js';
 import { GetLinksDownloadFiles } from '../../fileManager/getFiles.js';
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { DateConverterSQL } from '../../auxiliary functions/dateConverter.js';
 
 
 // Controlador para obtener la información de un cliente
@@ -13,7 +13,7 @@ export const Ctr_GetClientsById = async (req, res) => {
     try {
         const protocol = req.protocol; //protocolo => http ó https
         const host = req.get('host'); //localhost:puerto
-        const linkDownload = `${protocol}://${host}/api/download`;
+        const linkDownload = `${protocol}://${host}/api/preview`;
         const id = req.params.id
 
         // Valida que el Id del cliente exista
@@ -30,9 +30,10 @@ export const Ctr_GetClientsById = async (req, res) => {
 
         const data = {
             ...client,
-            fechaUltimoPedido: DateConverter(client.fechaUltimoPedido),
+            fechaUltimoPedido: DateConverterSQL(client.fechaUltimoPedido),
             cedRepresentanteLegal: GetLinksDownloadFiles(linkDownload, client.cedRepresentanteLegal),
-            avisoOperaciones: GetLinksDownloadFiles(linkDownload, client.avisoOperaciones)
+            avisoOperaciones: GetLinksDownloadFiles(linkDownload, client.avisoOperaciones),
+            cedPersonaNatural: GetLinksDownloadFiles(linkDownload, client.cedPersonaNatural)
         }
 
         return res.status(200).json({ success: true, message: 'Data Enviada', data })

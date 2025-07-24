@@ -1,15 +1,8 @@
 import { HandleError } from '../../utils/HandleError.js';
-import Joi from 'joi';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { schemaDriver } from './validateDataInsertDriver.middleware.js';
-
-const schemaUpdDriver = schemaDriver.keys({
-    id_conductor: Joi.string().required().messages({
-        'any.required': 'El identificador es requerido'
-    })
-})
+import { schemaUpdDriver } from '../../schema/schemaDrivers.js';
 
 
 export const Mdlware_ValidateDataUpdDriver = (req, res, next) => {

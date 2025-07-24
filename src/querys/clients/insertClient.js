@@ -7,6 +7,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 
 
+// Agrega un nuevo cliente
 export const InsertClient = async (data, files) => {
     let transaction = null
     try {
@@ -28,11 +29,13 @@ export const InsertClient = async (data, files) => {
         //construimos la ruta de las carpetas
         const rutaCed = `clientes/${id}/cedula_representante_legal`;
         const rutaAvisoOpe = `clientes/${id}/aviso_operaciones`;
+        const rutaCedPerNatural = `clientes/${id}/cedula_persona_natural`;
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, id)
             .input("Nombre", sql.VarChar, data.nombre)
             .input("Ruc", sql.VarChar, data.ruc)
+            .input("DV", sql.Int, data.dv)
             .input("Direccion", sql.VarChar, data.direccion)
             .input("NombreContacto", sql.VarChar, data.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, data.telPersonaContacto)
@@ -43,19 +46,20 @@ export const InsertClient = async (data, files) => {
             .input("NombreCuenta", sql.VarChar, data.nombreCuenta)
             .query(`
                     INSERT INTO Clientes ([id_cliente], [nombre], [nombre_persona_contacto], [email_persona_contacto],
-                                            [telefono_persona_contacto], [ruc_empresa], [direccion], [numero_cuenta],
-                                            [nombre_banco], [tipo_cuenta], [nombre_cuenta], tipo_cliente,
-                                            [copia_cedula_representante_legal], [copia_aviso_operaciones])
-                        VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, 
-                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}')
+                                            [telefono_persona_contacto], [ruc_empresa], [DV], [direccion], [numero_cuenta],
+                                            [nombre_banco], [tipo_cuenta], [nombre_cuenta], [tipo_cliente],
+                                            [copia_cedula_representante_legal], [copia_aviso_operaciones], [cedula_persona_natural])
+                        VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, @DV,
+                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
                 `)
 
          //guardamos el archivo
         const fileSaved = files && files.cedRepresentanteLegal ? await SaveFile(rutaCed, files.cedRepresentanteLegal) : true;
         const fileSaved2 = files && files.avisoOperaciones ? await SaveFile(rutaAvisoOpe, files.avisoOperaciones) : true;
+        const fileSaved3 = files && files.cedPersonaNatural ? await SaveFile(rutaCedPerNatural, files.cedPersonaNatural) : true;
 
         //Valida que se haya guardado los archivos
-        if (!fileSaved || !fileSaved2) {
+        if (!fileSaved || !fileSaved2 || !fileSaved3) {
             await transaction.rollback();
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }
@@ -69,13 +73,14 @@ export const InsertClient = async (data, files) => {
         await transaction.rollback()
         return false
     } catch (error) {
-        // En caso de error revierte la transaction
-        if (transaction) {
-            await transaction.rollback()
-        }
-
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'querys/Clients/insertClient/InsertClient', error);
+
+        // En caso de error revierte la transaction
+        if (transaction) {
+            await transaction.rollback();
+        }
+
         throw new Error('Ha ocurrido un error al crear al cliente');
     }
 }
