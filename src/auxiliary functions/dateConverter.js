@@ -62,7 +62,6 @@ export const DateConverterSQL = (date) => {
 
         return null;
     } catch (error) {
-        console.log(error)
         throw new Error('Error al convertir la fecha al formato (YYYY-MM-DD) de SQL');
     }    
 }
