@@ -4,7 +4,7 @@ import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { DateConverter } from '../../auxiliary functions/dateConverter.js';
+import { DateConverterSQL } from '../../auxiliary functions/dateConverter.js';
 
 const PAGE_SIZE = 20; //Establece el tamaño de la página
 
@@ -14,7 +14,7 @@ export const GetAllClients = async (page, active) =>  {
         const result = await pool.request()
             .input("Page", sql.Int, page)
             .input("PageSize", sql.Int, PAGE_SIZE)
-            .input("Active", sql.Int, active)
+            .input("Active", sql.Bit, active)
             .query(`
                     SELECT
                         C.[id_cliente],
@@ -49,7 +49,7 @@ export const GetAllClients = async (page, active) =>  {
         return {
             data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
                 ...rest,
-                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+                fechaUltimoPedido: DateConverterSQL(fechaUltimoPedido)
             })), // Excluir totalRegistros del array de datos
             paginaActual: page,
             totalRegistros: result.recordset[0].totalRegistros,
@@ -105,7 +105,7 @@ export const GetClientsFilters = async (page, nameCustomer, active) => {
         return {
             data: result.recordset.map(({ totalRegistros, fechaUltimoPedido, ...rest }) => ({
                 ...rest,
-                fechaUltimoPedido: DateConverter(fechaUltimoPedido)
+                fechaUltimoPedido: DateConverterSQL(fechaUltimoPedido)
             })), // Excluir totalRegistros del array de datos
             paginaActual: page,
             totalRegistros: result.recordset[0].totalRegistros,
