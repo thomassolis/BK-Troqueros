@@ -54,7 +54,7 @@ const getPathDriver = async (id) => {
 
         return result.recordset[0];
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.GET);
+        const code = GenerateCodeError(modules.DRIVERS, typeError.DRIVERS.GET);
         HandleError(code, error.message, 'querys/drivers/deleteDriver/getPathDriver', error);
         throw new Error('No se pudo obtener la ruta de los archivos del conductor');
     }

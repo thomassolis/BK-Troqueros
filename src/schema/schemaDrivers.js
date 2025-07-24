@@ -26,6 +26,9 @@ export const schemaDriver = Joi.object({
         'string.max': 'El campo telefono no debe contener más de 20 caracteres.'
     }),
     status: Joi.string().trim().max(20).allow(null, '').default('Disponible'),
+    tipo_licencia: Joi.string().max(1).optional().default('').messages({
+        'string.max': 'El campo tipo de licencia solo admite un caracter.'
+    })
 });
 
 

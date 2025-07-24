@@ -28,6 +28,7 @@ export const UpdateDriverInfo = async (driver, files) => {
         // Construimos la ruta de las carpetas
         const rutaLicencia = `conductores/${driver.id_conductor}/licencia`;
         const rutaPazSalvo = `conductores/${driver.id_conductor}/paz_a_salvo`;
+        const rutaRecordPolicivo = `conductores/${driver.id_conductor}/record_policivo`;
 
         const result = await transaction.request()
             .input("ID", sql.VarChar, driver.id_conductor)
@@ -37,6 +38,7 @@ export const UpdateDriverInfo = async (driver, files) => {
             .input("Email", sql.VarChar, driver.email)
             .input("Contra", sql.VarChar, driver.pass)
             .input("Telefono", sql.VarChar, driver.telefono)
+            .input("Tipo_licencia", sql.VarChar, driver.tipo_licencia)
             .query(`
                     UPDATE [Conductores]
                         SET [cedula] = @Cedula,
@@ -45,6 +47,7 @@ export const UpdateDriverInfo = async (driver, files) => {
                             [email] = @Email,
                             [contraseña] = @Contra,
                             [telefono] = @Telefono,
+                            [tipo_licencia] = @Tipo_licencia,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_conductor] = @ID
                 `)
@@ -53,9 +56,10 @@ export const UpdateDriverInfo = async (driver, files) => {
         // Actualiza los archivos del conductor
         const fileUpdated = cleanFiles && cleanFiles.licencia ? await UpdateFile(rutaLicencia, cleanFiles.licencia) : await UpdateFile(rutaLicencia, null);
         const fileUpdated2 = cleanFiles && cleanFiles.pazSalvo ? await UpdateFile(rutaPazSalvo, cleanFiles.pazSalvo) : await UpdateFile(rutaPazSalvo, null);
+        const fileUpdated3 = cleanFiles && cleanFiles.recordPolicivo ? await UpdateFile(rutaRecordPolicivo, cleanFiles.recordPolicivo) : await UpdateFile(rutaRecordPolicivo, null);
 
         //Valida que se haya guardado los archivos
-        if (!fileUpdated.success || !fileUpdated2.success) {
+        if (!fileUpdated.success || !fileUpdated2.success || !fileUpdated3.success) {
             await transaction.rollback();
             throw new Error('Error al actualizar los archivos. Se revirtió la transacción.');
         }

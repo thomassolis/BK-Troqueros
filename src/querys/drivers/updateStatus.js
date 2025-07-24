@@ -25,7 +25,7 @@ export const UpdateStatusDriver = async (driver) => {
 
         return false;
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
+        const code = GenerateCodeError(modules.DRIVERS, typeError.DRIVERS.PATCH);
         HandleError(code, error.message, 'querys/drivers/updateStatus/UpdateStatusDriver', error);
         throw new Error('Ha ocurrido un error al actualizar el status del conductor');
     }
