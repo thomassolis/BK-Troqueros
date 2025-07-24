@@ -10,15 +10,26 @@ import { Ctr_UpdateDriver } from '../controllers/drivers/updateDriverController.
 import { Ctr_UpdateStatusDriver } from '../controllers/drivers/updateStatusDriverController.js';
 import { Ctr_DeleteDriver } from '../controllers/drivers/deleteDriverController.js';
 import { Mdlware_ValidateFilesExt } from '../middlewares/validateFile.middleware.js';
+import { Ctr_ActivateDriver } from '../controllers/drivers/activateDriverController.js';
 
 const MODULE = 'Conductores';
 const router = express.Router();
 
-router.get('/', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetDrivers);
-router.get('/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetDriverById);
-router.post('/add', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataInsertDriver, Ctr_InsertDriver);
-router.put('/update', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdDriver, Ctr_UpdateDriver);
-router.patch('/update_status', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusDriver);
-router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), VerifyPermissionMiddleware, Ctr_DeleteDriver);
+// Muestra los conductores
+router.get('/see_drivers', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetDrivers);
+router.get('/see_driver_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetDriverById);
+
+// Agrega un nuevo conductor
+router.post('/add_driver', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataInsertDriver, Ctr_InsertDriver);
+
+// Actualiza la información de un conductor
+router.put('/update_driver', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateFilesExt, Mdlware_ValidateDataUpdDriver, Ctr_UpdateDriver);
+
+// Actualiza el estado de un conductor
+router.patch('/update_status_driver', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusDriver);
+
+// Habilita/Deshabilita un conductor
+router.patch('/activate_driver', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ActivateDriver);
+//router.delete('/delete/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), VerifyPermissionMiddleware, Ctr_DeleteDriver);
 
 export default router;

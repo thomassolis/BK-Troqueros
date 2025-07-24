@@ -20,10 +20,10 @@ export const Ctr_UpdateStatusDriver = async (req, res) => {
             return res.status(400).json({ success: false, message: 'No se ha podido actualizar el status. Inténtelo más tarde.' });
         }
 
-        return res.status(200).json({ success: true, message: 'Status Actualizado!.' })
+        return res.status(200).json({ success: true, message: 'Status Actualizado!' })
     } catch (error) {
-        const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
-        HandleError(code, error.message, 'controllers/chassis/updateStatusController/Ctr_UdpStatusChassis', error);
+        const code = GenerateCodeError(modules.DRIVERS, typeError.CHASISES.PATCH);
+        HandleError(code, error.message, 'controllers/drivers/updateStatusController/Ctr_UdpStatusChassis', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

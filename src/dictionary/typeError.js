@@ -46,6 +46,7 @@ export const typeError = {
         POST: "CONI", //Conductor no insertado
         PUT: "CONA", //Conductor no actualizado
         DELETE: "CONEL", //Conductor no eliminado
+        PATCH: "COSN", //Status no actualizado (Conductor) CONH (Conductor no habilitado/deshabilitado)
     },
     SERVICES: {
         GET: "SENE", //Servicio no encontrado

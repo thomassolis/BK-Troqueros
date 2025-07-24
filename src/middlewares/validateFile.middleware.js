@@ -19,7 +19,10 @@ export const Mdlware_ValidateFilesExt = (req, res, next) => {
 
             // Valida si la extensión es permitida
             if (!allowedExtension.includes(extension)) {
-                return res.status(404).json({ success: false, message: `La extensión del archivo ${name} no está permitida. Solo se aceptan archivos con extensión: .${allowedExtension.join(', .')}.` })
+                return res.status(400).json({
+                    success: false,
+                    message: `La extensión del archivo ${name} no está permitida. Solo se aceptan archivos con extensión: .${allowedExtension.join(', .')}.`
+                });
             }
 
             // Valida el tamaño del archivo
