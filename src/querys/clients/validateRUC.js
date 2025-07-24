@@ -30,7 +30,7 @@ export const ValidateRUC_Client = async (RUC) => {
         return false
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
-        HandleError(code, error.message, 'querys/Clients/insertClient/InsertClient', error);
+        HandleError(code, error.message, 'querys/Clients/validateRUC/ValidateRUC_Client', error);
         throw new Error('Ha ocurrido un error al crear al cliente');
     }
 }

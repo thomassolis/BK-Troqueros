@@ -44,7 +44,7 @@ export const CtrGetTruckVanId = async (req, res) => {
         return res.status(200).json({success: true, message: 'Data enviada', data: truckVan});
     } catch (error) {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.GET);
-        HandleError(code, error.message, 'controllers/TruckVan/getTruckVanController/CtrGetTruckVanId', error);
+        HandleError(code, error.message, 'controllers/TruckVan/getTruckVanIdController/CtrGetTruckVanId', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }

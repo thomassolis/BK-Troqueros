@@ -113,7 +113,7 @@ export const GetClientsFilters = async (page, nameCustomer, active) => {
         };
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
-        HandleError(code, error.message, 'querys/clients/getClients/GetAllClients', error);
+        HandleError(code, error.message, 'querys/clients/getClients/GetClientsFilters', error);
         throw new Error('Ha ocurrido un error al buscar el cliente');
     }
 }

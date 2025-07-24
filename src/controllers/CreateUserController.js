@@ -33,7 +33,7 @@ export const CtrCreateUser = async (req, res) => {
 
     } catch (error) {
         const code = GenerateCodeError(modules.USUARIOS, typeError.usuarioNoCreado);
-        HandleError(code, error.message, 'CtrCreateUser', error);
+        HandleError(code, error.message, 'controller/CreateUserController/CtrCreateUser', error);
         return res.status(500).json({ success: false, message: 'Error al crear el usuario' });
     }
 }

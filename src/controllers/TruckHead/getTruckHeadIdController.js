@@ -44,7 +44,7 @@ export const CtrGetTruckHeadId = async (req, res) => {
         return res.status(200).json({success: true, message: 'Data enviada', data: truckHead});
     } catch (error) {
         const code = GenerateCodeError(modules.CABEZALES, typeError.CABEZALES.GET);
-        HandleError(code, error.message, 'controllers/TruckHead/getTruckHeadController/CtrGetTruckHeadId', error);
+        HandleError(code, error.message, 'controllers/TruckHead/getTruckHeadIdController/CtrGetTruckHeadId', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }
