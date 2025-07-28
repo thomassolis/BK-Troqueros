@@ -67,7 +67,7 @@ export const GetRequestByID = async (id) => {
             ...rest,
             fecha_salida: fecha_salida.toISOString().split('T')[0], // Obtine la fecha (YYYY-MM-DD)
             hora_salida: ParseTime(hora_salida),
-            fecha_limite: fecha_salida ? fecha_salida.toISOString().split('T')[0] : null
+            fecha_limite: fecha_limite ? fecha_limite.toISOString().split('T')[0] : null
         }));
 
         return {
