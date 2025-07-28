@@ -42,10 +42,7 @@ export const DateConverterSQL = (date) => {
 
         // Si es un objeto Date, conviértelo a string con formato YYYY-MM-DD
         if (date instanceof Date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return date.toISOString().split('T')[0];
         }
 
         // Si es una cadena tipo ISO, extraer solo la parte de la fecha
