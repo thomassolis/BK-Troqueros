@@ -35,7 +35,7 @@ export const Mdlware_ValidateDataUpdRequest = (req, res, next) =>{
         req.body = value
         next();
     } catch (error) {
-        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
+        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
         HandleError(code, error.message, 'middlewares/requests/validateDataUpdRequests.middleware/Mdlware_ValidateDataUpdRequest', error);
         return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información. Intente más tarde' })
     }

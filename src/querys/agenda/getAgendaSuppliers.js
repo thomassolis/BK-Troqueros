@@ -58,7 +58,7 @@ export const GetAgendaSuppliers = async () => {
         return data;
     } catch (error) {
         const code = GenerateCodeError(modules.AGENDA, typeError.agendaNoEncontrada);
-        HandleError(code, error.message, 'querys/agenda/getagendaEntregaVacio/GetAgendaEntregaVacio', error);
+        HandleError(code, error.message, 'querys/agenda/getagendaSuppliers/GetAgendaSuppliers', error);
         throw new Error('Ha ocurrido un error al obtener la agenda de las entregas de vacios');
     }
 }

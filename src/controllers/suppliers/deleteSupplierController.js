@@ -24,7 +24,7 @@ export const CtrDeleteSupplier = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Proveedor eliminado correctamente!.'});
     } catch (error) {
-        const code = GenerateCodeError(modules.PROVEEDORES, typeError.PROVEEDORES.DELETE)
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.DELETE)
         HandleError(code, error.message, 'controllers/supplier/deleteSupplierController/CtrDeleteSupplier', error);
         return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde` })
     }

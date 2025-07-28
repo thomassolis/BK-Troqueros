@@ -15,10 +15,10 @@ export const Ctr_GetRequestsRutaServices = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No se encontraron rutas disponibles.' });
     }
 
-    return res.status(200).json({ success: true, message: 'Data Enviada', data: rutaServices });
-  } catch (error) {
-    const code = GenerateCodeError(modules.REQUESTS, typeError.SERVICES.GET);
-    HandleError(code, error.message, 'controllers/requests/getRequestDataServiceIDController/Ctr_GetRequestsDataServices', error);
-    return res.status(500).json({ success: false, message: `${error.message}. Inténtelo más tarde` });
-  }
-};
+        return res.status(200).json({ success: true, message: 'Data Enviada', data: rutaServices });
+    } catch (error) {
+        const code = GenerateCodeError(modules.REQUESTS, typeError.SERVICES.GET);
+        HandleError(code, error.message, 'controllers/requests/getRequestDataServiceController/Ctr_GetRequestsRutaServices', error);
+        return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
+    }
+}

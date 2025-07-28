@@ -25,7 +25,7 @@ export const Mdlware_ValidateDataUpdService = (req, res, next) => {
         next();
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.PUT)
-        HandleError(code, error.message, 'middlewares/services/validateDataInsertServices.middleware/Mdlware_ValidateDataInsertService', error);
+        HandleError(code, error.message, 'middlewares/services/validateDataUpdate.middleware/Mdlware_ValidateDataUpdService', error);
         return res.status(500).json({ success: true, message: 'Ha ocurrido un error con la validación de la información de la ruta del servicio. Intente más tarde' });
     }
 }

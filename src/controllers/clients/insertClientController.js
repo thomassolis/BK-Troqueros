@@ -36,7 +36,7 @@ export const Ctr_InsertClient = async (req, res) => {
 
         return res.status(201).json({ success: true, message: 'Cliente creado satisfactoriamente!' });
     } catch (error) {
-        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.GET);
+        const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'controllers/clients/getInsertClientController/Ctr_InsertClient', error);
         return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde.` });
     }

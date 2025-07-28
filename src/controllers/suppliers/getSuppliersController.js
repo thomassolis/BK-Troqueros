@@ -30,7 +30,7 @@ export const CtrGetSuppliers = async (req, res) => {
 
         return res.status(200).json({success: true, message: 'Data enviada', data: suppliers});
     } catch (error) {
-        const code = GenerateCodeError(modules.PROVEEDORES, typeError.PROVEEDORES.GET)
+        const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.GET)
         HandleError(code, error.message, 'controllers/suppliers/getSuppliersController/CtrGetSuppliers', error);
         return res.status(500).json({ success: false, message: `${error.message}. Intentelo más tarde` })
     }

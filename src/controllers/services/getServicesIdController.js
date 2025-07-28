@@ -24,7 +24,7 @@ export const Ctr_GetServicesByID = async (req, res) => {
         return res.status(200).json({success: true, message: 'Data enviada', data: service});
     } catch (error) {
         const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.GET);
-        HandleError(code, error.message, 'services/getServicesController/Ctr_GetServices', error);
+        HandleError(code, error.message, 'services/getServicesIdController/Ctr_GetServicesByID', error);
         return res.status(500).json({success: false, message: `${error.message}. Inténtelo más tarde` });
     }
 }
