@@ -46,11 +46,12 @@ export const InsertClient = async (data, files) => {
             .input("NombreCuenta", sql.VarChar, data.nombreCuenta)
             .query(`
                     INSERT INTO Clientes ([id_cliente], [nombre], [nombre_persona_contacto], [email_persona_contacto],
-                                            [telefono_persona_contacto], [ruc_empresa], [DV], [direccion], [numero_cuenta],
-                                            [nombre_banco], [tipo_cuenta], [nombre_cuenta], [tipo_cliente],
-                                            [copia_cedula_representante_legal], [copia_aviso_operaciones], [cedula_persona_natural])
+                        [telefono_persona_contacto], [ruc_empresa], [DV], [direccion], [numero_cuenta],
+                        [nombre_banco], [tipo_cuenta], [nombre_cuenta], [copia_cedula_representante_legal], 
+                        [copia_aviso_operaciones], [cedula_persona_natural]
+                    )
                         VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, @DV,
-                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '', '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
+                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
                 `)
 
          //guardamos el archivo
