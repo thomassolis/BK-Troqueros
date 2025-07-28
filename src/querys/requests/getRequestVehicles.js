@@ -10,6 +10,7 @@ import { typeError } from '../../dictionary/typeError.js';
 export const GetRequestChassis = async (filters) => {
     try {
         const result = await pool.request()
+            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
             .input("FechaSalida", sql.Date, filters.fecha_salida)
             .input("HoraSalida", sql.Time, filters.hora_salida)
             .query(`
@@ -20,8 +21,10 @@ export const GetRequestChassis = async (filters) => {
                             MIN(P.[hora_salida]) AS hora_salida,
                             SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
                         FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion] AND P.[fecha_salida] = @FechaSalida
+                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
                         INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                        WHERE P.[fecha_salida] = @FechaSalida
+							AND P.[id_peticion] <> @IdPeticion
                         GROUP BY
                             PS.[id_chasis], 
                             P.[fecha_salida]
@@ -68,6 +71,7 @@ export const GetRequestChassis = async (filters) => {
 export const GetRequestTruckHead = async (filters) => {
     try {
         const result = await pool.request()
+            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
             .input("FechaSalida", sql.Date, filters.fecha_salida)
             .input("HoraSalida", sql.Time, filters.hora_salida)
             .query(`
@@ -78,8 +82,10 @@ export const GetRequestTruckHead = async (filters) => {
                             MIN(P.[hora_salida]) AS hora_salida,
                             SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
                         FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion] AND P.[fecha_salida] = @FechaSalida
+                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
                         INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                        WHERE P.[fecha_salida] = @FechaSalida
+							AND P.[id_peticion] <> @IdPeticion
                         GROUP BY
                             PS.[id_cabezal], 
                             P.[fecha_salida]
@@ -126,6 +132,7 @@ export const GetRequestTruckHead = async (filters) => {
 export const GetRequestTruckVan = async (filters) => {
     try {
         const result = await pool.request()
+            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
             .input("FechaSalida", sql.Date, filters.fecha_salida)
             .input("HoraSalida", sql.Time, filters.hora_salida)
             .query(`
@@ -136,8 +143,10 @@ export const GetRequestTruckVan = async (filters) => {
                             MIN(P.[hora_salida]) AS hora_salida,
                             SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
                         FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion] AND P.[fecha_salida] = @FechaSalida
+                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
                         INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                        WHERE P.[fecha_salida] = @FechaSalida
+							AND P.[id_peticion] <> @IdPeticion
                         GROUP BY
                             PS.[id_furgon], 
                             P.[fecha_salida]
