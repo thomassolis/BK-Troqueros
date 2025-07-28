@@ -12,7 +12,20 @@ export const schemaClient = Joi.object({
       'string.max': 'El ruc no puede tener más de 50 caracteres.',
       'any.required': 'El ruc es obligatorio.'
     }),
-    dv: Joi.number().strict().optional().default(null).messages({
+    dv: Joi.any().custom((value, helpers) => {
+      if (value === null || value === undefined || value === '') return null;
+
+      const num = Number(value);
+
+      if (isNaN(num)) {
+        return helpers.error('dv.number.base');
+      }
+
+      return num;
+    })
+    .default(null)
+    .messages({
+      'dv.number.base': 'El DV debe ser un valor numérico.',
       'number.base': 'El DV debe ser un valor numérico.'
     }),
     direccion: Joi.string().trim().max(200).allow(null, "").default("").messages({
