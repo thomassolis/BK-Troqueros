@@ -19,7 +19,6 @@ export const GetAllClients = async (page, active) =>  {
                     SELECT
                         C.[id_cliente],
                         C.[nombre],
-                        C.[tipo_cliente] AS tipoCliente,
                         C.[nombre_persona_contacto] AS personaContacto,
                         C.[telefono_persona_contacto] AS telefono,
                         C.[email_persona_contacto] AS correo,
@@ -31,7 +30,6 @@ export const GetAllClients = async (page, active) =>  {
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],
-                        C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
                         C.[email_persona_contacto],
@@ -75,7 +73,6 @@ export const GetClientsFilters = async (page, nameCustomer, active) => {
                     SELECT
                         C.[id_cliente],
                         C.[nombre],
-                        C.[tipo_cliente] AS tipoCliente,
                         C.[nombre_persona_contacto] AS personaContacto,
                         C.[telefono_persona_contacto] AS telefono,
                         C.[email_persona_contacto] AS correo,
@@ -87,7 +84,6 @@ export const GetClientsFilters = async (page, nameCustomer, active) => {
                     GROUP BY 
                         C.[id_cliente], 
                         C.[nombre],
-                        C.[tipo_cliente],
                         C.[nombre_persona_contacto],
                         C.[telefono_persona_contacto],
                         C.[email_persona_contacto],
