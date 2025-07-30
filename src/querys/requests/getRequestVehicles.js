@@ -9,49 +9,59 @@ import { typeError } from '../../dictionary/typeError.js';
 // Obtiene los chasis disponibles y activos del sistema
 export const GetRequestChassis = async (filters) => {
     try {
-        const result = await pool.request()
-            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
-            .input("FechaSalida", sql.Date, filters.fecha_salida)
-            .input("HoraSalida", sql.Time, filters.hora_salida)
-            .query(`
-                    WITH ServiciosPorChasis AS (
-                        SELECT 
-                            PS.[id_chasis],
-                            P.[fecha_salida],
-                            MIN(P.[hora_salida]) AS hora_salida,
-                            SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
-                        FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
-                        INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                        WHERE P.[fecha_salida] = @FechaSalida
-							AND P.[id_peticion] <> @IdPeticion
-                        GROUP BY
-                            PS.[id_chasis], 
-                            P.[fecha_salida]
-                    )
+        const request = await pool.request();
+        request.input("FechaSalida", sql.Date, filters.fecha_salida)
+        request.input("HoraSalida", sql.Time, filters.hora_salida)
 
-                    SELECT 
-                        CH.[id_chasis],
-                        CH.[placa] +
-                        CASE
-                            WHEN SPCH.[fecha_salida] IS NOT NULL 
-                                AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida]))
-                            THEN 
-                                ' (' 
-                                + CONVERT(varchar(5), SPCH.[hora_salida], 108) + ' - ' 
-                                + CONVERT(varchar(5), DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida]), 108) 
-                                + ')'
-                            ELSE ''
-                        END AS placa,
-                        IIF(SPCH.[fecha_salida] = @FechaSalida
-                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida])), 
-                            1, 
-                            0
-                        ) AS success
-                    FROM Chasis CH
-                    LEFT JOIN ServiciosPorChasis SPCH ON SPCH.[id_chasis] = CH.[id_chasis]
-                    WHERE CH.[status] = 'Disponible' AND CH.[active] = 1
-                `);
+        let query = `
+            WITH ServiciosPorChasis AS (
+                SELECT 
+                    PS.[id_chasis],
+                    P.[fecha_salida],
+                    MIN(P.[hora_salida]) AS hora_salida,
+                    SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
+                FROM Pedido_Servicio PS
+                INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
+                INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                WHERE P.[fecha_salida] = @FechaSalida
+        `;
+
+        // Valida si los filtros incluye ID de petición
+        if (filters.IdPeticion) {
+            request.input("IdPeticion", sql.VarChar, filters.IdPeticion)
+            query += ' AND P.[id_peticion] <> @IdPeticion';
+        }
+
+        query += `
+                GROUP BY
+                    PS.[id_chasis], 
+                    P.[fecha_salida]
+            )
+
+            SELECT 
+                CH.[id_chasis],
+                CH.[placa] +
+                CASE
+                    WHEN [fecha_salida] IS NOT NULL 
+                        AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida]))
+                    THEN 
+                        ' (' 
+                        + CONVERT(varchar(5), SPCH.[hora_salida], 108) + ' - ' 
+                        + CONVERT(varchar(5), DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida]), 108) 
+                        + ')'
+                    ELSE ''
+                END AS placa,
+                IIF(SPCH.[fecha_salida] = @FechaSalida
+                    AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCH.[total_tiempo_estimado], SPCH.[hora_salida])), 
+                    1, 
+                    0
+                ) AS success
+            FROM Chasis CH
+            LEFT JOIN ServiciosPorChasis SPCH ON SPCH.[id_chasis] = CH.[id_chasis]
+            WHERE CH.[status] = 'Disponible' AND CH.[active] = 1
+        `;
+        
+        const result = await request.query(query);
 
         // Valida si la consulta arrojo datos
         if (result.recordset.length > 0) {
@@ -70,49 +80,59 @@ export const GetRequestChassis = async (filters) => {
 // Obtiene los cabezal disponibles y activos del sistema
 export const GetRequestTruckHead = async (filters) => {
     try {
-        const result = await pool.request()
-            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
-            .input("FechaSalida", sql.Date, filters.fecha_salida)
-            .input("HoraSalida", sql.Time, filters.hora_salida)
-            .query(`
-                    WITH ServiciosPorCabezal AS (
-                        SELECT 
-                            PS.[id_cabezal],
-                            P.[fecha_salida],
-                            MIN(P.[hora_salida]) AS hora_salida,
-                            SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
-                        FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
-                        INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                        WHERE P.[fecha_salida] = @FechaSalida
-							AND P.[id_peticion] <> @IdPeticion
-                        GROUP BY
-                            PS.[id_cabezal], 
-                            P.[fecha_salida]
-                    )
+        const request = await pool.request();
+        request.input("FechaSalida", sql.Date, filters.fecha_salida)
+        request.input("HoraSalida", sql.Time, filters.hora_salida)
 
-                    SELECT 
-                        CA.[id_cabezal],
-                        CA.[placa] +
-                        CASE
-                            WHEN SPCA.[fecha_salida] IS NOT NULL 
-                                AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida]))
-                            THEN 
-                                ' (' 
-                                + CONVERT(varchar(5), SPCA.[hora_salida], 108) + ' - ' 
-                                + CONVERT(varchar(5), DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida]), 108) 
-                                + ')'
-                            ELSE ''
-                        END AS placa,
-                        IIF(SPCA.[fecha_salida] = @FechaSalida
-                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida])), 
-                            1, 
-                            0
-                        ) AS success
-                    FROM Cabezal CA
-                    LEFT JOIN ServiciosPorCabezal SPCA ON SPCA.[id_cabezal] = CA.[id_cabezal]
-                    WHERE CA.[status] = 'Disponible' AND CA.[active] = 1
-                `);
+        let query = `
+            WITH ServiciosPorCabezal AS (
+                SELECT 
+                    PS.[id_cabezal],
+                    P.[fecha_salida],
+                    MIN(P.[hora_salida]) AS hora_salida,
+                    SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
+                FROM Pedido_Servicio PS
+                INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
+                INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                WHERE P.[fecha_salida] = @FechaSalida
+        `;
+
+        // Valida si los filtros incluye ID de petición
+        if (filters.IdPeticion) {
+            request.input("IdPeticion", sql.VarChar, filters.IdPeticion)
+            query += ' AND P.[id_peticion] <> @IdPeticion';
+        }
+
+        query += `
+                GROUP BY
+                    PS.[id_cabezal], 
+                    P.[fecha_salida]
+            )
+
+            SELECT 
+                CA.[id_cabezal],
+                CA.[placa] +
+                CASE
+                    WHEN SPCA.[fecha_salida] IS NOT NULL 
+                        AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida]))
+                    THEN 
+                        ' (' 
+                        + CONVERT(varchar(5), SPCA.[hora_salida], 108) + ' - ' 
+                        + CONVERT(varchar(5), DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida]), 108) 
+                        + ')'
+                    ELSE ''
+                END AS placa,
+                IIF(SPCA.[fecha_salida] = @FechaSalida
+                    AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPCA.[total_tiempo_estimado], SPCA.[hora_salida])), 
+                    1, 
+                    0
+                ) AS success
+            FROM Cabezal CA
+            LEFT JOIN ServiciosPorCabezal SPCA ON SPCA.[id_cabezal] = CA.[id_cabezal]
+            WHERE CA.[status] = 'Disponible' AND CA.[active] = 1
+        `;
+
+        const result = await request.query(query);
 
         // Valida si la consulta arrojo datos
         if (result.recordset.length > 0) {
@@ -131,49 +151,59 @@ export const GetRequestTruckHead = async (filters) => {
 // Obtiene los furgon disponibles y activos del sistema
 export const GetRequestTruckVan = async (filters) => {
     try {
-        const result = await pool.request()
-            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
-            .input("FechaSalida", sql.Date, filters.fecha_salida)
-            .input("HoraSalida", sql.Time, filters.hora_salida)
-            .query(`
-                    WITH ServiciosPorFurgon AS (
-                        SELECT 
-                            PS.[id_furgon],
-                            P.[fecha_salida],
-                            MIN(P.[hora_salida]) AS hora_salida,
-                            SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
-                        FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
-                        INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                        WHERE P.[fecha_salida] = @FechaSalida
-							AND P.[id_peticion] <> @IdPeticion
-                        GROUP BY
-                            PS.[id_furgon], 
-                            P.[fecha_salida]
-                    )
+        const request = await pool.request();
+        request.input("FechaSalida", sql.Date, filters.fecha_salida)
+        request.input("HoraSalida", sql.Time, filters.hora_salida)
 
-                    SELECT 
-                        FU.[id_furgon],
-                        FU.[placa] +
-                        CASE
-                            WHEN SPFU.[fecha_salida] IS NOT NULL 
-                                AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida]))
-                            THEN 
-                                ' (' 
-                                + CONVERT(varchar(5), SPFU.[hora_salida], 108) + ' - ' 
-                                + CONVERT(varchar(5), DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida]), 108) 
-                                + ')'
-                            ELSE ''
-                        END AS placa,
-                        IIF(SPFU.[fecha_salida] = @FechaSalida
-                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida])), 
-                            1, 
-                            0
-                        ) AS success
-                    FROM Furgon FU
-                    LEFT JOIN ServiciosPorFurgon SPFU ON SPFU.[id_furgon] = FU.[id_furgon]
-                    WHERE FU.[status] = 'Disponible' AND FU.[active] = 1
-                `);
+        let query = `
+            WITH ServiciosPorFurgon AS (
+                SELECT 
+                    PS.[id_furgon],
+                    P.[fecha_salida],
+                    MIN(P.[hora_salida]) AS hora_salida,
+                    SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
+                FROM Pedido_Servicio PS
+                INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
+                INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                WHERE P.[fecha_salida] = @FechaSalida
+        `;
+
+        // Valida si los filtros incluye ID de petición
+        if (filters.IdPeticion) {
+            request.input("IdPeticion", sql.VarChar, filters.IdPeticion)
+            query += ' AND P.[id_peticion] <> @IdPeticion';
+        }
+
+        query += `
+                GROUP BY
+                    PS.[id_furgon], 
+                    P.[fecha_salida]
+            )
+
+            SELECT 
+                FU.[id_furgon],
+                FU.[placa] +
+                CASE
+                    WHEN SPFU.[fecha_salida] IS NOT NULL 
+                        AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida]))
+                    THEN 
+                        ' (' 
+                        + CONVERT(varchar(5), SPFU.[hora_salida], 108) + ' - ' 
+                        + CONVERT(varchar(5), DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida]), 108) 
+                        + ')'
+                    ELSE ''
+                END AS placa,
+                IIF(SPFU.[fecha_salida] = @FechaSalida
+                    AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPFU.[total_tiempo_estimado], SPFU.[hora_salida])), 
+                    1, 
+                    0
+                ) AS success
+            FROM Furgon FU
+            LEFT JOIN ServiciosPorFurgon SPFU ON SPFU.[id_furgon] = FU.[id_furgon]
+            WHERE FU.[status] = 'Disponible' AND FU.[active] = 1
+        `;
+
+        const result = await request.query(query);
 
         // Valida si la consulta arrojo datos
         if (result.recordset.length > 0) {
