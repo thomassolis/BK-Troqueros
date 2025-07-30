@@ -1,4 +1,4 @@
-import { GetSessionUserInfo, sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.js';
+import { sessionStorage, SetSessionUserInfo } from '../contexts/sessionContext.js';
 import { VeryfyToken } from '../JWT/verifyToken.js';
 import { HandleError } from '../utils/HandleError.js';
 import {GenerateCodeError} from '../utils/getCodeError.js';
