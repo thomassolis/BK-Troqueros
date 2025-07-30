@@ -9,7 +9,7 @@ import { typeError } from '../dictionary/typeError.js';
 export const ValidateTokenMiddleware = async (req, res, next) => {
     try {
         // Leer el token desde las cookies
-        const token = req.cookies.Troquero-Token;
+        const token = req.cookies['Troquero-Token'];
 
         //Valida que el token exista
         if (!token) {
