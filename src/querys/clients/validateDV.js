@@ -15,7 +15,7 @@ export const ValidateDV_Client = async (DV) => {
         }
 
         const result = await pool.request()
-            .input("DV", sql.VarChar, DV)
+            .input("DV", sql.Int, DV)
             .query(`
                     SELECT 1
                     FROM Clientes

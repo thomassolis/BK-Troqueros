@@ -71,22 +71,25 @@ export const AddNewExtraCostsOrderSrvices = async (transaction, services) => {
         `;
 
         const values = [];
+        let contAuxi = 0; // Contador auxiliar para los parametros
 
-        services.forEach((item, index) => {
+        services.forEach(item => {
             // Valida si el servicio tiene nuevos costos extras
             if (!Array.isArray(item.nuevos_costos_extras)) {
                 return;
             }
 
             for (const newExtraCost of item.nuevos_costos_extras) {
-                request.input(`Id_Pedido_Servicio${index}`, sql.Int, item.id_pedidoServicio);
-                request.input(`Precio${index}`, sql.Float, newExtraCost.precio);
-                request.input(`Descripcion${index}`, sql.VarChar, newExtraCost.descripcion);
+                request.input(`Id_Pedido_Servicio${contAuxi}`, sql.Int, item.id_pedidoServicio);
+                request.input(`Precio${contAuxi}`, sql.Float, newExtraCost.precio);
+                request.input(`Descripcion${contAuxi}`, sql.VarChar, newExtraCost.descripcion);
 
                 // Agrega los valores a una lista
                 values.push(`(
-                    @Id_Pedido_Servicio${index}, @Precio${index}, @Descripcion${index}
+                    @Id_Pedido_Servicio${contAuxi}, @Precio${contAuxi}, @Descripcion${contAuxi}
                 )`);
+
+                contAuxi++; // Incrementar
             }
         });
 

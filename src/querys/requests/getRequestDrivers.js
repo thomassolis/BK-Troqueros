@@ -13,49 +13,59 @@ export const GetRequestDrivers = async (filters) => {
         // Parsea la hora en formato de fecha
         filters.hora_salida = GetTime(filters.hora_salida);
 
-        const result = await pool.request()
-            .input("IdPeticion", sql.VarChar, filters.IdPeticion)
-            .input("FechaSalida", sql.Date, filters.fecha_salida)
-            .input("HoraSalida", sql.Time, filters.hora_salida)
-            .query(`
-                    WITH ServiciosPorConductor AS (
-                        SELECT 
-                            PS.[id_conductor],
-                            P.[fecha_salida],
-                            MIN(P.[hora_salida]) AS hora_salida,
-                            SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
-                        FROM Pedido_Servicio PS
-                        INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
-                        INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                        WHERE P.[fecha_salida] = @FechaSalida
-							AND P.[id_peticion] <> @IdPeticion
-                        GROUP BY
-                            PS.[id_conductor], 
-                            P.[fecha_salida]
-                    )
+        const request = await pool.request();
+        request.input("FechaSalida", sql.Date, filters.fecha_salida)
+        request.input("HoraSalida", sql.Time, filters.hora_salida)
 
-                    SELECT 
-                        C.[id_conductor],
-                        C.[nombre] + ' ' + C.[apellido] +
-                        CASE
-                            WHEN SPC.[fecha_salida] IS NOT NULL 
-                                AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]))
-                            THEN 
-                                ' (' 
-                                + CONVERT(varchar(5), SPC.[hora_salida], 108) + ' - ' 
-                                + CONVERT(varchar(5), DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]), 108) 
-                                + ')'
-                            ELSE ''
-                        END AS nombre,
-                        IIF(SPC.[fecha_salida] = @FechaSalida
-                            AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida])), 
-                            1, 
-                            0
-                        ) AS success
-                    FROM Conductores C
-                    LEFT JOIN ServiciosPorConductor SPC ON SPC.[id_conductor] = C.[id_conductor]
-                    WHERE C.[status] = 'Disponible' AND C.[active] = 1
-                `);
+        let query = `
+            WITH ServiciosPorConductor AS (
+                SELECT 
+                    PS.[id_conductor],
+                    P.[fecha_salida],
+                    MIN(P.[hora_salida]) AS hora_salida,
+                    SUM(SD.[tiempo_estimado]) AS total_tiempo_estimado
+                FROM Pedido_Servicio PS
+                INNER JOIN Peticiones P ON P.[id_peticion] = PS.[id_peticion]
+                INNER JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                WHERE P.[fecha_salida] = @FechaSalida
+        `;
+
+        // Valida si los filtros incluye ID de petición
+        if (filters.IdPeticion) {
+            request.input("IdPeticion", sql.VarChar, filters.IdPeticion)
+            query += ' AND P.[id_peticion] <> @IdPeticion';
+        }
+
+        query += `
+                GROUP BY
+                    PS.[id_conductor], 
+                    P.[fecha_salida]
+            )
+
+            SELECT 
+                C.[id_conductor],
+                C.[nombre] + ' ' + C.[apellido] +
+                CASE
+                    WHEN SPC.[fecha_salida] IS NOT NULL 
+                        AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]))
+                    THEN 
+                        ' (' 
+                        + CONVERT(varchar(5), SPC.[hora_salida], 108) + ' - ' 
+                        + CONVERT(varchar(5), DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida]), 108) 
+                        + ')'
+                    ELSE ''
+                END AS nombre,
+                IIF(SPC.[fecha_salida] = @FechaSalida
+                    AND CONVERT(TIME, @HoraSalida) <= CONVERT(TIME, DATEADD(HOUR, SPC.[total_tiempo_estimado], SPC.[hora_salida])), 
+                    1, 
+                    0
+                ) AS success
+            FROM Conductores C
+            LEFT JOIN ServiciosPorConductor SPC ON SPC.[id_conductor] = C.[id_conductor]
+            WHERE C.[status] = 'Disponible' AND C.[active] = 1
+        `;
+
+        const result = await request.query(query);
 
         // Valida si la consulta arrojo datos
         if (result.recordset.length > 0) {
