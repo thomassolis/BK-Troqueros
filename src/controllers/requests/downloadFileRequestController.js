@@ -13,8 +13,8 @@ export const Ctr_DownloadFileRequest = async (req, res) => {
         const requests = await GetRequestsExcel(filters) // Obtiene las peticiones del sistema
 
         // Valida que las peticiones no sean undefined
-        if (!requests) {
-            return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
+        if (!requests || requests.length === 0) {
+            return res.status(404).json({success: false, message: 'No se encontraron resultados.'});
         }
 
         const buffer = await CreateTableExcelRequest(requests); // Crea la tabla con los datos de las peticiones filtrados
