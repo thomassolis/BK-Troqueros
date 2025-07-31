@@ -3,12 +3,20 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { UpdateClient } from '../../querys/clients/updateClient.js';
+import { ValidateDV_Client } from '../../querys/clients/validateDV.js';
 
 
 export const Ctr_UpdateClient = async (req, res) => {
     try {
         const data = req.body; // Obtenemos la información del cliente
         const files = req.files || {}; // Obtenemos los archivos del cliente
+
+        const existDV = await ValidateDV_Client(data.id_cliente, data.dv);
+
+        // Valida que el DV no este registrado
+        if (existDV) {
+            return res.status(403).json({ success: false, message: 'El DV ya existe, favor de comprobar la información ingresada.' })
+        }
 
         const updated = await UpdateClient(data, files) // Actualiza la información del cliente
 

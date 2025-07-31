@@ -20,7 +20,7 @@ export const Ctr_InsertClient = async (req, res) => {
         }
 
         // Valida si el DV del cliente se encuentra en la base de datos
-        const existDV = await ValidateDV_Client(newClient.dv);
+        const existDV = await ValidateDV_Client(null, newClient.dv);
         if (existDV) {
             return res.status(401).json({ success: false, message: 'Ya existe un cliente registrado con ese DV.' });
         }
