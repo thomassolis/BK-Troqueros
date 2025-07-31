@@ -5,7 +5,7 @@ import { typeError } from '../dictionary/typeError.js';
 
 export const CtrLogout = (req, res) => {
     try {
-        res.clearCookie('Troquero-Token', '', { 
+        res.clearCookie('Troquero-Token', { 
             httpOnly: true, 
             secure: true, 
             sameSite: 'strict' 
