@@ -35,29 +35,14 @@ export const CreateNewService = async (service) => {
         await transaction.rollback();
         return true;
     } catch (error) {
+        const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.POST);
+        HandleError(code, error.message, 'querys/services/createServices/CreateNewService', error);
+
         // En caso de error revierte la transaction
         if (transaction) {
             await transaction.rollback()
         }
-
-        const code = GenerateCodeError(modules.SERVICES, typeError.SERVICES.POST);
-
-        // Valida si el error ha sido por primary key o unique key
-        if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo crear el servicio, ${error.message}`);
-            MyThrow.ErrorCode = 2627;
-
-            if (error.message.includes('PK_')) {
-                MyThrow.message = 'UPS... Ha ocurrido un error, inténtelo más tarde.';
-            } else {
-                MyThrow.message = 'El servicio ya existe en el sistema.';
-            }
-
-            HandleError(code, error.message, 'querys/services/createServices/CreateNewService', error);
-            throw MyThrow
-        }
-
-        HandleError(code, error.message, 'querys/services/createServices/CreateNewService', error);
+        
         throw new Error('Ha ocurrido un error al crear el servicio');
     }
 }
