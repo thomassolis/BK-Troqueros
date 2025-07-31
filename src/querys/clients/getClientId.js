@@ -15,6 +15,7 @@ export const GetClientById = async (id) => {
                         [id_cliente],
                         [nombre],
                         [ruc_empresa] AS ruc,
+                        [DV] as dv,
                         [direccion],
                         [nombre_persona_contacto] AS nombrePersonaContacto,
                         [telefono_persona_contacto] AS telPersonaContacto,

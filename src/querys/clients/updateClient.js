@@ -11,6 +11,7 @@ import { UpdateFile } from '../../fileManager/updateFile.js';
 export const UpdateClient = async (client, files) => {
     let transaction = null
     try {
+        console.log(client)
         // Valida que la información no sea undefined
         if (!client) {
             return null
@@ -40,7 +41,7 @@ export const UpdateClient = async (client, files) => {
             .input("ID", sql.VarChar, client.id_cliente)
             .input("Nombre", sql.VarChar, client.nombre)
             .input("Ruc", sql.VarChar, client.ruc)
-            .input("DV", sql.VarChar, client.dv)
+            .input("DV", sql.Int, client.dv)
             .input("Direccion", sql.VarChar, client.direccion)
             .input("NombreContacto", sql.VarChar, client.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, client.telPersonaContacto)
