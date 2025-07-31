@@ -8,7 +8,8 @@ const ValidateNotPastDate = (value, helpers) => {
         // Limpiar la hora para comparar solo la fecha
         selectedDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
-        
+        console.log('selectedDate: ',selectedDate)
+        console.log('currentDate: ',currentDate)
         if (selectedDate < currentDate) {
             return helpers.error('date.minToday');
         }
