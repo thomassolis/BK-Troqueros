@@ -8,6 +8,7 @@ import { typeError } from '../../dictionary/typeError.js';
 
 export const ActivateRutaService = async (service) => {
     try {
+        console.log(service)
         const result = await pool.request()
             .input("ID", sql.Int, service.id_servicio_datos)
             .input("Active", sql.Bit, service.active)
