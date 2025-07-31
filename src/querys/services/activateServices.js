@@ -9,7 +9,7 @@ import { typeError } from '../../dictionary/typeError.js';
 export const ActivateService = async (service) => {
     try {
         const result = await pool.request()
-            .input("ID", sql.Int, service.id_servicio)
+            .input("ID", sql.Int, service.id_servicio_datos)
             .input("Active", sql.Bit, service.active)
             .query(`
                     UPDATE [Troqueros].[dbo].[Servicios]
