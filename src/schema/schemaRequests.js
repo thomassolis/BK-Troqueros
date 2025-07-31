@@ -2,18 +2,20 @@ import Joi from 'joi';
 
 // Valida que las fechas no sean menores a la fecha actual
 const ValidateNotPastDate = (value, helpers) => {
-    const selectedDate = new Date(value);
-        const currentDate = new Date();
+    // Divide la fecha en partes para construirla como local
+    const [year, month, day] = value.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day); // Mes base 0
+    
+    const currentDate = new Date(); // Obtiene la fecha actual
+    selectedDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
 
-        // Limpiar la hora para comparar solo la fecha
-        selectedDate.setHours(0, 0, 0, 0);
-        currentDate.setHours(0, 0, 0, 0);
-        
-        if (selectedDate < currentDate) {
-            return helpers.error('date.minToday');
-        }
+    // Valida que la fecha no sea menor a la fecha actual
+    if (selectedDate < currentDate) {
+        return helpers.error('date.minToday');
+    }
 
-        return value;
+    return value;
 }
 
 // Esquema para los servicios de las peticiones

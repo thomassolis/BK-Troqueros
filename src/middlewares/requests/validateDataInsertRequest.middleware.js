@@ -30,7 +30,7 @@ export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
         }
         
         req.body = value
-        next();
+        //next();
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'middlewares/requests/validateDataInsertRequests.middleware/Mdlware_ValidateDataInsertRequest', error);
