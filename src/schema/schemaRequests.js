@@ -44,6 +44,16 @@ const schemaOrderService = Joi.object({
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
     }),
     entrega_vacio: Joi.boolean().optional().default(false),
+    numero_contenedor: Joi.string().trim().max(15).optional().default('').messages({
+        'string.max': 'El campo número de contenedor no puede tener más de 15 caracteres.'
+    }),
+    comentario: Joi.string().trim().optional().default(''),
+    sh: Joi.string().trim().max(20).optional().default('').messages({
+        'string.max': 'El campo sh no puede tener más de 20 caracteres.'
+    }),
+    size_contenedor: Joi.string().trim().max(20).optional().default('').messages({
+        'string.max': 'El campo tamaño del contenedor no puede ser más de 20 caracteres.'
+    }),
 }).xor('id_chasis', 'id_furgon')
 .error(errors => {
     for (const err of errors) {
@@ -100,6 +110,16 @@ const schemaServiceSupplier = Joi.object({
         'any.required': 'El campo tarifa es requerido.',
         'number.base': 'El campo tarifa debe ser un valor numérico.',
         'number.greater': 'El campo tarifa debe ser un monto mayor a cero.'
+    }),
+    numero_contenedor: Joi.string().trim().max(15).optional().default('').messages({
+        'string.max': 'El campo número de contenedor no puede tener más de 15 caracteres.'
+    }),
+    comentario: Joi.string().trim().optional().default(''),
+    sh: Joi.string().trim().max(20).optional().default('').messages({
+        'string.max': 'El campo sh no puede tener más de 20 caracteres.'
+    }),
+    size_contenedor: Joi.string().trim().max(20).optional().default('').messages({
+        'string.max': 'El campo tamaño del contenedor no puede ser más de 20 caracteres.'
     }),
 }).unknown(false).messages({
     'object.unknown': 'El campo {#key} no está permitido.'
