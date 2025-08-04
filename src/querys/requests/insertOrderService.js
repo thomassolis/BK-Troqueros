@@ -21,7 +21,9 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
             )
 
             INSERT INTO [Troqueros].[dbo].[Pedido_Servicio] ([id_servicio_datos], [id_peticion],
-            [id_conductor], [id_chasis], [id_cabezal], [id_furgon], [entrega_vacio], [fecha_limite])
+                [id_conductor], [id_chasis], [id_cabezal], [id_furgon], [entrega_vacio], [fecha_limite],
+                [comentario], [num_contenedor],[size_contenedor], [numero_referencia]
+            )
                 OUTPUT 
                     INSERTED.[id_Pedido_Servicio], 
                     INSERTED.[id_conductor],
@@ -42,11 +44,16 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
             request.input(`Furgon${index}`, sql.VarChar, item.id_furgon);
             request.input(`EntregaVacio${index}`, sql.Bit, item.entrega_vacio || false);
             request.input(`FechaLimite${index}`, sql.Date, item.fecha_limite);
+            request.input(`Comentario${index}`, sql.Text, item.comentario || '');
+            request.input(`NumeroContenedor${index}`, sql.VarChar, item.numero_contenedor || 'N/A');
+            request.input(`SizeContenedor${index}`, sql.VarChar, item.size_contenedor || '');
+            request.input(`SH${index}`, sql.VarChar, item.sh || 'N/A'); 
 
             // Agrega los valores a una lista
             values.push(`(
                 @Id_servicio_datos${index}, @IDPeticion, @Conductor${index}, @Chasis${index}, 
-                @Cabezal${index}, @Furgon${index}, @EntregaVacio${index}, @FechaLimite${index}
+                @Cabezal${index}, @Furgon${index}, @EntregaVacio${index}, @FechaLimite${index},
+                @Comentario${index}, @NumeroContenedor${index}, @SizeContenedor${index}, @SH${index}
             )`);
         });
 

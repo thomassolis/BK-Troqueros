@@ -108,6 +108,10 @@ export const ChangeStructureRequest = (request) => {
                 cabezal: item.cabezal,
                 furgon: item.furgon,
                 tarifa: item.tarifa,
+                comentario: item.comentario,
+                numero_contenedor: item.numero_contenedor,
+                size_contenedor: item.size_contenedor,
+                sh: item.sh
             };
 
             // Si existe entrega_vacio y fecha_limite, los agregas

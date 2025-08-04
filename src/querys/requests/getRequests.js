@@ -20,6 +20,8 @@ export const GetRequests = async (filters) => {
         const nameCustomer = filters.nameCustomer ? filters.nameCustomer : null;
         const status = filters.status ? filters.status : null;
         const startDate = filters.startDate ? filters.startDate : null;
+        const sh = filters.sh ? filters.sh : null;
+        const num_contenedor = filters.num_contenedor ? filters.num_contenedor : null;
         let endDate = (filters.endDate && startDate) ? filters.endDate : null;
 
         // Valida si la fecha startDate tiene fecha y si endDate es undefined
@@ -47,6 +49,10 @@ export const GetRequests = async (filters) => {
                     P.[fecha_finalizacion],
                     P.[status],
                     PS.[id_Pedido_Servicio],
+                    PS.[comentario],
+                    PS.[num_contenedor] AS numero_contenedor,
+                    PS.[size_contenedor],
+                    PS.[numero_referencia] AS sh,
                     S.[nombre] AS servicio,
                     CO.[nombre] + ' ' + CO.[apellido] AS conductor,
                     CH.[placa] AS chasis,
@@ -117,7 +123,11 @@ export const GetRequests = async (filters) => {
                     [fecha_salida],
                     [hora_salida],
                     [fecha_finalizacion],
-                    [status]
+                    [status],
+                    CAST([comentario] AS VARCHAR(MAX)) AS comentario,
+                    [numero_contenedor],
+                    [size_contenedor],
+                    [sh]
                 FROM ServiciosFiltrados
             ),
             TotalCount AS (
@@ -148,6 +158,10 @@ export const GetRequests = async (filters) => {
                 PP.[hora_salida],
                 PP.[fecha_finalizacion],
                 PP.[status],
+                PP.[comentario],
+                PP.[numero_contenedor],
+                PP.[size_contenedor],
+                PP.[sh],
                 PP.[totalRegistros]
             FROM PeticionesPaginadas PP
             JOIN ServiciosFiltrados SF ON SF.[id_peticion] = PP.[id_peticion]

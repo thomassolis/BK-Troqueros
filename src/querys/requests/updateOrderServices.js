@@ -4,8 +4,7 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { UpdExtraCostsRequest } from './updateExtraCosts.js';
-import { request } from 'express';
-import { AddExtraCostsOrderServices, AddNewExtraCostsOrderSrvices } from './addExtraCost.js';
+import { AddNewExtraCostsOrderSrvices } from './addExtraCost.js';
 
 // Actualiza os datos de la petición
 export const UpdOrderServiceRequest = async (transaction, services) => {
@@ -23,6 +22,10 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
             request.input(`Furgon${index}`, sql.VarChar, element.id_furgon || null)
             request.input(`EntregaVacio${index}`, sql.Bit, element.entrega_vacio || false)
             request.input(`FechaLimite${index}`, sql.VarChar, element.fecha_limite || null)
+            request.input(`Comentario${index}`, sql.Text, element.comentario || '');
+            request.input(`NumeroContenedor${index}`, sql.VarChar, element.numero_contenedor || 'N/A');
+            request.input(`SizeContenedor${index}`, sql.VarChar, element.size_contenedor || '');
+            request.input(`SH${index}`, sql.VarChar, element.sh || 'N/A');
 
             query += `
                 UPDATE [Troqueros].[dbo].[Pedido_Servicio]
@@ -32,7 +35,11 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
                         [id_cabezal] = @Cabezal${index},
                         [id_furgon] = @Furgon${index},
                         [entrega_vacio] = @EntregaVacio${index},
-                        [fecha_limite] = @FechaLimite${index}
+                        [fecha_limite] = @FechaLimite${index},
+                        [comentario] = @Comentario${index},
+                        [num_contenedor] = @NumeroContenedor${index},
+                        [size_contenedor] = @SizeContenedor${index},
+                        [numero_referencia] = @SH${index}
                 WHERE [id_Pedido_Servicio] = @IDPedidoServicio${index} AND [id_servicio_datos] = @IDServicioDatos${index}
             `;
         });
