@@ -2,14 +2,14 @@ import Joi from 'joi';
 
 const schemaBaseItem = Joi.object({
     lugar_origen: Joi.string().trim().max(30).required().messages({
-        'any.required': 'El campo lugar de salida es requerido.',
-        'string.empty': 'El campo lugar de salida no puede estar vacío.',
-        'string.max': 'El campo lugar de salida no debe tener más de 30 caracteres.'
+        'any.required': 'El campo lugar de origen es requerido.',
+        'string.empty': 'El campo lugar de origen no puede estar vacío.',
+        'string.max': 'El campo lugar de origen no debe tener más de 30 caracteres.'
     }),
     lugar_destino: Joi.string().trim().max(30).required().messages({
-        'any.required': 'El campo lugar de llegada es requerido.',
-        'string.empty': 'El campo lugar de llegada no puede estar vacío.',
-        'string.max': 'El campo lugar de llegada no debe tener más de 30 caracteres.'
+        'any.required': 'El campo lugar de destino es requerido.',
+        'string.empty': 'El campo lugar de destino no puede estar vacío.',
+        'string.max': 'El campo lugar de destino no debe tener más de 30 caracteres.'
     }),
     tarifa: Joi.number().precision(2).required().messages({
         'any.required': 'El campo tarifa es requerido.',
@@ -34,7 +34,10 @@ export const schemaService = Joi.object({
         'string.empty': 'El campo nombre del servicio no puede estar vacío.',
         'string.max': 'El campo nombre del servicio no debe tener más de 100 caracteres.'
     }),
-    datos_servicio: Joi.array().items(schemaBaseItem).default([]),    
+    datos_servicio: Joi.array().items(schemaBaseItem).min(1).required().messages({
+        'any.required': 'La ruta del servicio es requerido.',
+        'array.min': 'Debe incluir una ruta al servicio.'
+    }),
 });
 
 // Esquema para agregar una nueva ruta del servicio

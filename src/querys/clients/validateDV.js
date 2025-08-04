@@ -7,20 +7,28 @@ import { modules } from '../../dictionary/modules.js';
 
 
 // Verifica si el DV del cliente ya está registrado en el sistema
-export const ValidateDV_Client = async (DV) => {
+export const ValidateDV_Client = async (idClient, DV) => {
     try {
         // Valida si el DV es undefined
         if (!DV) {
             return null
         }
 
-        const result = await pool.request()
-            .input("DV", sql.Int, DV)
-            .query(`
-                    SELECT 1
-                    FROM Clientes
-                    WHERE DV = @DV
-                `)
+        const request = await pool.request();
+        request.input("DV", sql.Int, DV);
+
+        let query = `
+            SELECT 1 FROM CLIENTES
+            WHERE DV = @DV
+        `;
+
+        // Valida que idCliente no sea undefined
+        if (idClient) {
+            request.input("IDCliente", sql.VarChar, idClient);
+            query += ` AND id_cliente <> @IDCliente`
+        }
+
+        const result = await request.query(query)
 
         // Valida si la consulta tiene datos
         if (result.recordset.length > 0) {
