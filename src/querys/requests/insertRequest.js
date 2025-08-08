@@ -18,12 +18,12 @@ export const InsertNewRequest = async (request) => {
 
         // Generamos el ID de la petición antes del INSERT
         const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(8);
+            .query(`DECLARE @NuevoID CHAR(10);
                     EXEC Prc_GenerarIDPeticion @NuevoID OUTPUT;
                     SELECT @NuevoID AS [id_peticion];`);
 
         const idRequest = idResult.recordset[0]?.id_peticion;
-
+        console.log("--------",idRequest)        
         // validamos que id de la petición exista
         if (!idRequest) {
             throw new Error('Ha ocurrido un error al crear la petición');
@@ -72,6 +72,7 @@ export const InsertNewRequest = async (request) => {
         await transaction.rollback();
         return false;
     } catch (error) {
+        console.log(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
 

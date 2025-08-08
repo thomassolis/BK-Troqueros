@@ -4,34 +4,32 @@ import { HandleError } from '../utils/HandleError.js';
 
 //Convierte la fecha en formato (DD-MM-YYYY)
 export const DateConverter = (date) => {
-    try {
-        // Validar si la fecha es (null, undefined, etc.)
-        if (!date) {
-            return null;
-        }
+    try {        
+        if (!date) return null;
 
-        // Convertir a objeto Date si es necesario
         const fechaObj = new Date(date);
 
-        // Verificar si la fecha es válida
         if (isNaN(fechaObj.getTime())) {
-            throw new Error(`Fecha inválida, ${error.message}`);
+            throw new Error(`Fecha inválida: ${date}`);
         }
 
-        // Obtener día, mes y año
-        const dia = fechaObj.getDate(); // Los dias en JS van de 0 a 30
-        const mes = fechaObj.getMonth() + 1; // Los meses en JS van de 0 a 11
-        const anio = fechaObj.getFullYear();
+        // Obtener día, mes y año en UTC para evitar el cambio por zona horaria
+        const dia = fechaObj.getUTCDate();
+        const mes = fechaObj.getUTCMonth() + 1;
+        const anio = fechaObj.getUTCFullYear();
 
-        // Formatear en dd/mm/yyyy
-        return `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
+        const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
+        console.log("Fecha salida", fechaFormateada);
+
+        return fechaFormateada;
 
     } catch (error) {
         const code = GenerateCodeError('-', typeError.general);
-        HandleError(code, error.message, 'auxiliary functions/dateConverter/DateConverter', error)
+        HandleError(code, error.message, 'auxiliary functions/dateConverter/DateConverter', error);
         throw new Error(`Error al convertir la fecha al formato (DD/MM/YYYY)`);
     }
 };
+
 
 //Convierte la fecha (YYYY-MM-DD HH:mm:ss) a (YYYY-MM-DD)
 export const DateConverterSQL = (date) => {

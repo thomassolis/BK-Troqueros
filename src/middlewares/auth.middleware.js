@@ -34,8 +34,7 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
             });
         }
 
-        SetSessionUserInfo(dataDecode);
-        console.log("sali del middle")
+        SetSessionUserInfo(dataDecode);        
         next();
     } catch (error) {
         console.log("errpr", error)

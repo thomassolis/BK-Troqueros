@@ -16,7 +16,12 @@ export const GetAgendaEntregaVacio = async () => {
                     CAST(0 AS BIT) AS allDay,
                     'Vacio' AS [type],
                     C.[nombre] AS cliente,
-                    P.[id_peticion] AS peticion
+                    P.[id_peticion] AS peticion,
+                    ps.[num_contenedor] as numero_contenedor,
+					ps.numero_referencia as sh,
+					ps.size_contenedor as size_contenedor,
+                    ps.id_Pedido_Servicio as id_Pedido_Servicio,
+                    ps.vacio_entregado
                 FROM [Troqueros].[dbo].[Peticiones] P
                 LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
                 LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
@@ -33,11 +38,16 @@ export const GetAgendaEntregaVacio = async () => {
         }
 
         // Agrupamos los detalles del servicio con entrega vacio
-        const data = result.recordset.map(({cliente, peticion, ...rest}) => ({
+        const data = result.recordset.map(({cliente, peticion,size_contenedor, sh, numero_contenedor,id_Pedido_Servicio,vacio_entregado,  ...rest}) => ({
             ...rest,
             details: {
                 cliente,
-                peticion
+                peticion,
+                size_contenedor,
+                sh,
+                vacio_entregado,
+                numero_contenedor,
+                id_Pedido_Servicio
             }
         }));
         

@@ -4,7 +4,6 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
 
 // Obtiene los datos a insertar en el archivo Excel
 export const GetRequestsExcel = async (filters) => {
@@ -34,13 +33,16 @@ export const GetRequestsExcel = async (filters) => {
                 CH.[placa] AS chasis,
                 CA.[placa] AS cabezal,
                 F.[placa] AS furgon,
+				PS.[numero_referencia] as SH,
+				PS.[num_contenedor] as 'Número de Contenedor',
+				ps.[size_contenedor] as 'Tamaño de Contenedor',
                 P.[precio_total] AS monto,
-                P.[precio_proveedor] AS [precio proveedor],
-                P.[profit],
-                P.[fecha_creacion],
-                P.[fecha_salida],
-                P.[hora_salida],
-                P.[fecha_finalizacion],
+				P.[fecha_creacion] as 'Creación de Petición',
+                P.[fecha_salida] as 'Comienzo de Petición',                
+				PR.[nombre] AS 'Nombre Proveedor',
+                P.[precio_proveedor] AS 'Costo de Proveedor',
+                P.[profit], 
+				ps.comentario,
                 P.[status]                
             FROM Peticiones P
             LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
@@ -50,7 +52,8 @@ export const GetRequestsExcel = async (filters) => {
             LEFT JOIN Conductores CO ON CO.[id_conductor] = PS.[id_conductor]
             LEFT JOIN Chasis CH ON CH.[id_chasis] = PS.[id_chasis]
             LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
-            LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]            
+            LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]      
+			LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]            
         `;
 
         const conditions = [];
@@ -98,13 +101,10 @@ export const GetRequestsExcel = async (filters) => {
         if (result.recordset.length === 0) {
             return [];
         }
+        
 
-        const data = result.recordset.map(({fecha_creacion, fecha_salida, hora_salida, fecha_finalizacion, ...rest}) => ({
-            ...rest,
-            ['fecha creacion']: DateConverter(fecha_creacion),
-            ['fecha salida']: DateConverter(fecha_salida),
-            ['hora salida']: ParseTime(hora_salida),
-            ['fecha finalizacion']: DateConverter(fecha_finalizacion),
+        const data = result.recordset.map(({...rest}) => ({
+            ...rest,            
         }));
 
         return data;

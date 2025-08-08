@@ -45,9 +45,9 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
             request.input(`EntregaVacio${index}`, sql.Bit, item.entrega_vacio || false);
             request.input(`FechaLimite${index}`, sql.Date, item.fecha_limite);
             request.input(`Comentario${index}`, sql.Text, item.comentario || '');
-            request.input(`NumeroContenedor${index}`, sql.VarChar, item.numero_contenedor || 'N/A');
+            request.input(`NumeroContenedor${index}`, sql.VarChar, item.numero_contenedor || '');
             request.input(`SizeContenedor${index}`, sql.VarChar, item.size_contenedor || '');
-            request.input(`SH${index}`, sql.VarChar, item.sh || 'N/A'); 
+            request.input(`SH${index}`, sql.VarChar, item.sh || ''); 
 
             // Agrega los valores a una lista
             values.push(`(

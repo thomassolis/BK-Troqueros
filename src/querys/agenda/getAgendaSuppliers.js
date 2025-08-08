@@ -21,12 +21,14 @@ export const GetAgendaSuppliers = async () => {
                     CAST(0 AS BIT) AS allDay,
                     'Proveedor' AS [type],
                     C.[nombre] AS cliente,
-                    P.[id_peticion] AS peticion
+                    P.[id_peticion] AS peticion,
+					PR.nombre as nombre_proveedor
                 FROM [Troqueros].[dbo].[Peticiones] P
                 LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
                 LEFT JOIN [Troqueros].[dbo].[Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
                 LEFT JOIN [Troqueros].[dbo].[Servicios] S ON S.[id_servicio] = SD.[id_servicio]
                 LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
+				LEFT JOIN [Troqueros].[dbo].[Proveedores] PR ON PR.[id_proveedor] = p.[proveedor_id]
                 WHERE P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
                     AND P.[fecha_salida] < DATEADD(MONTH, 3, EOMONTH(GETDATE(), -1))
 					AND P.[proveedor_id] IS NOT NULL
@@ -37,8 +39,9 @@ export const GetAgendaSuppliers = async () => {
 					P.[hora_salida],
 					S.[nombre],
 					C.[nombre],
-					P.[fecha_creacion]
-                ORDER BY P.[fecha_creacion]      
+					P.[fecha_creacion],
+					pr.nombre
+                ORDER BY P.[fecha_creacion]        
             `);
 
         // Valida que hayan datos para mostrar
@@ -47,11 +50,12 @@ export const GetAgendaSuppliers = async () => {
         }
 
         // Agrupamos los detalles del servicio con entrega vacio
-        const data = result.recordset.map(({cliente, peticion, ...rest}) => ({
+        const data = result.recordset.map(({cliente, peticion, nombre_proveedor, ...rest}) => ({
             ...rest,
             details: {
                 cliente,
-                peticion
+                peticion,
+                nombre_proveedor
             }
         }));
 

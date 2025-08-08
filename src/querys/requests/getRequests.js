@@ -7,11 +7,9 @@ import { typeError } from '../../dictionary/typeError.js';
 import { GroupServicesByRequets } from '../../auxiliary functions/functionAuxiliary.js';
 import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
 
-
-//Establece el tamaño de la página
 const PAGE_SIZE = 20;
 
-export const GetRequests = async (filters) => {
+export const GetRequests = async (filters) => {    
     try {
         const page = filters.page ? parseInt(filters.page) : 1;
         const idPeticion = filters.idPeticion ? filters.idPeticion : null;
@@ -24,16 +22,14 @@ export const GetRequests = async (filters) => {
         const num_contenedor = filters.num_contenedor ? filters.num_contenedor : null;
         let endDate = (filters.endDate && startDate) ? filters.endDate : null;
 
-        // Valida si la fecha startDate tiene fecha y si endDate es undefined
         if (startDate && !endDate) {
-            endDate = new Date().toISOString().split('T')[0]; // Obtiene la fecha actual en formato YYYY-MM-DD
+            endDate = new Date().toISOString().split('T')[0];
         }
 
         const request = await pool.request();
         request.input("Page", sql.Int, page);
         request.input("PageSize", sql.Int, PAGE_SIZE);
 
-        // Obtenemos los servicios filtrados
         let query = `
             WITH ServiciosFiltrados AS (
                 SELECT
@@ -60,19 +56,17 @@ export const GetRequests = async (filters) => {
                     F.[placa] AS furgon
                 FROM Peticiones P
                 LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
-                LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
                 LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
                 LEFT JOIN Servicios S ON S.[id_servicio] = SD.[id_servicio]
                 LEFT JOIN Conductores CO ON CO.[id_conductor] = PS.[id_conductor]
                 LEFT JOIN Chasis CH ON CH.[id_chasis] = PS.[id_chasis]
                 LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
                 LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]
-            
+                WHERE 1=1
         `;
 
         const conditions = [];
 
-        // Valida si hay filtros ha aplicar en la consulta
         if (idPeticion) {
             request.input("IdPeticion", sql.VarChar, idPeticion);
             conditions.push(`P.[id_peticion] LIKE '%' + @IdPeticion + '%'`);
@@ -90,7 +84,21 @@ export const GetRequests = async (filters) => {
 
         if (nameCustomer) {
             request.input("NameCustomer", sql.VarChar, nameCustomer);
-            conditions.push(`C.[nombre] LIKE '%' + @NameCustomer + '%'`);
+            conditions.push(`EXISTS (
+                SELECT 1 FROM Clientes C 
+                WHERE C.[id_cliente] = P.[cliente_id] 
+                AND C.[nombre] LIKE '%' + @NameCustomer + '%'
+            )`);
+        }
+
+        if (num_contenedor) {            
+            request.input("num_contenedor", sql.VarChar, num_contenedor);
+            conditions.push(`PS.[num_contenedor] LIKE '%' + @num_contenedor + '%'`);
+        }
+
+        if (sh) {            
+            request.input("numero_referencia", sql.VarChar, sh);
+            conditions.push(`PS.[numero_referencia] LIKE '%' + @numero_referencia + '%'`);
         }
 
         if (status) {
@@ -104,12 +112,10 @@ export const GetRequests = async (filters) => {
             conditions.push(`P.[fecha_salida] BETWEEN @StartDate AND @EndDate`);
         }
 
-        // Construye las condiciones de la consulta
         if (conditions.length > 0) {
-            query += ' WHERE ' + conditions.join(' AND ');
+            query += ' AND ' + conditions.join(' AND ');
         }
 
-        // Obtiene el total de peticiones
         query += `),
             PeticionesUnicas AS (
                 SELECT DISTINCT
@@ -134,22 +140,42 @@ export const GetRequests = async (filters) => {
                 SELECT COUNT(*) AS totalRegistros FROM PeticionesUnicas
             ),
             PeticionesPaginadas AS (
-                SELECT PU.*, T.[totalRegistros]
+                SELECT 
+                    PU.*, 
+                    T.[totalRegistros],
+                    ROW_NUMBER() OVER (ORDER BY PU.[fecha_creacion] DESC) AS row_num
                 FROM PeticionesUnicas PU
                 CROSS JOIN TotalCount T
-                ORDER BY PU.[fecha_creacion] DESC
-                OFFSET (@Page - 1) * @PageSize ROWS
-                FETCH NEXT @PageSize ROWS ONLY
             )
             SELECT
                 PP.[id_peticion],
                 C.[nombre] AS cliente,
                 P.[nombre] AS proveedor,
-                SF.[servicio],
-                SF.[conductor],
-                SF.[chasis],
-                SF.[cabezal],
-                SF.[furgon],
+                (
+                    SELECT STRING_AGG(SF.[servicio], ', ')
+                    FROM ServiciosFiltrados SF
+                    WHERE SF.[id_peticion] = PP.[id_peticion]
+                ) AS servicios,
+                (
+                    SELECT TOP 1 SF.[conductor]
+                    FROM ServiciosFiltrados SF
+                    WHERE SF.[id_peticion] = PP.[id_peticion]
+                ) AS conductor,
+                (
+                    SELECT TOP 1 SF.[chasis]
+                    FROM ServiciosFiltrados SF
+                    WHERE SF.[id_peticion] = PP.[id_peticion]
+                ) AS chasis,
+                (
+                    SELECT TOP 1 SF.[cabezal]
+                    FROM ServiciosFiltrados SF
+                    WHERE SF.[id_peticion] = PP.[id_peticion]
+                ) AS cabezal,
+                (
+                    SELECT TOP 1 SF.[furgon]
+                    FROM ServiciosFiltrados SF
+                    WHERE SF.[id_peticion] = PP.[id_peticion]
+                ) AS furgon,
                 PP.[monto],
                 PP.[precio_proveedor],
                 PP.[profit],
@@ -164,15 +190,14 @@ export const GetRequests = async (filters) => {
                 PP.[sh],
                 PP.[totalRegistros]
             FROM PeticionesPaginadas PP
-            JOIN ServiciosFiltrados SF ON SF.[id_peticion] = PP.[id_peticion]
             LEFT JOIN Clientes C ON C.[id_cliente] = PP.[cliente_id]
             LEFT JOIN Proveedores P ON P.[id_proveedor] = PP.[proveedor_id]
+            WHERE PP.row_num BETWEEN ((@Page - 1) * @PageSize + 1) AND (@Page * @PageSize)
             ORDER BY PP.[fecha_creacion] DESC
         `;
-
+        
         const result = await request.query(query);
 
-        // Valida si la consulta tiene datos
         if (result.recordset.length === 0) {
             return [];
         }

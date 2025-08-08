@@ -23,9 +23,9 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
             request.input(`EntregaVacio${index}`, sql.Bit, element.entrega_vacio || false)
             request.input(`FechaLimite${index}`, sql.VarChar, element.fecha_limite || null)
             request.input(`Comentario${index}`, sql.Text, element.comentario || '');
-            request.input(`NumeroContenedor${index}`, sql.VarChar, element.numero_contenedor || 'N/A');
+            request.input(`NumeroContenedor${index}`, sql.VarChar, element.numero_contenedor || '');
             request.input(`SizeContenedor${index}`, sql.VarChar, element.size_contenedor || '');
-            request.input(`SH${index}`, sql.VarChar, element.sh || 'N/A');
+            request.input(`SH${index}`, sql.VarChar, element.sh || '');
 
             query += `
                 UPDATE [Troqueros].[dbo].[Pedido_Servicio]

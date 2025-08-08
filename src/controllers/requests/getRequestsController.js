@@ -12,11 +12,15 @@ export const Ctr_GetRequests = async (req, res) => {
         console.log('filters', filters);
 
         const requests = await GetRequests(filters); // Obtiene las peticiones del sistema
-
+        console.log("-----",requests)
         // Valida que las peticiones no sean undefined
         if (!requests) {
             return res.status(200).json({success: false, message: 'No se encontraron resultados.'});
         }
+        console.log(
+  'Data que envío al front:',
+  JSON.stringify(requests, null, 2)
+);
 
         return res.status(200).json({success: true, message: 'Data enviada', data: requests});
     } catch (error) {

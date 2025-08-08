@@ -4,7 +4,7 @@ import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverter.js';
+import {ParseTime } from '../../auxiliary functions/dateConverter.js';
 import { ChangeStructureRequest } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Obtiene la información de una petición
