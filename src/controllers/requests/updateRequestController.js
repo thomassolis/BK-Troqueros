@@ -7,11 +7,8 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_UpdRequest = async (req, res) => {
     try {
-        const request = req.body; // Obtiene la información de la petición
-
-        console.log('Ctr_UpdRequest', request)
-        const updatedRequest = await UpdateRequest(request) // Actualiza los datos de la petición
-
+        const request = req.body; // Obtiene la información de la petición        
+        const updatedRequest = await UpdateRequest(request) // Actualiza los datos de la petición        
         // Valida que se haya actualizado la petición
         if (!updatedRequest) {
             return res.status(404).json({ success: true, message: 'Petición no actualizada.' });

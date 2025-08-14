@@ -13,7 +13,6 @@ import { typeError } from '../dictionary/typeError.js';
 export const ctrAuthentication = async (req, res) => {
     try {
         const { email, pass } = req.body;
-
         //Verifica que las credenciales del usuario
         if (!email || !pass) {
             return res.status(400).json({ success: false, message: 'Los campos están vacíos.' });
@@ -21,7 +20,6 @@ export const ctrAuthentication = async (req, res) => {
 
         //Obtiene los datos del usuario
         const user = await ValidateUser(email);
-
         //Valida que el usuario exista
         if (!user) {
             await InsertUserBan(email); //Sino existe, lo crea y lo guarda en la tabla de usuarios baneados

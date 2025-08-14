@@ -23,37 +23,51 @@ export const GroupServicesByRequets = (requests) => {
 
 // Construye el array para los costros extras por servicios
 export const BuildArray = (arrayServices, arrayServicesInserted) => {
-    // Define los campos en común que usarás como clave compuesta
-    const camposClave = ['id_conductor', 'id_chasis', 'id_cabezal', 'id_furgon'];
+    
+  // Campos para la clave base
+  const camposClave = ['id_conductor', 'id_chasis', 'id_cabezal', 'id_furgon'];
 
-    // Función para construir una clave compuesta a partir de los campos clave
-    const construirClave = (obj) => camposClave.map(c => obj[c]).join('|');
+  // Normaliza valores para evitar 'undefined' o 'null' en la clave
+  const norm = (v) => (v === undefined || v === null ? '' : String(v).trim());
 
-    // Crea un Map usando la clave compuesta como key
-    const mapOriginales = new Map(
-        arrayServices.map(item => [construirClave(item), item])
-    );
+  // Construye clave base determinista
+  const construirClave = (obj) => camposClave.map(c => norm(obj[c])).join('|');    
+  // 1) Construimos un MultiMap: clave -> cola (array) de originales con esa clave
+  const colaPorClave = new Map();
+  for (const original of arrayServices || []) {
+    const clave = construirClave(original);
+    if (!colaPorClave.has(clave)) colaPorClave.set(clave, []);
+    colaPorClave.get(clave).push(original);
+  }
 
-    const resultado = [];
+  const resultado = [];
 
-    arrayServicesInserted.forEach(item => {
-        const clave = construirClave(item);
-        const original = mapOriginales.get(clave) || {};
+  // 2) Recorremos los insertados y consumimos uno de la cola por cada coincidencia
+  for (const item of (arrayServicesInserted || [])) {
+    const clave = construirClave(item);
+    const cola = colaPorClave.get(clave);
 
-        // Solo agregamos si el servicio tiene costos extras
-        if (Array.isArray(original.costos_extras) && original.costos_extras.length > 0) {
-            original.costos_extras.forEach(costo => {
-                resultado.push({
-                    id_Pedido_Servicio: item.id_Pedido_Servicio,
-                    precio: costo.precio,
-                    descripcion: costo.descripcion
-                });
-            });
-        }
-    });
+    // Si no hay original disponible para esta clave, saltamos
+    if (!cola || cola.length === 0) continue;
 
-    return resultado;
+    // Tomamos el siguiente original (FIFO) para hacer el emparejamiento único
+    const originalEmparejado = cola.shift();
+
+    // Si tiene costos extras, los agregamos
+    if (Array.isArray(originalEmparejado?.costos_extras) && originalEmparejado.costos_extras.length > 0) {
+      for (const costo of originalEmparejado.costos_extras) {
+        resultado.push({
+          id_Pedido_Servicio: item.id_Pedido_Servicio,
+          precio: costo.precio,
+          descripcion: costo.descripcion
+        });
+      }
+    }
+  }
+
+  return resultado;
 };
+
 
 // Cambia la estructura del Objeto (Petición)
 export const ChangeStructureRequest = (request) => {
@@ -70,6 +84,7 @@ export const ChangeStructureRequest = (request) => {
         profit: primerRegistro.profit,
         fecha_salida: primerRegistro.fecha_salida,
         hora_salida: primerRegistro.hora_salida,
+        numero_factura: primerRegistro.numero_factura,
         servicios: []
     };
 
@@ -134,8 +149,7 @@ export const ChangeStructureRequest = (request) => {
     });
 
     // Al final, conviertes el map a array
-    estructura.servicios = Array.from(serviciosMap.values());
-
+    estructura.servicios = Array.from(serviciosMap.values());    
     return estructura;
 }
 

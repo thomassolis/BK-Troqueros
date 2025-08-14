@@ -41,6 +41,7 @@ export const UpdateRequest = async (request) => {
             .input("Profit", sql.Float, profit || 0)
             .input("FechaSalida", sql.Date, request.fecha_salida)
             .input("HoraSalida", sql.Time, request.hora_salida)
+            .input("Numero_factura", sql.VarChar, request.numero_factura)
             .query(`
                     UPDATE [Troqueros].[dbo].[Peticiones]
                         SET [cliente_id] = @Cliente,
@@ -50,7 +51,8 @@ export const UpdateRequest = async (request) => {
                             [profit] = @Profit,
                             [fecha_salida] = @FechaSalida,
                             [hora_salida] = @HoraSalida,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificación] = GETDATE(),
+                            [numero_factura] = @Numero_factura
                     WHERE [id_peticion] = @ID
                 `);
 

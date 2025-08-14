@@ -7,6 +7,6 @@ import { VerifyPermissionMiddleware } from '../middlewares/verifyPermission.midd
 const MODULE = 'Usuarios';
 const router = express.Router();
 
-router.post('/register', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), ValidateUserData, CtrCreateUser);
+router.post('/register', /*ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE),*/ ValidateUserData, CtrCreateUser);
 
 export default router;

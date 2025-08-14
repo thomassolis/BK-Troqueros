@@ -8,7 +8,6 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_UpdateStatusRequest = async (req, res) => {
     try {
         const request = req.body; // Obtiene la data
-        console.log(request)
 
         // Validamos que peticion no sea undefined
         if (!request || !Object.keys(request).length) {

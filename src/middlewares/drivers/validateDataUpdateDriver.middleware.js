@@ -7,8 +7,7 @@ import { schemaUpdDriver } from '../../schema/schemaDrivers.js';
 
 export const Mdlware_ValidateDataUpdDriver = (req, res, next) => {
     try {
-        const data = req.body; // Obtiene la data del conductor
-        console.log(req.body);
+        const data = req.body; // Obtiene la data del conductor        
         // Valida que los datos del conductor no sean undefined
         if (!data || !Object.keys(data).length) {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })

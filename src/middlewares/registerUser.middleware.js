@@ -7,8 +7,7 @@ import { userSchema } from '../schema/schemaUsers.js';
 
 export const ValidateUserData = (req, res, next) => {
     try {
-        const data = req.body; // Obtenemos la info del usuario
-
+        const data = req.body; // Obtenemos la info del usuario        
         // Valida que data no sea undefined
         if (!data || !Object.keys(data).length) {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })

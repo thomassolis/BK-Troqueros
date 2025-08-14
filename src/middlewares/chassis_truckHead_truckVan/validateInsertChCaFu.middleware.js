@@ -6,8 +6,6 @@ import { schemaVehicles } from '../../schema/schemaVehiculo.js';
 
 //Valida los datos enviados por el request body
 export const ValidateDataInsertMiddleware = (req, res, next) => {
-    console.log(req.body)
-    console.log(req.files)
     try {
         const data = req.body; // Obtenemos los datos de los vehículos
 

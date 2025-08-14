@@ -10,12 +10,10 @@ export const InitSocket = (server) => {
     try {
         io = new Server(server) // Instaciamos un nuevo objeto
 
-        io.on('connection', (socket) => {
-            console.log('Usuario conectado', socket.id)
+        io.on('connection', (socket) => {            
 
             // Evento que escucha cuando se crean nuevas solicitudes de creación de shipper o consignee
-            socket.on('Nueva_Solicitud', (data) => {
-                console.log('Procesando Solicitud...', data)
+            socket.on('Nueva_Solicitud', (data) => {                
                 // Evento que emite una nueva notificación al departamento de IT
                 socket.broadcast.emit('Solicitud_confirmada', {
                     title: 'Creación de Customer.',
@@ -25,7 +23,7 @@ export const InitSocket = (server) => {
 
             // Evento que escucha cuando el usuario se desconecta
             socket.on('disconnect', () => {
-                console.log('Usuario desconectado');
+                
             });
         })
     } catch (error) {

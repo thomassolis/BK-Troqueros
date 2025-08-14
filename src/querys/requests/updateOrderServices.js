@@ -26,6 +26,7 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
             request.input(`NumeroContenedor${index}`, sql.VarChar, element.numero_contenedor || '');
             request.input(`SizeContenedor${index}`, sql.VarChar, element.size_contenedor || '');
             request.input(`SH${index}`, sql.VarChar, element.sh || '');
+            request.input(`monto${index}`, sql.Float, element.tarifa || '');
 
             query += `
                 UPDATE [Troqueros].[dbo].[Pedido_Servicio]
@@ -39,7 +40,8 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
                         [comentario] = @Comentario${index},
                         [num_contenedor] = @NumeroContenedor${index},
                         [size_contenedor] = @SizeContenedor${index},
-                        [numero_referencia] = @SH${index}
+                        [numero_referencia] = @SH${index},
+                        [monto] = @monto${index}
                 WHERE [id_Pedido_Servicio] = @IDPedidoServicio${index} AND [id_servicio_datos] = @IDServicioDatos${index}
             `;
         });

@@ -8,9 +8,7 @@ import { UpdateDriverInfo } from '../../querys/drivers/updateDriver.js';
 export const Ctr_UpdateDriver = async (req, res) => {
     try {
         const data = req.body; // Obtenemos la información del cliente
-        const files = req.files || {}; // Obtenemos los archivos del cliente
-        console.log('actualizando: ',req.body);
-        console.log(req.files);
+        const files = req.files || {}; // Obtenemos los archivos del cliente                
         const updated = await UpdateDriverInfo(data, files) // Actualiza la información del conductor
         
         // Valida que se haya actualizado la información del cliente

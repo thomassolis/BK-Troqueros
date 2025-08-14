@@ -32,6 +32,7 @@ export const CtrCreateUser = async (req, res) => {
         return res.status(201).json({ success: true, message: 'Usuario creado satisfactoriamente 😃' });
 
     } catch (error) {
+        console.error(error);
         const code = GenerateCodeError(modules.USUARIOS, typeError.usuarioNoCreado);
         HandleError(code, error.message, 'controller/CreateUserController/CtrCreateUser', error);
         return res.status(500).json({ success: false, message: 'Error al crear el usuario' });

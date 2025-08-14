@@ -5,9 +5,7 @@ import {GenerateCodeError} from '../utils/getCodeError.js';
 import { typeError } from '../dictionary/typeError.js';
 
 // Middleware para validar el token en las cookies
-export const ValidateTokenMiddleware = async (req, res, next) => {
-
-    console.log(req.params.id);
+export const ValidateTokenMiddleware = async (req, res, next) => {    
     try {
         // Leer el token desde las cookies
         const token = req.cookies['Troquero-Token'];
@@ -37,7 +35,7 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         SetSessionUserInfo(dataDecode);        
         next();
     } catch (error) {
-        console.log("errpr", error)
+        console.error("errpr", error)
         //pregunta si el error ha sido por TokenExpiredError
         if (error.name === 'TokenExpiredError') {
             return res.status(403).json({success: false, message: 'El token ha expirado'});

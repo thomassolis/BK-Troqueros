@@ -7,9 +7,9 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_InsertRequest = async (req, res) => {
     try {
-        const request = req.body; // Obtiene la data de la petición        
-        const createdRequest = await InsertNewRequest(request); // Crea la petición
+        const request = req.body; // Obtiene la data de la petición 
 
+        const createdRequest = await InsertNewRequest(request); // Crea la petición
         // Valida que se haya creado la petición en el sistema
         if (!createdRequest) {
             return res.status(400).json({success: false, message: 'No se pudo crear la petición.'});

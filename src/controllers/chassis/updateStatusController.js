@@ -7,8 +7,7 @@ import { UpdateStatusChassis } from '../../querys/Chassis/updateStatus.js';
 
 export const Ctr_UdpStatusChassis = async (req, res) => {
     try {
-        const chassis = req.body; // Obtenemos los datos
-        console.log(chassis);
+        const chassis = req.body; // Obtenemos los datos        
 
         // Validamos que chasis no sea undefined
         if (!chassis || !Object.keys(chassis).length) {

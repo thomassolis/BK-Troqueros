@@ -29,6 +29,8 @@ export const GetRequestsExcel = async (filters) => {
                 P.[id_peticion] AS ID,
                 C.[nombre] AS cliente,
                 S.[nombre] AS servicio,
+                SD.[lugar_origen] as 'Lugar de Origen',
+		        SD.[lugar_destino] as 'Lugar de Destino',
                 CO.[nombre] + ' ' + CO.[apellido] AS conductor,
                 CH.[placa] AS chasis,
                 CA.[placa] AS cabezal,
@@ -43,6 +45,7 @@ export const GetRequestsExcel = async (filters) => {
                 P.[precio_proveedor] AS 'Costo de Proveedor',
                 P.[profit], 
 				ps.comentario,
+                P.[numero_factura] AS 'Número de Factura',
                 P.[status]                
             FROM Peticiones P
             LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
@@ -93,8 +96,7 @@ export const GetRequestsExcel = async (filters) => {
         // Construye las condiciones de la consulta
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
-        }
-        console.log(query)
+        }        
         const result = await request.query(query);
 
         // Valida si la consulta tiene datos

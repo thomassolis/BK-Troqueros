@@ -30,7 +30,7 @@ export const CreateUser = async (data) => {
             return false;
         }
 
-        const insertedRole = await InsertRolUser(idUser, data.rol); //inserta el rol
+        const insertedRole = await InsertRolUser(idUser, data.rol, transaction); //inserta el rol
 
         //valida que el rol se haya insertado correctamente
         if (!insertedRole) {
@@ -43,6 +43,7 @@ export const CreateUser = async (data) => {
 
         return insertedRole;
     } catch (error) {
+        console.error(error)
         await transaction.rollback();
 
         const code = GenerateCodeError(modules.USUARIOS, typeError.usuarioNoCreado);
@@ -60,15 +61,16 @@ export const ValidateEmail = async (email) => {
         return result.recordset[0];
         
     } catch (error) {
+        console.error(error);
         const code = GenerateCodeError(modules.USUARIOS, typeError.validarCorreo);
         HandleError(code, error.message, 'query/CreateUser/ValidateEmail', error);
         throw new Error(`Error al validar el correo ${email}`);
     }
 }
 
-const InsertRolUser = async (idUsuario, idRol) => {
+const InsertRolUser = async (idUsuario, idRol, transaction) => {
     try {
-        const result = await pool.request()
+        const result = await transaction.request()
             .input("idUsuario", sql.Int, idUsuario)
             .input("idRol", sql.Char(3), idRol)
             .query(`INSERT INTO [Troqueros].[dbo].[Usuarios_Roles] (id_usuario, id_rol) VALUES (@idUsuario, @idRol)`);

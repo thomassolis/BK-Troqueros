@@ -37,8 +37,7 @@ export const CtrGetChassisId = async (req, res) => {
             fecha_ultimo_revisado: DateConverterSQL(data.fecha_ultimo_revisado),
             foto_poliza: GetLinksPreviewFiles(linkDownload, data.foto_poliza),
             foto_revisado: GetLinksPreviewFiles(linkDownload, data.foto_revisado),
-        };
-        console.log('chasis a enviar', chassis)
+        };        
 
         return res.status(200).json({success: true, message: 'Data enviada', data: chassis});
     } catch (error) {

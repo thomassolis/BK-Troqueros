@@ -10,10 +10,7 @@ export const CtrUpdateChassis = async (req, res) => {
     
     try {
         const dataChassis = req.body; //obtiene los datos del request body
-        const files = req.files || {}; //obtiene todos los archivos del request files 
-        
-        console.log('chasis', dataChassis)
-        console.log('files', files);
+        const files = req.files || {}; //obtiene todos los archivos del request files                         
 
         //Actualiza el chasis
         const updatedChassis = await UpdateChassis(dataChassis, files);

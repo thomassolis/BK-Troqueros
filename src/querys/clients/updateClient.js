@@ -10,8 +10,7 @@ import { UpdateFile } from '../../fileManager/updateFile.js';
 // Actualiza la información del cliente
 export const UpdateClient = async (client, files) => {
     let transaction = null
-    try {
-        console.log(client)
+    try {        
         // Valida que la información no sea undefined
         if (!client) {
             return null

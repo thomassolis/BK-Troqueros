@@ -74,7 +74,7 @@ export const UpdateChassis = async (chassis, files) => {
         await transaction.rollback();        
         return false;
     } catch (error) {
-        console.log(error)
+        console.error(error)
         //revierte la actualización del chasis
         if (transaction) {
             await transaction.rollback();

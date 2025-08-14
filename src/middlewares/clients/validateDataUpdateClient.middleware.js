@@ -7,8 +7,7 @@ import { schemaClientUpd } from '../../schema/schemaClients.js';
 // Valida los datos antes de actualizar la información del cliente
 export const Mdlware_ValidateDataUpdateClient = (req, res, next) => {
     try {
-        const data = req.body; // Obtenemos los datos de los vehículos
-        console.log('Dataaa: ', data);
+        const data = req.body; // Obtenemos los datos de los vehículos        
         // Valida que los datos de los vehículos no sea undefined
         if (!data || !Object.keys(data).length) {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })

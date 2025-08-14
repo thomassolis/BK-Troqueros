@@ -37,7 +37,7 @@ export const GetRequestByID = async (id) => {
                         P.[profit],
                         SD.[lugar_origen],
                         SD.[lugar_destino],
-                        SD.[tarifa],
+                        PS.[monto] as tarifa,
                         PS.[entrega_vacio],
                         PS.[fecha_limite],
                         PS.[comentario],
@@ -47,7 +47,8 @@ export const GetRequestByID = async (id) => {
                         CE.[precio] AS costoExtra,
                         CE.[descripcion],
                         P.[fecha_salida],
-                        P.[hora_salida]
+                        P.[hora_salida],
+                        P.[numero_factura]
                     FROM Peticiones P
                     LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
                     LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
@@ -60,8 +61,7 @@ export const GetRequestByID = async (id) => {
                     LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]
                     LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
                     WHERE P.id_peticion = @ID
-                `);
-
+                `);                
         // Valida si la consulta tiene datos
         if (result.recordset.length === 0) {
             return [];
@@ -75,7 +75,7 @@ export const GetRequestByID = async (id) => {
         }));
 
         return {
-            data: ChangeStructureRequest(data)
+            data: ChangeStructureRequest(data)            
         };
         
     } catch (error) {

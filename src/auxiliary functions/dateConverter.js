@@ -18,8 +18,7 @@ export const DateConverter = (date) => {
         const mes = fechaObj.getUTCMonth() + 1;
         const anio = fechaObj.getUTCFullYear();
 
-        const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
-        console.log("Fecha salida", fechaFormateada);
+        const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;        
 
         return fechaFormateada;
 

@@ -7,8 +7,7 @@ import { typeError } from '../../dictionary/typeError.js';
 export const CtrDeleteChassis = async (req, res) => {
     try {
         //obtiene el id del chasis del request params
-        const id_chassis = req.params.id;        
-        console.log('id_chassis',id_chassis)
+        const id_chassis = req.params.id;      
 
         //valida que el id del chasis no sea nulo
         if (!id_chassis) {

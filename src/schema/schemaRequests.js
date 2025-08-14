@@ -198,6 +198,7 @@ export const schemaRequest = Joi.object({
         'any.required': 'El campo cliente es requerido.',
         'string.empty': 'El campo cliente no puede estar vacío.'
     }),
+    numero_factura: Joi.string().trim(),
     fecha_salida: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required().custom(ValidateNotPastDate).messages({
         'any.required': 'El campo fecha de salida es requerido.',
         'string.pattern.base': 'La fecha debe tener el formato año-mes-dia.',

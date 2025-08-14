@@ -8,7 +8,6 @@ import { typeError } from '../../dictionary/typeError.js';
 //controlado para insertar chasis
 export const CtrInsertChassis = async (req, res) => {
     try {
-        console.log(req.body);
         //obtiene los datos del request body
         const chassis = req.body;
         var file = req.files;

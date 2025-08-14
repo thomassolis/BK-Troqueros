@@ -22,24 +22,20 @@ export const InsertNewRequest = async (request) => {
                     EXEC Prc_GenerarIDPeticion @NuevoID OUTPUT;
                     SELECT @NuevoID AS [id_peticion];`);
 
-        const idRequest = idResult.recordset[0]?.id_peticion;
-        console.log("--------",idRequest)        
+        const idRequest = idResult.recordset[0]?.id_peticion;           
         // validamos que id de la petición exista
         if (!idRequest) {
             throw new Error('Ha ocurrido un error al crear la petición');
         }
-
+                //* ALL OK HERE
         let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto total de los servicios
         let profit = 0 // Declaramos el profit con valor inicial de 0
-
+            //* ALL OK HERE #2
         // Valida si la petición es por proveedor
-        // Calcula el profit
-        console.log('request',request?.precio_proveedor)
-        if (request?.precio_proveedor) {
-            console.log('Entre en profit')
+        // Calcula el profit        
+        if (request?.precio_proveedor) {            
             profit = request.servicios[0].tarifa - request.precio_proveedor;
-        }
-        
+        }        
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)
@@ -50,12 +46,13 @@ export const InsertNewRequest = async (request) => {
             .input("FechaSalida", sql.Date, request.fecha_salida)
             .input("HoraSalida", sql.Time, request.hora_salida)
             .input("Status", sql.VarChar, request.status || 'En espera')
+            .input("Numero_factura", sql.VarChar, request.numero_factura || null)
             .query(`
                     INSERT INTO [Troqueros].[dbo].[Peticiones] ([id_peticion], [cliente_id], 
-                    [proveedor_id], [precio_proveedor], [profit], [precio_total], [fecha_salida], [hora_salida], [status])
-                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @Profit, @Monto, @FechaSalida, @HoraSalida, @Status)
+                    [proveedor_id], [precio_proveedor], [profit], [precio_total], [fecha_salida], [hora_salida], [status], [numero_factura])
+                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @Profit, @Monto, @FechaSalida, @HoraSalida, @Status, @Numero_factura)
                 `);
-        
+         //* ALL OK HERE #3
         // Valida si se hizo el insert
         if (result.rowsAffected > 0) {
             // Agrega los servicios de la petición
@@ -72,7 +69,7 @@ export const InsertNewRequest = async (request) => {
         await transaction.rollback();
         return false;
     } catch (error) {
-        console.log(error)
+        console.error(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
 

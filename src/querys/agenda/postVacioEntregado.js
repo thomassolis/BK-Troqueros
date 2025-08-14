@@ -1,8 +1,7 @@
 
 import { pool } from "../../db/db.js";
 import sql from 'mssql';
-export const PostVacioEntregado = async(data) => {
-    console.log('data', data);
+export const PostVacioEntregado = async(data) => {    
     try{
         const result = await pool.request()
         .input("value", sql.Bit, data.value)

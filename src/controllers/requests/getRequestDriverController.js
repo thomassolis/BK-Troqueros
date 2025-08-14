@@ -8,8 +8,7 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_GetRequestsDrivers = async (req, res) => {
     try {
-        let filters = req.query; // Obtiene la fecha y hora de salida de la petición
-        console.log('filters', filters);
+        let filters = req.query; // Obtiene la fecha y hora de salida de la petición        
         const isValidDate = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
         if (!isValidDate) {

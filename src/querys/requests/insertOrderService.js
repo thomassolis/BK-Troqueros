@@ -6,37 +6,40 @@ import { typeError } from '../../dictionary/typeError.js';
 import { AddExtraCostsOrderServices } from './addExtraCost.js';
 
 // Inserta los servicios de las peticiones
+//Modificado
 export const InsertOrderServices = async (transaction, services, idRequest) => {
+    console.dir(services, {depth:null});
+    console.dir("POR NOXUS");
     try {
         const request = await transaction.request();
         request.input("IDPeticion", sql.VarChar, idRequest);
 
         let query = `
             DECLARE @InsertedIDs TABLE (
-                id_Pedido_Servicio INT, 
+                id_Pedido_Servicio INT,                 
                 id_conductor CHAR(7),
                 id_chasis CHAR(7),
                 id_cabezal CHAR(7),
-                id_furgon CHAR(7)
+                id_furgon CHAR(7)            
             )
 
             INSERT INTO [Troqueros].[dbo].[Pedido_Servicio] ([id_servicio_datos], [id_peticion],
                 [id_conductor], [id_chasis], [id_cabezal], [id_furgon], [entrega_vacio], [fecha_limite],
-                [comentario], [num_contenedor],[size_contenedor], [numero_referencia]
+                [comentario], [num_contenedor],[size_contenedor], [numero_referencia], [monto]
             )
                 OUTPUT 
                     INSERTED.[id_Pedido_Servicio], 
                     INSERTED.[id_conductor],
                     INSERTED.[id_chasis],
                     INSERTED.[id_cabezal],
-                    INSERTED.[id_furgon]
+                    INSERTED.[id_furgon]                    
                 INTO @InsertedIDs
                 VALUES 
         `;
 
         const values = [];
 
-        services.forEach((item, index) => {
+        services.forEach((item, index) => {            
             request.input(`Id_servicio_datos${index}`, sql.Int, item.id_servicio_datos);
             request.input(`Conductor${index}`, sql.VarChar, item.id_conductor);
             request.input(`Chasis${index}`, sql.VarChar, item.id_chasis);
@@ -48,22 +51,23 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
             request.input(`NumeroContenedor${index}`, sql.VarChar, item.numero_contenedor || '');
             request.input(`SizeContenedor${index}`, sql.VarChar, item.size_contenedor || '');
             request.input(`SH${index}`, sql.VarChar, item.sh || ''); 
+            request.input(`monto${index}`, sql.Float, item.tarifa || 0); 
 
             // Agrega los valores a una lista
             values.push(`(
                 @Id_servicio_datos${index}, @IDPeticion, @Conductor${index}, @Chasis${index}, 
                 @Cabezal${index}, @Furgon${index}, @EntregaVacio${index}, @FechaLimite${index},
-                @Comentario${index}, @NumeroContenedor${index}, @SizeContenedor${index}, @SH${index}
+                @Comentario${index}, @NumeroContenedor${index}, @SizeContenedor${index}, @SH${index}, @monto${index}
             )`);
         });
 
         query += values.join(', ') + `\nSELECT id_Pedido_Servicio, id_conductor,
                 id_chasis,
                 id_cabezal,
-                id_furgon  FROM @InsertedIDs`;
+                id_furgon FROM @InsertedIDs`;
         
         const result = await request.query(query);
-
+       
         // Valida si se insertaron los servicios de la petición
         if (result.recordset.length > 0 && result.rowsAffected.length > 0 || result.rowsAffected > 0) {
             // Agrega los costos extras de los servicios

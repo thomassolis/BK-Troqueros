@@ -9,8 +9,7 @@ import {
 
 export const Mdlware_ValidateDataInsertRequest = (req, res, next) =>{
     try {
-        const data = req.body; // Obtenemos los datos de la petición
-        console.log('Data:', data);
+        const data = req.body; // Obtenemos los datos de la petición        
         // Valida que los datos de la petición no sea undefined
         if (!data || !Object.keys(data).length) {
             return res.status(400).json({ success: true, message: 'Favor de proporcionar la información solicitada.' })

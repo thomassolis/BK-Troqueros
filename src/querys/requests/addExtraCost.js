@@ -40,8 +40,7 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
             return true;
         }
 
-        query += values.join(', ');
-        console.log('Query to insert extra costs:', query);
+        query += values.join(', ');        
         
         const result = await request.query(query);
 
@@ -51,8 +50,7 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
         }
 
         return false;
-    } catch (error) {
-        //console.log('Error al insertar los costos extras de los servicios:', error);
+    } catch (error) {        
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/addExtraCost/AddExtraCostsOrderServices', error);
         throw new Error(`Ha ocurrido un error al insertar los costos extras de los servicios`);

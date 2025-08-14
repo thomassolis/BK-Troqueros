@@ -17,6 +17,7 @@ import { Mdlware_ValidateDataUpdRequest } from '../middlewares/requests/validate
 import { Ctr_UpdRequest } from '../controllers/requests/updateRequestController.js';
 import { Ctr_DeleteServiceRequest } from '../controllers/requests/deleteServiceRequestController.js';
 import { Ctr_DeleteExtraCostsRequest } from '../controllers/requests/deleteExtraCostsController.js';
+import { Ctr_ChangeBilledStatusPerRequest } from '../controllers/requests/updateBilledStatusPerRequest.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -61,5 +62,8 @@ router.delete('/delete_service_request/:id', ValidateTokenMiddleware, VerifyPerm
 
 // Elimina los costos extras de un servicio
 router.delete('/delete_extra_costs_request/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteExtraCostsRequest);
+
+//Cambia el estatus de una petición para saber si fue facturada.
+router.post('/update_billed_status_request',  ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ChangeBilledStatusPerRequest);
 
 export default router;

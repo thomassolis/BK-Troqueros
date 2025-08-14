@@ -31,8 +31,7 @@ export const Ctr_GetDriverById = async (req, res) => {
             licencia: GetLinksPreviewFiles(linkPreview, driver.licencia),
             pazSalvo: GetLinksPreviewFiles(linkPreview, driver.pazSalvo),
             record_policivo: GetLinksPreviewFiles(linkPreview, driver.record_policivo)
-        }
-        console.log('Data', data)
+        }        
         return res.status(200).json({ success: true, message: 'Data enviada.', data })
     } catch (error) {
         const code = GenerateCodeError(modules.DRIVERS, typeError.DRIVERS.GET);

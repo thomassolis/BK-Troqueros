@@ -7,8 +7,7 @@ import { UpdateStatusDriver } from '../../querys/drivers/updateStatus.js';
 
 export const Ctr_UpdateStatusDriver = async (req, res) => {
     try {
-        const driver = req.body; // Obtenemos el status del conductor
-        console.log('Driver: ', driver);
+        const driver = req.body; // Obtenemos el status del conductor        
         // Valida que el status no sea undefined
         if (!driver) {
             return res.status(400).json({ success: false, message: 'Status no proporcionado' });

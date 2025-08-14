@@ -7,8 +7,7 @@ import { schemaService } from '../../schema/schemaServices.js';
 // Valida que los datos cumplan con el schema establecido
 export const Mdlware_ValidateDataInsertService = (req, res, next) => {
     try {
-        const data = req.body; // Obtiene la data del servicio
-        console.log('Data de servicio',data)
+        const data = req.body; // Obtiene la data del servicio        
 
         // Valida si la data es undefined
         if (!data || !Object.keys(data).length) {

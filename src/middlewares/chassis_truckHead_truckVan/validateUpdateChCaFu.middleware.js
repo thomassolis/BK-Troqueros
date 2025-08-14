@@ -5,8 +5,7 @@ import { typeError } from '../../dictionary/typeError.js';
 import { schemaVehiclesUpd } from '../../schema/schemaVehiculo.js';
 
 //valida los datos del request body
-export const ValidateDataUpdateMiddleware = (req, res, next) => {
-    console.log(req.body);
+export const ValidateDataUpdateMiddleware = (req, res, next) => {    
     try {
         const data = req.body; // Obtenemos los datos de los vehículos
 

@@ -7,8 +7,7 @@ import { DeleteClient } from '../../querys/clients/deleteClient.js';
 
 export const Ctr_DeleteClient = async (req, res) => {
     try {
-        const idClient = req.params.id
-        console.log('params:', idClient);
+        const idClient = req.params.id        
         // Valida que id del cliente exista
         if (!idClient) {
             return res.status(401).json({ success: false, message: 'No se ha podido eliminar al cliente. Identificador no proporcionado' })

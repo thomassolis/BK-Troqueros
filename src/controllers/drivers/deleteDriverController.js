@@ -7,8 +7,7 @@ import { DeleteDriver } from '../../querys/drivers/deleteDriver.js';
 
 export const Ctr_DeleteDriver = async (req, res) => {
     try {
-        const idDriver = req.params.id; // Obtiene el ID del conductor
-        console.log('idDriver: ',idDriver);
+        const idDriver = req.params.id; // Obtiene el ID del conductor        
         // Valida que id del cliente exista
         if (!idDriver) {
             return res.status(401).json({ success: false, message: 'No se ha podido eliminar al conductor. Identificador no proporcionado' })
