@@ -11,7 +11,7 @@ export const UpdateIntents = async (email) => {
     try {
         await pool.request()
         .input("Email", sql.VarChar, email)
-        .query(`UPDATE [Troqueros].[dbo].[Usuarios] 
+        .query(`UPDATE [Usuarios] 
                 SET 
                     [max_intento] = 0
                 WHERE 

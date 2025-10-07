@@ -27,7 +27,7 @@ export const UpdExtraCostsRequest = async (transaction, services) => {
                 request.input(`Descripcion${index}`, sql.VarChar, item.descripcion)
 
                 query += `
-                    UPDATE [Troqueros].[dbo].[Costos_Extras]
+                    UPDATE [Costos_Extras]
                         SET [precio] = @Precio${index},
                             [descripcion] = @Descripcion${index}
                     WHERE [id_Costos_Extras] = @IdCostosExtras${index} AND [id_Pedido_Servicio] = @IdPedidoServicio${index}

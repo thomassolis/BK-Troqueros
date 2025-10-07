@@ -12,7 +12,7 @@ export const ActivateSupplier = async (supplier) => {
             .input("ID", sql.VarChar, supplier.id_proveedor)
             .input("Active", sql.Bit, supplier.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Proveedores]
+                    UPDATE [Proveedores]
                         SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_proveedor] = @ID

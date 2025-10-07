@@ -16,7 +16,7 @@ export const ValidateTokenMiddleware = async (req, res, next) => {
         }
 
         //Valida y decodifica el token
-        const dataDecode = await VeryfyToken(token);
+        const dataDecode = await VeryfyToken(token);        
 
         //valida que el token no sea inválido
         if (!dataDecode) {

@@ -22,10 +22,10 @@ export const GetAgendaPeticion = async () => {
                     C.[nombre] AS cliente,
                     P.[id_peticion] AS peticion,
                     COUNT(PS.[id_Pedido_Servicio]) AS CantServicios
-                FROM [Troqueros].[dbo].[Peticiones] P
-                LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
-                LEFT JOIN [Troqueros].[dbo].[Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
+                FROM [Peticiones] P
+                LEFT JOIN [Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
+                LEFT JOIN [Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                LEFT JOIN [Clientes] C ON C.[id_cliente] = P.[cliente_id]
                 WHERE P.[proveedor_id] IS NULL
                     AND P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
                     AND P.[fecha_salida] < DATEADD(MONTH, 3, EOMONTH(GETDATE(), -1))

@@ -48,7 +48,7 @@ export const InsertTruckVan = async (truckVan, file) => {
             .input("FechaRenovacion", sql.Date, truckVan.fechaRenovacion)
             .input("FechaUltRevisado", sql.Date, truckVan.fechaUltRevisado)
             .query(`
-                INSERT INTO [Troqueros].[dbo].[Furgon] 
+                INSERT INTO [Furgon] 
                 (id_furgon, placa, status, numero_poliza, fecha_expedicion_poliza, fecha_caducidad_poliza, 
                 fecha_renovacion_revisado, fecha_ultimo_revisado, foto_poliza, foto_revisado)
                 VALUES ('${idFurgon}', @Placa, @Status, @NumPoliza, @FechaExpedicion, @FechaCaducidad,

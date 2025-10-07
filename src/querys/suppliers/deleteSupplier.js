@@ -10,7 +10,7 @@ export const DeleteSupplier = async (id) => {
     try {
         const result = await pool.request()
             .input("Id", sql.Char(7), id)
-            .query(`DELETE [Troqueros].[dbo].[Proveedores]
+            .query(`DELETE [Proveedores]
                     WHERE id_proveedor = @Id`);
 
         // Valida que se haya hecho la eliminación

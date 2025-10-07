@@ -11,7 +11,7 @@ export const Banned = async (email, tableName) => {
         //Actualiza los datos del usuario que ha sido baneado
         await pool.request()
                 .input("Email", sql.VarChar, email)
-                .query(`UPDATE [Troqueros].[dbo].[${tableName}] 
+                .query(`UPDATE [${tableName}] 
                         SET 
                             [suspendido] = 1,
                             [fecha_suspencion] = DATEADD(MINUTE, 10, GETDATE())
@@ -30,7 +30,7 @@ export const UnBan = async (email) => {
     try {
         await pool.request()
                 .input("Email", sql.VarChar, email)
-                .query(`UPDATE [Troqueros].[dbo].[Usuarios] 
+                .query(`UPDATE [Usuarios] 
                         SET 
                             [suspendido] = 0,
                             [fecha_suspencion] = NULL,

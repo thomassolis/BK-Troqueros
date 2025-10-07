@@ -18,7 +18,7 @@ export const GetRequestDataServiceID = async (id) => {
                         [lugar_origen],
                         [lugar_destino],
                         [tarifa]
-                    FROM [Troqueros].[dbo].[Servicios_datos]
+                    FROM [Servicios_datos]
                     WHERE [id_servicio_datos] = @ID AND [active] = 1
                 `);
 

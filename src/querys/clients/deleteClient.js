@@ -15,7 +15,7 @@ export const DeleteClient = async (id) => {
         const result = await pool.request()
             .input("Id", sql.VarChar, id)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Clientes]
+                    UPDATE [Clientes]
                         SET [active] = 0
                     WHERE id_cliente = @Id
                 `);

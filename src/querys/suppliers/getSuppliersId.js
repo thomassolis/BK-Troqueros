@@ -21,7 +21,7 @@ export const GetSuppleirId = async (idSupplier) => {
                         [nombre_cuenta],
                         [numero_cuenta],
                         [tipo_banco]
-                    FROM [Troqueros].[dbo].[Proveedores]
+                    FROM [Proveedores]
                     WHERE id_proveedor = @IdSupplier`);
         
         return result.recordset[0];

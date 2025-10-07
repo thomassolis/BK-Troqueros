@@ -23,7 +23,7 @@ export const GetSuppliers = async (page, active) => {
                         [telefono],
                         [email],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Proveedores]
+                    FROM [Proveedores]
                     WHERE [active] = @Active
                     ORDER BY [id_proveedor] DESC
                     OFFSET @Page ROWS
@@ -67,7 +67,7 @@ export const GetSuppliersByFilter = async (page, search, active) => {
                         [telefono],
                         [email],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Proveedores]
+                    FROM [Proveedores]
                     WHERE [nombre] LIKE @Search AND [Active] = @Active
                     ORDER BY [id_proveedor]
                     OFFSET @Page ROWS

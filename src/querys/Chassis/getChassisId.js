@@ -21,7 +21,7 @@ export const GetChassisId = async (idChassis) => {
                                             fecha_ultimo_revisado,
                                             foto_poliza,
                                             foto_revisado
-                                        FROM [Troqueros].[dbo].[Chasis]
+                                        FROM [Chasis]
                                         WHERE id_chasis = @IdChassis`);
         
         return result.recordset[0];

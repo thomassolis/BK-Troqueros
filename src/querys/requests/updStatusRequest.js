@@ -9,7 +9,7 @@ import { typeError } from '../../dictionary/typeError.js';
 export const UpdateStatusRequest = async (request) => {
     try {
         let query = `
-            UPDATE [Troqueros].[dbo].[Peticiones]
+            UPDATE [Peticiones]
                 SET [status] = @Status,
                     [fecha_modificación] = GETDATE()
 
@@ -34,7 +34,7 @@ export const UpdateStatusRequest = async (request) => {
         return false;
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PATCH);
-        HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
+        HandleError(code, error.message, 'querys/requests//UpdateStatusRequest', error);
         throw new Error('Ha ocurrido un error al crear una nueva petición');
     }
 }

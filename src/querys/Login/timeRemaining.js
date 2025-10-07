@@ -13,7 +13,7 @@ export const TimeRemaining = async (id_usuario) => {
             .input("Id_usuario", sql.VarChar, id_usuario)
             .query(`SELECT 
                     DATEDIFF(SECOND, GETDATE(), fecha_suspencion) AS time
-                    FROM [Troqueros].[dbo].[Usuarios] 
+                    FROM [Usuarios] 
                     WHERE id_usuario = @Id_usuario`);
 
         const time = result.recordset[0].time;

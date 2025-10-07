@@ -16,9 +16,9 @@ export const VerifyPermission = async (module, action, rol) => {
             .query(`SELECT
 				P.[${action}]
                 FROM 
-                [Troqueros].[dbo].[Permisos] P 
+                [Permisos] P 
                 JOIN 
-                [Troqueros].[dbo].[Modulos] M
+                [Modulos] M
                 ON
                 P.[id_permiso] = M.[id_permiso]
                 WHERE P.[id_rol] = @Rol AND M.[tabla_relacionada] = @Module AND P.[${action}] = 1`);

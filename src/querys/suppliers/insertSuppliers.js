@@ -21,7 +21,7 @@ export const InsertSupplier = async (supplier) => {
             .query(`DECLARE @NuevoID CHAR(7);
                     EXEC Prc_GenerarIDProveedor @NuevoID OUTPUT
                     
-                    INSERT INTO [Troqueros].[dbo].[Proveedores] ([id_proveedor], [nombre], [persona_contacto], 
+                    INSERT INTO [Proveedores] ([id_proveedor], [nombre], [persona_contacto], 
                         [celular], [telefono], [email], [numero_yappy], [nombre_cuenta], [numero_cuenta], [tipo_Banco])
                     VALUES (@NuevoID, @Nombre, @PersonaContacto, @Celular, @Telefono,
                         @Email, @NumeroYappy, @NombreCuenta, @NumeroCuenta, @TipoBanco)`);

@@ -13,7 +13,7 @@ export const ValidateUser = async (email) => {
                             .input("Email", sql.VarChar, email)
                             .query(`SELECT 
                                         CASE
-                                            WHEN EXISTS (SELECT 1 FROM [Troqueros].[dbo].[Usuarios] WHERE email = @Email)
+                                            WHEN EXISTS (SELECT 1 FROM [Usuarios] WHERE email = @Email)
                                             THEN (
                                                 SELECT 
                                                     JSON_QUERY(
@@ -31,11 +31,11 @@ export const ValidateUser = async (email) => {
                                                             '}'
                                                         )
                                                     )
-                                                FROM [Troqueros].[dbo].[Usuarios] U
-                                                JOIN [Troqueros].[dbo].[Usuarios_Roles] UR ON U.[id_usuario] = UR.[id_usuario]
+                                                FROM [Usuarios] U
+                                                JOIN [Usuarios_Roles] UR ON U.[id_usuario] = UR.[id_usuario]
                                                 WHERE U.[email] = @Email
                                             )
-                                            WHEN EXISTS (SELECT 1 FROM [Troqueros].[dbo].[Usuarios_Baneados] WHERE email = @Email)
+                                            WHEN EXISTS (SELECT 1 FROM [Usuarios_Baneados] WHERE email = @Email)
                                             THEN (
                                                 SELECT
                                                     JSON_QUERY(
@@ -49,7 +49,7 @@ export const ValidateUser = async (email) => {
                                                             '}'
                                                         )
                                                     )
-                                                FROM [Troqueros].[dbo].[Usuarios_Baneados] WHERE email = @Email
+                                                FROM [Usuarios_Baneados] WHERE email = @Email
                                             )
                                             ELSE NULL
                                         END AS resultado`);

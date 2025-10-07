@@ -21,6 +21,7 @@ export const GetDriverByID = async (id) => {
                         [foto_licencia] AS licencia,
                         [foto_PazYSalvo] AS pazSalvo,
                         [foto_record_policivo] AS record_policivo,
+                        [foto_Pasaporte] AS pasaporte,
                         [status],
                         [tipo_licencia]
                     FROM [Conductores]

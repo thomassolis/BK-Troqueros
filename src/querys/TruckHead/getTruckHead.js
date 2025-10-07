@@ -19,7 +19,7 @@ export const GetTruckHead = async (page, active) => {
                         [placa],
                         [status],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Cabezal]
+                    FROM [Cabezal]
                     WHERE [active] = @Active
                     ORDER BY id_cabezal DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
@@ -57,7 +57,7 @@ export const GetTruckHeadByFilter = async (page, search, active) => {
                         [placa],
                         [status],
                         COUNT(*) OVER() AS totalRegistros
-                    FROM [Troqueros].[dbo].[Cabezal]
+                    FROM [Cabezal]
                     WHERE [placa] LIKE @Search AND [active] = @Active
                     ORDER BY [id_cabezal]
                     OFFSET @Page ROWS

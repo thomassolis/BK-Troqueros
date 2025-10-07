@@ -13,7 +13,7 @@ export const GetRequestClients = async () => {
                     SELECT 
                         [id_cliente],
                         [nombre]
-                    FROM [Troqueros].[dbo].[Clientes]
+                    FROM [Clientes]
                     WHERE [active] = 1
                 `);
 

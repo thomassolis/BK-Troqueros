@@ -20,7 +20,7 @@ export const GetChassis = async (page, active) => {
                         [placa],
                         [status],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Chasis]
+                    FROM [Chasis]
                     WHERE [active] = @Active
                     ORDER BY [id_chasis] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
@@ -58,7 +58,7 @@ export const GetChassisByFilter = async (page, search, active) => {
                         [placa],
                         [status],
                         COUNT(*) OVER() AS totalRegistros
-                    FROM [Troqueros].[dbo].[Chasis]
+                    FROM [Chasis]
                     WHERE [placa] LIKE @Search AND [active] = @Active
                     ORDER BY [id_chasis]
                     OFFSET @Page ROWS

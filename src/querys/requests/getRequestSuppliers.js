@@ -13,7 +13,7 @@ export const GetRequestSuppliers = async () => {
                     SELECT 
                         [id_proveedor],
                         [nombre]
-                    FROM [Troqueros].[dbo].[Proveedores]
+                    FROM [Proveedores]
                     WHERE [active] = 1
                 `);
 

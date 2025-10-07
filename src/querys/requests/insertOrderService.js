@@ -8,78 +8,66 @@ import { AddExtraCostsOrderServices } from './addExtraCost.js';
 // Inserta los servicios de las peticiones
 //Modificado
 export const InsertOrderServices = async (transaction, services, idRequest) => {
-    console.dir(services, {depth:null});
-    console.dir("POR NOXUS");
-    try {
-        const request = await transaction.request();
-        request.input("IDPeticion", sql.VarChar, idRequest);
+  try {
+    for (const service of services) {
+      // 1. Insertar el Pedido_Servicio
+      const psResult = await transaction.request()
+        .input("id_servicio_datos", sql.Int, service.id_servicio_datos)
+        .input("id_peticion", sql.VarChar, idRequest)
+        .input("id_conductor", sql.VarChar, service.id_conductor)
+        .input("id_chasis", sql.VarChar, service.id_chasis)
+        .input("id_cabezal", sql.VarChar, service.id_cabezal)
+        .input("id_furgon", sql.VarChar, service.id_furgon)
+        .input("entrega_vacio", sql.Bit, service.entrega_vacio || false)
+        .input("fecha_limite", sql.Date, service.fecha_limite || null)
+        .input("comentario", sql.Text, service.comentario || '')
+        .input("num_contenedor", sql.VarChar, service.numero_contenedor || '')
+        .input("size_contenedor", sql.VarChar, service.size_contenedor || '')
+        .input("numero_referencia", sql.VarChar, service.sh || '')
+        .query(`
+          INSERT INTO Pedido_Servicio (
+            id_servicio_datos, id_peticion, id_conductor, id_chasis, id_cabezal, id_furgon,
+            entrega_vacio, fecha_limite, comentario,
+            num_contenedor, size_contenedor, numero_referencia
+          )
+          OUTPUT INSERTED.id_Pedido_Servicio AS id
+          VALUES (
+            @id_servicio_datos, @id_peticion, @id_conductor, @id_chasis, @id_cabezal, @id_furgon,
+            @entrega_vacio, @fecha_limite, @comentario,
+            @num_contenedor, @size_contenedor, @numero_referencia
+          )
+        `);
 
-        let query = `
-            DECLARE @InsertedIDs TABLE (
-                id_Pedido_Servicio INT,                 
-                id_conductor CHAR(7),
-                id_chasis CHAR(7),
-                id_cabezal CHAR(7),
-                id_furgon CHAR(7)            
-            )
+      const idPedidoServicio = psResult.recordset[0].id;
 
-            INSERT INTO [Troqueros].[dbo].[Pedido_Servicio] ([id_servicio_datos], [id_peticion],
-                [id_conductor], [id_chasis], [id_cabezal], [id_furgon], [entrega_vacio], [fecha_limite],
-                [comentario], [num_contenedor],[size_contenedor], [numero_referencia], [monto]
-            )
-                OUTPUT 
-                    INSERTED.[id_Pedido_Servicio], 
-                    INSERTED.[id_conductor],
-                    INSERTED.[id_chasis],
-                    INSERTED.[id_cabezal],
-                    INSERTED.[id_furgon]                    
-                INTO @InsertedIDs
-                VALUES 
-        `;
+      // 2. Insertar todas las tarifas ligadas a este Pedido_Servicio
+      for (const tarifa of service.tarifa || []) {
+        const ptResult = await transaction.request()
+          .input("costo", sql.Float, tarifa.costo || 0)
+          .input("venta", sql.Float, tarifa.venta || 0)
+          .input("descripcion", sql.VarChar, tarifa.descripcion || '')
+          .query(`
+            INSERT INTO preciosTotales (costo, venta, descripcion)
+            OUTPUT INSERTED.id_preciosTotales AS id
+            VALUES (@costo, @venta, @descripcion)
+          `);
 
-        const values = [];
+        const idPrecio = ptResult.recordset[0].id;
 
-        services.forEach((item, index) => {            
-            request.input(`Id_servicio_datos${index}`, sql.Int, item.id_servicio_datos);
-            request.input(`Conductor${index}`, sql.VarChar, item.id_conductor);
-            request.input(`Chasis${index}`, sql.VarChar, item.id_chasis);
-            request.input(`Cabezal${index}`, sql.VarChar, item.id_cabezal);
-            request.input(`Furgon${index}`, sql.VarChar, item.id_furgon);
-            request.input(`EntregaVacio${index}`, sql.Bit, item.entrega_vacio || false);
-            request.input(`FechaLimite${index}`, sql.Date, item.fecha_limite);
-            request.input(`Comentario${index}`, sql.Text, item.comentario || '');
-            request.input(`NumeroContenedor${index}`, sql.VarChar, item.numero_contenedor || '');
-            request.input(`SizeContenedor${index}`, sql.VarChar, item.size_contenedor || '');
-            request.input(`SH${index}`, sql.VarChar, item.sh || ''); 
-            request.input(`monto${index}`, sql.Float, item.tarifa || 0); 
-
-            // Agrega los valores a una lista
-            values.push(`(
-                @Id_servicio_datos${index}, @IDPeticion, @Conductor${index}, @Chasis${index}, 
-                @Cabezal${index}, @Furgon${index}, @EntregaVacio${index}, @FechaLimite${index},
-                @Comentario${index}, @NumeroContenedor${index}, @SizeContenedor${index}, @SH${index}, @monto${index}
-            )`);
-        });
-
-        query += values.join(', ') + `\nSELECT id_Pedido_Servicio, id_conductor,
-                id_chasis,
-                id_cabezal,
-                id_furgon FROM @InsertedIDs`;
-        
-        const result = await request.query(query);
-       
-        // Valida si se insertaron los servicios de la petición
-        if (result.recordset.length > 0 && result.rowsAffected.length > 0 || result.rowsAffected > 0) {
-            // Agrega los costos extras de los servicios
-            const addedExtrasCost = await AddExtraCostsOrderServices(transaction, services, result.recordset)
-
-            return addedExtrasCost;
-        }
-
-        return false;
-    } catch (error) {
-        const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
-        HandleError(code, error.message, 'querys/requests/insertOrderRequests/InsertOrderServices', error);
-        throw new Error(`Ha ocurrido un error al insertar los servicios de la petición ${idRequest}`);
+        // 3. Insertar en la tabla puente
+        await transaction.request()
+          .input("idPS", sql.Int, idPedidoServicio)
+          .input("idPT", sql.Int, idPrecio)
+          .query(`
+            INSERT INTO pedidoServicio_preciosTotales (id_Pedido_Servicio, id_preciosTotales)
+            VALUES (@idPS, @idPT)
+          `);
+      }
     }
-}
+
+    return true;
+  } catch (error) {
+    console.error("❌ Error en InsertOrderServices:", error.message);
+    throw new Error(`Ha ocurrido un error al insertar servicios de la petición ${idRequest}`);
+  }
+};

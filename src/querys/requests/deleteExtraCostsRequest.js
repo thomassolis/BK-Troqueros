@@ -15,7 +15,7 @@ export const DeleteExtraCostsRequest = async (idExtraCost) => {
         const result = await transaction.request()
             .input("IdExtraCost", sql.Int, idExtraCost)
             .query(`
-                    DELETE [Troqueros].[dbo].[Costos_Extras] WHERE [id_Costos_Extras] = @IdExtraCost
+                    DELETE [Costos_Extras] WHERE [id_Costos_Extras] = @IdExtraCost
                 `);
 
         // Valida que se haya hecho la eliminación del costo extra

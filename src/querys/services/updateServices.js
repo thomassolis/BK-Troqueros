@@ -12,7 +12,7 @@ export const UpdateDataServices = async (service) => {
             .input("ID", sql.Int, service.id_servicio)
             .input("Nombre", sql.VarChar(30), service.nombre_servicio)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Servicios]
+                    UPDATE [Servicios]
                         SET [nombre] = @Nombre
                     WHERE id_servicio = @ID
                 `);

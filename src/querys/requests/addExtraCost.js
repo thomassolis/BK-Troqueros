@@ -14,7 +14,7 @@ export const AddExtraCostsOrderServices = async (transaction, services, idsPedid
         const request = await transaction.request();
 
         let query = `
-            INSERT INTO [Troqueros].[dbo].[Costos_Extras] ([id_Pedido_Servicio], [precio], [descripcion])
+            INSERT INTO [Costos_Extras] ([id_Pedido_Servicio], [precio], [descripcion])
                 VALUES 
         `;
 
@@ -64,7 +64,7 @@ export const AddNewExtraCostsOrderSrvices = async (transaction, services) => {
         const request = await transaction.request();
 
         let query = `
-            INSERT INTO [Troqueros].[dbo].[Costos_Extras] ([id_Pedido_Servicio], [precio], [descripcion])
+            INSERT INTO [Costos_Extras] ([id_Pedido_Servicio], [precio], [descripcion])
                 VALUES 
         `;
 

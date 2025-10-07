@@ -12,7 +12,7 @@ export const ActivateTruckHead = async (truckHead) => {
             .input("ID", sql.VarChar, truckHead.id_cabezal)
             .input("Active", sql.Bit, truckHead.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Cabezal]
+                    UPDATE [Cabezal]
                         SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_cabezal] = @ID

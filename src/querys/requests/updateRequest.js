@@ -7,70 +7,61 @@ import { HandleError } from '../../utils/HandleError.js';
 import { UpdOrderServiceRequest } from './updateOrderServices.js';
 import { InsertOrderServices } from './insertOrderService.js';
 import { GetTime } from '../../auxiliary functions/dateConverter.js';
-import { GetTotalPricePerService } from '../../auxiliary functions/functionAuxiliary.js';
-
-
+import { RefreshPaymentsRequest } from './updatePaymentsRequest.js';
+import { InsertPaymentFiles } from './insertPaymentFiles.js';
 // Actualiza la información de una petición
-export const UpdateRequest = async (request) => {
+export const UpdateRequest = async (request, idRequest, files) => {        
     let transaction = null
     try {
         request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
         transaction = new sql.Transaction(pool); // Instanciamos un objeto Transaction
         await transaction.begin(); // Iniciamos la transaction
-
-        // Obtiene el monto total de la petición
-        let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto de los servicios registrados
-        monto += GetTotalPricePerService(request.nuevos_servicios || []); // Obtiene el monto de los servicios nuevos
-
-        let profit = 0; // Declaramos profit con valor inicial de 0
-        
-        // Valida si la petición es por proveedor
-        // Calcula el profit
-        if (request?.precio_proveedor) {
-            profit = request.servicios && request.servicios.length > 0 
-                ? (request.servicios[0].tarifa - request.precio_proveedor)
-                : (request.nuevos_servicios[0].tarifa - request.precio_proveedor);
-        }
-        
+                
         const result = await transaction.request()
-            .input("ID", sql.VarChar, request.id_peticion)
+            .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)
             .input("Proveedor", sql.VarChar, request.id_proveedor)
-            .input("Monto", sql.Float, monto)
             .input("PrecioProveedor", sql.Float, request.precio_proveedor)
-            .input("Profit", sql.Float, profit || 0)
             .input("FechaSalida", sql.Date, request.fecha_salida)
             .input("HoraSalida", sql.Time, request.hora_salida)
             .input("Numero_factura", sql.VarChar, request.numero_factura)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Peticiones]
+                    UPDATE [Peticiones]
                         SET [cliente_id] = @Cliente,
                             [proveedor_id] = @Proveedor,
-                            [precio_total] = @Monto,
                             [precio_proveedor] = @PrecioProveedor,
-                            [profit] = @Profit,
                             [fecha_salida] = @FechaSalida,
                             [hora_salida] = @HoraSalida,
                             [fecha_modificación] = GETDATE(),
                             [numero_factura] = @Numero_factura
                     WHERE [id_peticion] = @ID
                 `);
-
+        
         // Valida que se haya actualizado la petición
         if (result.rowsAffected > 0) {
             // Actualiza los servicios
             // Valida si los servicios estan vacíos
             const updatedServices = request.servicios && request.servicios.length > 0
                 ? await UpdOrderServiceRequest(transaction, request.servicios)
-                : true;
-
+                : true;            
             // Agrega los nuevos servicios de la petición
             // Valida si los nuevos servicios estan vacíos
             const addedServices = request.nuevos_servicios && request.nuevos_servicios.length > 0 
                 ? await InsertOrderServices(transaction, request.nuevos_servicios, request.id_peticion) 
                 : true ;
 
-            if (updatedServices && addedServices) {
+            const paymentsRefreshed = await RefreshPaymentsRequest(
+                transaction,
+                idRequest,
+                request.paymentData || []
+            );       
+                        
+
+            if(files?.paymentFiles){                
+                await InsertPaymentFiles(transaction, files.paymentFiles, idRequest);
+            }            
+
+            if (updatedServices && addedServices && paymentsRefreshed) {
                 await transaction.commit();
                 return true;
             }
@@ -79,6 +70,7 @@ export const UpdateRequest = async (request) => {
         await transaction.rollback();
         return false;
     } catch (error) {
+        console.log(error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
         HandleError(code, error.message, 'querys/requests/updateRequest/UpdateRequest', error);
 

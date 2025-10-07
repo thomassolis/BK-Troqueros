@@ -21,7 +21,7 @@ export const GetTruckVanId = async (idFurgon) => {
                                             fecha_ultimo_revisado,
                                             foto_poliza,
                                             foto_revisado
-                                        FROM [Troqueros].[dbo].[Furgon]
+                                        FROM [Furgon]
                                         WHERE id_furgon = @IdFurgon`);
         
         return result.recordset[0];

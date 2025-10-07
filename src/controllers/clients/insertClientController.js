@@ -11,7 +11,7 @@ import { ValidateDV_Client } from '../../querys/clients/validateDV.js';
 export const Ctr_InsertClient = async (req, res) => {
     try {
         const newClient  = req.body; // Obtenemos los datos del nuevo cliente
-        const files = req.files;
+        const files = req.files;        
                 
         // Valida si el RUC del cliente se encuentra en la base de datos
         const existRUC = await ValidateRUC_Client(newClient.ruc);

@@ -13,7 +13,7 @@ export const GetRequestServices = async () => {
                     SELECT 
                         [id_servicio],
                         [nombre]
-                    FROM [Troqueros].[dbo].[Servicios]
+                    FROM [Servicios]
                     WHERE [active] = 1
                 `);
 

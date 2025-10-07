@@ -13,7 +13,7 @@ export const GetRequestRutaServices = async (id) => {
       SELECT
         [id_servicio_datos],
         [lugar_origen] + ' - ' + [lugar_destino] AS ruta
-      FROM [Troqueros].[dbo].[Servicios_datos]
+      FROM [Servicios_datos]
       WHERE [active] = 1
     `;
 

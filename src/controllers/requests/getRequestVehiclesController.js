@@ -7,7 +7,7 @@ import { HandleError } from '../../utils/HandleError.js';
 
 
 export const Ctr_GetRequestsVehicles = async (req, res) => {
-    try {
+    try {        
         let filters = req.query; // Obtiene la fecha y hora de salida de la petición        
         const isValid = ValidateDate(filters); // Valida que la fecha sea una fecha valida
 
@@ -23,7 +23,7 @@ export const Ctr_GetRequestsVehicles = async (req, res) => {
         const truckvan = await GetRequestTruckVan(filters); // Obtiene los furgon
 
         // Valida que conductores no sean undefined
-        if (!chassis || !truckhead || !truckvan) {
+        if (!chassis && !truckhead && !truckvan) {
             return res.status(404).json({ success: false, message: 'Vehículos no encontrado. Inténtelo más tarde.' });
         }
 

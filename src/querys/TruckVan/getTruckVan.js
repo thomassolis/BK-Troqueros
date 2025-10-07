@@ -20,7 +20,7 @@ export const GetTruckVan = async (page, active) => {
                         [placa],
                         [status],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Furgon]
+                    FROM [Furgon]
                     WHERE [active] = @Active
                     ORDER BY [id_furgon] DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
@@ -58,7 +58,7 @@ export const GetTruckVanByFilter = async (page, search, active) => {
                         [placa],
                         [status],
                         CEILING(COUNT(*) OVER()) AS totalRegistros
-                    FROM [Troqueros].[dbo].[Furgon]
+                    FROM [Furgon]
                     WHERE [placa] LIKE @Search AND [active] = @Active
                     ORDER BY [id_furgon]
                     OFFSET @Page ROWS

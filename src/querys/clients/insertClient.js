@@ -8,7 +8,7 @@ import { modules } from '../../dictionary/modules.js';
 
 
 // Agrega un nuevo cliente
-export const InsertClient = async (data, files) => {
+export const InsertClient = async (data, files) => {    
     let transaction = null
     try {
         // Valida que la información no sea undefined
@@ -52,8 +52,7 @@ export const InsertClient = async (data, files) => {
                     )
                         VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, @DV,
                             @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
-                `)
-
+                `)                
          //guardamos el archivo
         const fileSaved = files && files.cedRepresentanteLegal ? await SaveFile(rutaCed, files.cedRepresentanteLegal) : true;
         const fileSaved2 = files && files.avisoOperaciones ? await SaveFile(rutaAvisoOpe, files.avisoOperaciones) : true;

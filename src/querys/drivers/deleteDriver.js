@@ -28,7 +28,7 @@ export const DeleteDriver = async (id) => {
 
         const result = await pool.request()
             .input("Id", sql.VarChar, id)
-            .query(`DELETE [Troqueros].[dbo].[Conductores]
+            .query(`DELETE [Conductores]
                     WHERE [id_conductor] = @Id`);
         
         return result.rowsAffected[0];
@@ -48,7 +48,7 @@ const getPathDriver = async (id) => {
                     SELECT
                         [foto_licencia] AS licencia,
                         [foto_PazYSalvo] AS pazSalvo
-                    FROM [Troqueros].[dbo].[Conductores]
+                    FROM [Conductores]
                     WHERE [id_conductor] = @Id
                 `);
 

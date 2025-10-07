@@ -46,6 +46,9 @@ export const GetRequestsExcel = async (filters) => {
                 P.[profit], 
 				ps.comentario,
                 P.[numero_factura] AS 'Número de Factura',
+                pt.costo,
+			    pt.venta,
+                PS.[id_Pedido_Servicio],
                 P.[status]                
             FROM Peticiones P
             LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
@@ -56,7 +59,10 @@ export const GetRequestsExcel = async (filters) => {
             LEFT JOIN Chasis CH ON CH.[id_chasis] = PS.[id_chasis]
             LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
             LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]      
-			LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]            
+			LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]   
+            
+            LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
+		    LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]            
         `;
 
         const conditions = [];
@@ -96,7 +102,7 @@ export const GetRequestsExcel = async (filters) => {
         // Construye las condiciones de la consulta
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
-        }        
+        }                
         const result = await request.query(query);
 
         // Valida si la consulta tiene datos
@@ -107,7 +113,8 @@ export const GetRequestsExcel = async (filters) => {
 
         const data = result.recordset.map(({...rest}) => ({
             ...rest,            
-        }));
+        }));        
+
 
         return data;
     } catch (error) {

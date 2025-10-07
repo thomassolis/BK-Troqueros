@@ -16,7 +16,7 @@ export const DeleteServices = async (id) => {
         const result = await pool.request()
             .input("ID", sql.Int, id)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Servicios]
+                    UPDATE [Servicios]
                         SET [active] = 0
                     WHERE [id_servicio] = @ID
                 `)
@@ -45,7 +45,7 @@ export const DeleteRutaServices = async (id) => {
         const result = await pool.request()
             .input("ID", sql.Int, id)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Servicios_datos]
+                    UPDATE [Servicios_datos]
                         SET [active] = 0
                     WHERE [id_servicio_datos] = @ID
                 `)

@@ -22,9 +22,9 @@ export const GetAgendaEntregaVacio = async () => {
 					ps.size_contenedor as size_contenedor,
                     ps.id_Pedido_Servicio as id_Pedido_Servicio,
                     ps.vacio_entregado
-                FROM [Troqueros].[dbo].[Peticiones] P
-                LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
-                LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
+                FROM [Peticiones] P
+                LEFT JOIN [Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
+                LEFT JOIN [Clientes] C ON C.[id_cliente] = P.[cliente_id]
                 WHERE PS.[entrega_vacio] = 1
                     AND P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
                     AND P.[fecha_salida] < DATEADD(MONTH, 3, EOMONTH(GETDATE(), -1))

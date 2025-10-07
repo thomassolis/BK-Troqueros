@@ -37,6 +37,8 @@ export const InsertDriver = async (driver, files) => {
         const rutaLicencia = `conductores/${idDriver}/licencia`;
         const rutaPazSalvo = `conductores/${idDriver}/paz_a_salvo`;
         const rutaRecordPolicivo = `conductores/${idDriver}/record_policivo`;
+        const rutaPasaporte = `conductores/${idDriver}/pasaporte`;
+
 
         const result = await transaction.request()
             .input("Cedula", sql.VarChar, driver.cedula)
@@ -50,18 +52,19 @@ export const InsertDriver = async (driver, files) => {
             .query(`
                     INSERT INTO [Conductores] ([id_conductor], [cedula], [nombre], [apellido],
                         [email], [contraseña], [telefono], [foto_licencia], [foto_PazYSalvo],
-                        [foto_record_policivo], [status], [tipo_licencia])
+                        [foto_record_policivo], [foto_Pasaporte], [status], [tipo_licencia])
                         VALUES ('${idDriver}', @Cedula, @Nombre, @Apellido, @Email, @Contra, @Telefono, 
-                            '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', @Status, @Tipo_licencia)                        
+                            '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', '${rutaPasaporte}', @Status, @Tipo_licencia)                        
                 `)
         
         //guardamos el archivo
         const fileSaved = files && files.licencia ? await SaveFile(rutaLicencia, files.licencia) : true;
         const fileSaved2 = files && files.pazSalvo ? await SaveFile(rutaPazSalvo, files.pazSalvo) : true;
         const fileSaved3 = files && files.recordPolicivo ? await SaveFile(rutaRecordPolicivo, files.recordPolicivo) : true;
+        const fileSaved4 = files && files.pasaporte ? await SaveFile(rutaPasaporte, files.pasaporte) : true;
 
         //Valida que se haya guardado los archivos
-        if (!fileSaved || !fileSaved2 || !fileSaved3) {
+        if (!fileSaved || !fileSaved2 || !fileSaved3 || !fileSaved4) {
             await transaction.rollback();
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }

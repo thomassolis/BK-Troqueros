@@ -11,7 +11,7 @@ export const ActivateDriver = async (driver) => {
             .input("ID", sql.VarChar, driver.id_conductor)
             .input("Active", sql.Bit, driver.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Conductores]
+                    UPDATE [Conductores]
                         SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_conductor] = @ID

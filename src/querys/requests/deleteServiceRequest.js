@@ -15,7 +15,7 @@ export const DeleteServiceRequest = async (idService) => {
 
         const check = await request
             .input('IDServicio', sql.Int, idService)
-            .query(`SELECT 1 AS existe FROM [Troqueros].[dbo].[Pedido_Servicio] WHERE [id_Pedido_Servicio] = @IDServicio`);
+            .query(`SELECT 1 AS existe FROM [Pedido_Servicio] WHERE [id_Pedido_Servicio] = @IDServicio`);
 
         // Valida si existe el servicio
         if (check.recordset.length === 0) {
@@ -26,12 +26,12 @@ export const DeleteServiceRequest = async (idService) => {
         // Borra costos extras si existen
         await request
             .input('IDServicio1', sql.Int, idService)
-            .query(`DELETE FROM [Troqueros].[dbo].[Costos_Extras] WHERE [id_Pedido_Servicio] = @IDServicio`);
+            .query(`DELETE FROM [Costos_Extras] WHERE [id_Pedido_Servicio] = @IDServicio`);
 
         // Borra el servicio
         const result = await request
             .input('IDServicio2', sql.Int, idService)
-            .query(`DELETE FROM [Troqueros].[dbo].[Pedido_Servicio] WHERE [id_Pedido_Servicio] = @IDServicio`);
+            .query(`DELETE FROM [Pedido_Servicio] WHERE [id_Pedido_Servicio] = @IDServicio`);
 
         // Valida que se haya eliminado el servicio
         if (result.rowsAffected > 0) {

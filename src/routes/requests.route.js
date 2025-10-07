@@ -17,7 +17,7 @@ import { Mdlware_ValidateDataUpdRequest } from '../middlewares/requests/validate
 import { Ctr_UpdRequest } from '../controllers/requests/updateRequestController.js';
 import { Ctr_DeleteServiceRequest } from '../controllers/requests/deleteServiceRequestController.js';
 import { Ctr_DeleteExtraCostsRequest } from '../controllers/requests/deleteExtraCostsController.js';
-import { Ctr_ChangeBilledStatusPerRequest } from '../controllers/requests/updateBilledStatusPerRequest.js';
+// import { Ctr_ChangeBilledStatusPerRequest } from '../controllers/requests/updateBilledStatusPerRequest.js';
 
 const MODULE = 'Peticiones';
 const router = express.Router();
@@ -49,10 +49,10 @@ router.get('/see_requests', ValidateTokenMiddleware, VerifyPermissionMiddleware(
 router.get('/see_request_id/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_GetRequestsByID);
 
 // Agrega una nueva petición
-router.post('/add_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataInsertRequest, Ctr_InsertRequest);
+router.post('/add_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), /*Mdlware_ValidateDataInsertRequest,*/ Ctr_InsertRequest);
 
 // Actualiza la información de una petición
-router.put('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Mdlware_ValidateDataUpdRequest, Ctr_UpdRequest);
+router.put('/update_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), /*Mdlware_ValidateDataUpdRequest,*/ Ctr_UpdRequest);
 
 // Actualiza el estado de la petición
 router.patch('/update_status_request', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_UpdateStatusRequest);
@@ -64,6 +64,6 @@ router.delete('/delete_service_request/:id', ValidateTokenMiddleware, VerifyPerm
 router.delete('/delete_extra_costs_request/:id', ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_DeleteExtraCostsRequest);
 
 //Cambia el estatus de una petición para saber si fue facturada.
-router.post('/update_billed_status_request',  ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ChangeBilledStatusPerRequest);
+// router.post('/update_billed_status_request',  ValidateTokenMiddleware, VerifyPermissionMiddleware(MODULE), Ctr_ChangeBilledStatusPerRequest);
 
 export default router;

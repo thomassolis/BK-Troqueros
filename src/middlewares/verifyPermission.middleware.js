@@ -11,7 +11,6 @@ export const VerifyPermissionMiddleware = (module) => {
         try {
             const rol = GetSessionUserInfo().rol; //obtenemos el rol del usuario
             const action = GetAction(req.method); // Obtenemos la acción que quiere hacer el usuario
-
             // Valida la acción
             if (!action) {
                 return res.status(403).json({success: false, message: 'Acción requerida!'});
@@ -24,7 +23,6 @@ export const VerifyPermissionMiddleware = (module) => {
             if (!hasPermission) {
                 return res.status(403).json({success: false, message: 'No tienes permiso para esta acción.'});
             }
-
             next();
         } catch (error) {
             const module = req.baseUrl.split('/')[2].toUpperCase(); //obtiene el modulo

@@ -10,7 +10,7 @@ export const InsertUserBan = async (email) => {
     try {
         await pool.request()
             .input("Email", sql.VarChar, email)
-            .query(`INSERT INTO [Troqueros].[dbo].[Usuarios_Baneados] (email, max_intento, user_ban)
+            .query(`INSERT INTO [Usuarios_Baneados] (email, max_intento, user_ban)
                     VALUES (@Email, 1, 1)`);
 
     } catch (error) {

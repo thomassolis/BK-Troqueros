@@ -19,7 +19,7 @@ export const UpdateSuppliers = async (supplier) => {
                                 .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
                                 .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
                                 .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
-                                .query(`UPDATE [Troqueros].[dbo].[Proveedores]
+                                .query(`UPDATE [Proveedores]
                                             SET [id_proveedor] = @IdProveedor,
                                                 [nombre] = @Nombre,
                                                 [persona_contacto] = @PersonaContacto,

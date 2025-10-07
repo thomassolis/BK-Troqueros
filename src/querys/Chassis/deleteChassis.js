@@ -13,7 +13,7 @@ export const DeleteChassis = async (id) => {
     try {
         const result = await pool.request()
             .input("Id", sql.VarChar, id)
-            .query(`UPDATE [Troqueros].[dbo].[Chasis]
+            .query(`UPDATE [Chasis]
                         SET [active] = 0
                     WHERE id_chasis = @Id`);
 

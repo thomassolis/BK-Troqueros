@@ -4,7 +4,7 @@ import { GetRequestsExcel } from '../../querys/requests/getRequestsExcel.js';
 import { CreateTableExcelRequest } from '../../utils/createFileExcel.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
-
+import { GroupAndSumByService } from './GroupAndSumByService.js';
 
 export const Ctr_DownloadFileRequest = async (req, res) => {
     try {
@@ -15,8 +15,8 @@ export const Ctr_DownloadFileRequest = async (req, res) => {
         if (!requests || requests.length === 0) {
             return res.status(404).json({success: false, message: 'No se encontraron resultados.'});
         }
-
-        const buffer = await CreateTableExcelRequest(requests); // Crea la tabla con los datos de las peticiones filtrados        
+        const dataRequest = GroupAndSumByService(requests); // Llama a la función para agrupar y sumar
+        const buffer = await CreateTableExcelRequest(dataRequest); // Crea la tabla con los datos de las peticiones filtrados        
         if (!buffer) {
             return res.status(400).json({success: false, message: 'Ha ocurrido un error al crear el archivo. Inténtelo más tarde.'});
         }

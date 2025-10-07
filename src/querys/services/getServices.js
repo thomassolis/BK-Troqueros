@@ -43,7 +43,7 @@ export const GetServices = async (filters) => {
                             SD.[lugar_destino],
                             SD.[tarifa],
                             SD.[tiempo_estimado]
-                        FROM [Troqueros].[dbo].[Servicios_datos] SD
+                        FROM [Servicios_datos] SD
                         WHERE SD.[id_servicio] = SP.[id_servicio] AND [active] = @Active
                         FOR JSON PATH
                     )

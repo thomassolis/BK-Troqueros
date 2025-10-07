@@ -23,12 +23,12 @@ export const GetAgendaSuppliers = async () => {
                     C.[nombre] AS cliente,
                     P.[id_peticion] AS peticion,
 					PR.nombre as nombre_proveedor
-                FROM [Troqueros].[dbo].[Peticiones] P
-                LEFT JOIN [Troqueros].[dbo].[Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
-                LEFT JOIN [Troqueros].[dbo].[Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                LEFT JOIN [Troqueros].[dbo].[Servicios] S ON S.[id_servicio] = SD.[id_servicio]
-                LEFT JOIN [Troqueros].[dbo].[Clientes] C ON C.[id_cliente] = P.[cliente_id]
-				LEFT JOIN [Troqueros].[dbo].[Proveedores] PR ON PR.[id_proveedor] = p.[proveedor_id]
+                FROM [Peticiones] P
+                LEFT JOIN [Pedido_Servicio] PS ON PS.[id_peticion] = P.[id_peticion]
+                LEFT JOIN [Servicios_datos] SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
+                LEFT JOIN [Servicios] S ON S.[id_servicio] = SD.[id_servicio]
+                LEFT JOIN [Clientes] C ON C.[id_cliente] = P.[cliente_id]
+				LEFT JOIN [Proveedores] PR ON PR.[id_proveedor] = p.[proveedor_id]
                 WHERE P.[fecha_salida] >= DATEADD(MONTH, -1, EOMONTH(GETDATE(), -1))
                     AND P.[fecha_salida] < DATEADD(MONTH, 3, EOMONTH(GETDATE(), -1))
 					AND P.[proveedor_id] IS NOT NULL

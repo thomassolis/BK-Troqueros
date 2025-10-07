@@ -9,7 +9,7 @@ import { DateConverter, ParseTime } from '../../auxiliary functions/dateConverte
 
 const PAGE_SIZE = 20;
 
-export const GetRequests = async (filters) => {
+export const GetRequests = async (filters) => {  
   try {
     const page = Math.max(1, parseInt(filters.page ?? '1', 10));
     const idPeticion    = filters.idPeticion    ?? null;
@@ -33,6 +33,7 @@ export const GetRequests = async (filters) => {
 
     let query = `
       WITH ServiciosCompletos AS (
+
         SELECT
           P.[id_peticion],
           P.[cliente_id],
@@ -67,7 +68,11 @@ export const GetRequests = async (filters) => {
           PR.[nombre]             AS proveedor,
           SD.[id_servicio_datos],
 		      sd.[lugar_origen],
-		      sd.[lugar_destino]
+		      sd.[lugar_destino],
+
+          pt.costo,
+			    pt.venta,
+				PS.id_Pedido_Servicio as 'Servicios_Unicos'
         FROM Peticiones P
         LEFT JOIN Pedido_Servicio  PS  ON PS.[id_peticion]       = P.[id_peticion]
         LEFT JOIN Servicios_datos  SD  ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
@@ -78,10 +83,12 @@ export const GetRequests = async (filters) => {
         LEFT JOIN Furgon           F   ON F.[id_furgon]          = PS.[id_furgon]
         LEFT JOIN Clientes         C   ON C.[id_cliente]         = P.[cliente_id]
         LEFT JOIN Proveedores      PR  ON PR.[id_proveedor]      = P.[proveedor_id]
+
+        LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
+		    LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]			
     `;
 
-    const conditions = [];
-
+    const conditions = [];    
     if (idPeticion) {
       request.input('IdPeticion', sql.VarChar, idPeticion);
       conditions.push(`P.[id_peticion] LIKE '%' + @IdPeticion + '%'`);
@@ -163,7 +170,7 @@ export const GetRequests = async (filters) => {
     JOIN PeticionesPaginadas PP ON SC.[id_peticion] = PP.[id_peticion]
     ORDER BY PP.[row_num], SC.[id_Pedido_Servicio];`;
 
-    const result = await request.query(query);
+    const result = await request.query(query);    
 
     // Consistencia de shape de respuesta
     if (result.recordset.length === 0) {
@@ -182,6 +189,7 @@ export const GetRequests = async (filters) => {
       hora_salida:       ParseTime(hora_salida),
       fecha_finalizacion:DateConverter(fecha_finalizacion),
     }));
+    
 
     return {
       data: GroupServicesByRequets(data), // ojo con el nombre de la función

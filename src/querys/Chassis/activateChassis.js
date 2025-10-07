@@ -12,7 +12,7 @@ export const ActivateChassis = async (chassis) => {
             .input("ID", sql.VarChar, chassis.id_chasis)
             .input("Active", sql.Bit, chassis.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Chasis]
+                    UPDATE [Chasis]
                         SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_chasis] = @ID

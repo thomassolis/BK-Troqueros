@@ -1,25 +1,98 @@
+import path from 'path';
+import fs from "fs";
+import { GetLinksDownloadFiles } from '../fileManager/getFiles.js';
 
 // Agrupa las peticiones por servicios
-export const GroupServicesByRequets = (requests) => {
-    try {
-        const requestGroup = new Map();
+export const GroupServicesByRequets = (rows) => {
+  
+  try {
+    const byPeticion = new Map();
 
-        for (const item of requests) {
-            const id = item.id_peticion;
+    for (const r of rows) {
+      // 1) Crear el objeto padre si no existe
+      let parent = byPeticion.get(r.id_peticion);
+      if (!parent) {
+        parent = {
+          id_peticion: r.id_peticion,
+          id_cliente: r.cliente_id ?? null,
+          id_proveedor: r.proveedor_id ?? null,
+          cliente: r.nombre_cliente ?? null,
+          proveedor: r.proveedor ?? null,
+          monto: r.monto_peticion ?? null,
+          precio_proveedor: r.precio_proveedor ?? null,
+          profit: r.profit ?? 0,
+          fecha_salida: r.fecha_salida ?? null,
+          hora_salida: r.hora_salida ?? null,
+          numero_factura: r.numero_factura ?? null,
+          status: r.status ?? null,
+          services: [],
+          paymentData: [],
+          files: []
+        };
+        byPeticion.set(r.id_peticion, parent);
+      }
 
-            if (!requestGroup.has(id)) {
-                // Clonamos el objeto original y creamos el array vacio
-                requestGroup.set(id, { ...item, services: [] });
-            } else {
-                requestGroup.get(id).services.push(item);
-            }
-        }
+      // 2) Verificar si ya existe el servicio (por id_Pedido_Servicio)
+      let service = parent.services.find(s => s.id_Pedido_Servicio === r.id_Pedido_Servicio);
+      if (!service) {
+        service = {
+          id_peticion: parent.id_peticion, // Redundante pero pedido
+          cliente: parent.cliente,         // Redundante pero pedido
+          numero_factura: r.numero_factura ?? null,
+          id_Pedido_Servicio: r.id_Pedido_Servicio,
+          servicio: r.servicio ?? null,
+          lugar_origen: r.lugar_origen ?? null,
+          lugar_destino: r.lugar_destino ?? null,
+          conductor: r.conductor ?? null,
+          chasis: r.chasis ?? null,
+          cabezal: r.cabezal ?? null,
+          furgon: r.furgon ?? null,
+          tarifa: [], // Aquí guardamos las tarifas de cada servicio
+          comentario: r.comentario ?? '',
+          numero_contenedor: r.numero_contenedor ?? '',
+          size_contenedor: r.size_contenedor ?? '',
+          sh: r.sh ?? '',
+          id_proveedor: r.proveedor_id ?? null,
+          proveedor: r.proveedor ?? null,
+          precio_proveedor: r.precio_proveedor ?? null,
+          fecha_salida: r.fecha_salida ?? null,
+          hora_salida: r.hora_salida ?? null,
+          status: r.status ?? null,
+          // Inicializamos los totales por servicio
+          costo: 0,
+          venta: 0,
+          profit: 0
+        };
+        parent.services.push(service);
+      }
 
-        return Array.from(requestGroup.values());
-    } catch (error) {
-        throw new Error(`Error al agrupar los servicios de las peticiones, ${error}`);        
+      // 3) Sumar las tarifas por servicio
+      const costo = Number(r.costo) || 0;
+      const venta = Number(r.venta) || 0;
+      const profit = venta - costo;
+
+      // Añadimos la tarifa a la lista del servicio
+      service.tarifa.push({
+        costo,
+        descripcion: service.tarifa.length === 0 ? 'Movimiento' : String(service.tarifa.length + 1),  // Incremental
+        profit,
+        venta
+      });
+
+      // Sumamos los valores al servicio
+      service.costo += costo;
+      service.venta += venta;
+      service.profit += profit;
     }
-} 
+
+    return Array.from(byPeticion.values());
+  } catch (error) {
+    throw new Error(`Error al agrupar los servicios de las peticiones: ${error}`);
+  }
+};
+
+
+
 
 // Construye el array para los costros extras por servicios
 export const BuildArray = (arrayServices, arrayServicesInserted) => {
@@ -70,125 +143,269 @@ export const BuildArray = (arrayServices, arrayServicesInserted) => {
 
 
 // Cambia la estructura del Objeto (Petición)
-export const ChangeStructureRequest = (request) => {
-    const primerRegistro = request[0];
+// Cambia la estructura del Objeto (Petición) incluyendo los datos de pago
+// ChangeStructureRequest
+export const ChangeStructureRequest = (request, req) => {    
 
-    const estructura = {
-        id_peticion: primerRegistro.id_peticion,
-        id_cliente: primerRegistro.id_cliente,
-        id_proveedor: primerRegistro.id_proveedor,
-        cliente: primerRegistro.cliente,
-        proveedor: primerRegistro.proveedor,
-        monto: primerRegistro.monto,
-        precio_proveedor: primerRegistro.precio_proveedor,
-        profit: primerRegistro.profit,
-        fecha_salida: primerRegistro.fecha_salida,
-        hora_salida: primerRegistro.hora_salida,
-        numero_factura: primerRegistro.numero_factura,
-        servicios: []
+  //Variables for link images
+  const protocol = req.protocol;
+  const host = req.get('host');
+  const linkDownload = `${protocol}://${host}/api/preview/Peticiones/comprobantes`;
+  const id = request?.[0]?.id_peticion;  
+
+  const getBaseUrl = (req) => `${req.protocol}://${req.get("host")}`;
+
+  // ✅ Defensivo: si viene vacío, devuelve estructura mínima
+  if (!Array.isArray(request) || request.length === 0) {
+    return {
+      id_peticion: null,
+      id_cliente: null,
+      id_proveedor: null,
+      cliente: null,
+      proveedor: null,
+      monto: null,
+      precio_proveedor: null,
+      profit: 0,
+      fecha_salida: null,
+      hora_salida: null,
+      numero_factura: null,
+      servicios: [],
+      paymentData: [],
+      files: [],
     };
+  }
 
-    const serviciosMap = new Map();
+  const primerRegistro = request[0];  
 
-    
-    request.forEach(item => {
-        const idServicio = item.id_Pedido_Servicio;
+  const estructura = {
+    // Si no quieres espacios en el id_peticion del payload, usa trim() aquí también:
+    // id_peticion: String(primerRegistro.id_peticion).trim(),
+    id_peticion: primerRegistro.id_peticion,
+    id_cliente: primerRegistro.id_cliente,
+    id_proveedor: primerRegistro.id_proveedor,
+    cliente: primerRegistro.cliente,
+    proveedor: primerRegistro.proveedor,
+    monto: primerRegistro.monto,
+    precio_proveedor: primerRegistro.precio_proveedor,
+    profit: primerRegistro.profit,
+    fecha_salida: primerRegistro.fecha_salida,
+    hora_salida: primerRegistro.hora_salida,
+    numero_factura: primerRegistro.numero_factura,
+    servicios: [],
+    paymentData: [],
+    files: [],
+  };
 
-        // Si ya existe el servicio en el map, solo agregas costos extras si aplica
-        if (serviciosMap.has(idServicio)) {
-            const servicioExistente = serviciosMap.get(idServicio);
+  const serviciosMap = new Map();
+  const pagosMap = new Map(); // Agrupa pagos por combinación única
 
-            if (item.id_Costos_Extras) {
-                servicioExistente.costos_extras.push({
-                    id_costos_extras: item.id_Costos_Extras,
-                    precio: item.costoExtra,
-                    descripcion: item.descripcion
-                });
-            }
-        } else {
-            // Construyes el servicio
-            const servicio = {
-                id_pedidoServicio: item.id_Pedido_Servicio,
-                id_servicio_datos: item.id_servicio_datos,
-                id_servicio: item.id_servicio,
-                servicio: item.servicio,
-                lugar_origen: item.lugar_origen,
-                lugar_destino: item.lugar_destino,
-                id_conductor: item.id_conductor,
-                id_chasis: item.id_chasis,
-                id_cabezal: item.id_cabezal,
-                id_furgon: item.id_furgon,
-                conductor: item.conductor,
-                chasis: item.chasis,
-                cabezal: item.cabezal,
-                furgon: item.furgon,
-                tarifa: item.tarifa,
-                comentario: item.comentario,
-                numero_contenedor: item.numero_contenedor,
-                size_contenedor: item.size_contenedor,
-                sh: item.sh
-            };
+  // --- Helpers para tarifas ---
+  const hasTarifaData = (it) => {
+    // Considera 0 como válido; solo descartamos null/undefined y string vacío
+    const hasDesc = (it.descripcion ?? "") !== "";
+    const hasCosto = it.costo !== null && it.costo !== undefined;
+    const hasVenta = it.venta !== null && it.venta !== undefined;
+    return hasDesc || hasCosto || hasVenta;
+  };
 
-            // Si existe entrega_vacio y fecha_limite, los agregas
-            if (item.entrega_vacio && item.fecha_limite) {
-                servicio.entrega_vacio = item.entrega_vacio;
-                servicio.fecha_limite = item.fecha_limite;
-            }
+  const makeTarifa = (it) => ({
+    costo: Number(it.costo) || 0,
+    descripcion: it.descripcion ?? "",
+    profit: Number(it.profit) || 0,
+    venta: Number(it.venta) || 0,
+  });
 
-            // Si tiene costos extras, inicializas el array
-            if (item.id_Costos_Extras) {
-                servicio.costos_extras = [{
-                    id_costos_extras: item.id_Costos_Extras,
-                    precio: item.costoExtra,
-                    descripcion: item.descripcion
-                }];
-            }
+  const tarifaKey = (t) => `${t.costo}|${t.venta}|${t.descripcion ?? ""}`;
 
-            serviciosMap.set(idServicio, servicio);
+  // ----------------------------
+  // Recorrido fila a fila
+  // ----------------------------
+  request.forEach((item) => {
+    const idServicio = item.id_Pedido_Servicio;
+
+    // --- Pagos (solo si hay algún dato) ---
+    if (item.descripcionDePago || item.montoPagado || item.referenciaBancaria) {
+      const pagoKey = `${item.descripcionDePago}-${item.montoPagado}-${item.referenciaBancaria}`;
+      if (!pagosMap.has(pagoKey)) {
+        pagosMap.set(pagoKey, {
+          descripcionDePago: item.descripcionDePago,
+          montoPagado: item.montoPagado,
+          referenciaBancaria: item.referenciaBancaria,
+        });
+      }
+    }
+
+    if (serviciosMap.has(idServicio)) {
+      // --- Servicio existente: acumular valores ---
+      const s = serviciosMap.get(idServicio);
+
+      // Acumular tarifas si hay datos en esta fila
+      if (hasTarifaData(item)) {
+        const t = makeTarifa(item);
+        s.__tarifaSet ??= new Set(s.tarifa?.map(tarifaKey) ?? []);
+        const key = tarifaKey(t);
+        if (!s.__tarifaSet.has(key)) {
+          s.tarifa.push(t);
+          s.__tarifaSet.add(key);
         }
-    });
+      }
 
-    // Al final, conviertes el map a array
-    estructura.servicios = Array.from(serviciosMap.values());    
-    return estructura;
-}
+      // Costos extras (si existieran)
+      if (item.id_Costos_Extras) {
+        s.costos_extras ??= [];
+        s.costos_extras.push({
+          id_costos_extras: item.id_Costos_Extras,
+          precio: item.costoExtra,
+          descripcion: item.descripcion,
+        });
+      }
+    } else {
+      // --- Crear el servicio la primera vez ---
+      const servicio = {
+        id_pedidoServicio: item.id_Pedido_Servicio,
+        id_servicio_datos: item.id_servicio_datos,
+        id_servicio: item.id_servicio,
+        servicio: item.servicio,
+        lugar_origen: item.lugar_origen,
+        lugar_destino: item.lugar_destino,
+        id_conductor: item.id_conductor,
+        id_chasis: item.id_chasis,
+        id_cabezal: item.id_cabezal,
+        id_furgon: item.id_furgon,
+        conductor: item.conductor,
+        chasis: item.chasis,
+        cabezal: item.cabezal,
+        furgon: item.furgon,
+        tarifa: [], // <-- siempre array; iremos acumulando
+        comentario: item.comentario,
+        numero_contenedor: item.numero_contenedor,
+        size_contenedor: item.size_contenedor,
+        sh: item.sh,
+      };
+
+      // Sembrar la tarifa de la primera fila si existen datos
+      if (hasTarifaData(item)) {        
+        const t = makeTarifa(item);
+        servicio.tarifa.push(t);
+        servicio.__tarifaSet = new Set([tarifaKey(t)]);
+      }
+
+      // entrega_vacio + fecha_limite (mantengo tu condición original)
+      if (item.entrega_vacio && item.fecha_limite) {
+        servicio.entrega_vacio = item.entrega_vacio;
+        servicio.fecha_limite = item.fecha_limite;
+      }
+
+      // Costos extras (si existieran)
+      if (item.id_Costos_Extras) {
+        servicio.costos_extras = [
+          {
+            id_costos_extras: item.id_Costos_Extras,
+            precio: item.costoExtra,
+            descripcion: item.descripcion,
+          },
+        ];
+      }
+
+      serviciosMap.set(idServicio, servicio);
+    }
+  });
+
+  // ----------------------------
+  // Archivos por petición (server-side)
+  // ----------------------------
+
+  try {
+    const files_path = path.join(
+      process.cwd(),
+      "src",
+      "adjuntos",
+      "Peticiones",
+      "comprobantes"
+    );
+
+    // Para carpeta usas id_peticion sin espacios (como ya hacías):            
+
+    const idPeticionFolder = String(primerRegistro.id_peticion).trim();
+    const requestFolder = path.join(files_path, idPeticionFolder);
+
+    if (fs.existsSync(requestFolder)) {
+
+      const baseUrl = getBaseUrl(req);
+    
+      // Una sola llamada: obtienes todos los links de esa carpeta
+      const links = GetLinksDownloadFiles(linkDownload, id, "Peticiones");
+
+      // Luego, al armar cada file:
+      estructura.files = fs.readdirSync(requestFolder).map((fileName) => {
+        const fullPath = path.join(requestFolder, fileName);
+        const stats = fs.statSync(fullPath);
+
+        // Buscar el link correspondiente a este archivo
+        const link = links.find((l) => l.name === fileName);
+
+        return {
+          nombre: fileName,
+          ruta: link?.url ?? null,                  // ✅ ahora es string único
+          url: link?.url ?? null,                   // si quieres mantener "url"
+          size: stats.size,
+          fecha_subida: stats.birthtime.toISOString(),
+          tipo: path.extname(fileName).slice(1),
+        };
+      });
+
+    }
+  } catch (e) {
+    console.warn("⚠️ Error leyendo archivos de la petición:", e?.message);
+  }
+
+  // ----------------------------
+  // Convertir mapas a arrays y limpiar artefactos
+  // ----------------------------
+  estructura.servicios = Array.from(serviciosMap.values()).map((s) => {
+    if (s.__tarifaSet) delete s.__tarifaSet;
+    // Si quieres ordenar tarifas por descripción / venta, descomenta:
+    // s.tarifa?.sort((a, b) => String(a.descripcion).localeCompare(String(b.descripcion)));
+    return s;
+  });
+
+  estructura.paymentData = Array.from(pagosMap.values());
+
+
+
+  return estructura;
+};
 
 
 // Obtiene el precio total de los servicios
+// Obtiene el precio total de los servicios
 export const GetTotalPricePerService = (services) => {
-    try {
-        // Valida que el servicio sea un array
-        if (!Array.isArray(services)) {
-            return 0; // De lo contrario retorna 0
-        }
 
-        let monto = 0;
-
-        // Suma las tarifas de los servicios
-        // Obtiene el monto total de los servicios solicitados
-        // Suma los costos extras
-        for (const item of services || []) {
-            monto += (item.tarifa ? item.tarifa : 0);
-            
-            // Suma los precios de los costos extras si existen
-            if (Array.isArray(item.costos_extras)) {
-                for (const costo of item.costos_extras) {
-                    monto += (costo.precio ? costo.precio : 0);
-                }
-            }
-
-            if (Array.isArray(item.nuevos_costos_extras)) {
-                for (const costo of item.nuevos_costos_extras) {
-                    monto += (costo.precio ? costo.precio : 0);
-                }
-            }
-        }
-
-        return monto;
-    } catch (error) {
-        throw new Error(`Error al obtener el total de los costos extras, ${error}`);        
+  try {
+    if (!Array.isArray(services)) {
+      return 0;
     }
-}
+
+    let monto = 0;
+
+    for (const item of services || []) {
+      if (Array.isArray(item.tarifa)) {
+        // Sumar todas las ventas de la tarifa
+        for (const t of item.tarifa) {
+          monto += Number(t.venta) || 0;
+        }
+      } else {
+        // Retrocompatibilidad: si tarifa es un número
+        monto += Number(item.tarifa) || 0;
+      }
+    }
+
+    return monto;
+  } catch (error) {
+    throw new Error(`Error al obtener el total de tarifas, ${error}`);
+  }
+};
+
 
 // Verifica que si hay una entrega vacio con la misma fecha de inicio
 export const OrganizeEmptyDeliveryDates = (array) => {

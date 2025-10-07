@@ -12,7 +12,7 @@ export const ActivateService = async (service) => {
             .input("ID", sql.Int, service.id_servicio)
             .input("Active", sql.Bit, service.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Servicios]
+                    UPDATE [Servicios]
                         SET [active] = @Active
                     WHERE [id_servicio] = @ID
                 `);

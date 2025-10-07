@@ -13,7 +13,7 @@ export const ActivateClient = async (client) => {
             .input("ID", sql.VarChar, client.id_cliente)
             .input("Active", sql.Bit, client.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Clientes]
+                    UPDATE [Clientes]
                         SET [active] = @Active,
                             [fecha_modificación] = GETDATE()
                     WHERE [id_cliente] = @ID

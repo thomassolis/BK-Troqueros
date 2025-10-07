@@ -16,7 +16,7 @@ export const CreateUser = async (data) => {
             .input("Apellido", sql.VarChar, data.apellido)
             .input("Email", sql.VarChar, data.email)
             .input("Pass", sql.VarChar, data.pass)
-            .query(`INSERT INTO [Troqueros].[dbo].[Usuarios] (nombre, apellido, email, contraseña) 
+            .query(`INSERT INTO [Usuarios] (nombre, apellido, email, contraseña) 
                 OUTPUT INSERTED.id_usuario
                 VALUES (@Nombre, @Apellido, @Email, @Pass)`);
 
@@ -56,7 +56,7 @@ export const ValidateEmail = async (email) => {
     try {
         const result = await pool.request()
             .input("Email", sql.VarChar, email)
-            .query(`SELECT email FROM [Troqueros].[dbo].[Usuarios] WHERE [email] = @Email`);
+            .query(`SELECT email FROM [Usuarios] WHERE [email] = @Email`);
 
         return result.recordset[0];
         
@@ -73,7 +73,7 @@ const InsertRolUser = async (idUsuario, idRol, transaction) => {
         const result = await transaction.request()
             .input("idUsuario", sql.Int, idUsuario)
             .input("idRol", sql.Char(3), idRol)
-            .query(`INSERT INTO [Troqueros].[dbo].[Usuarios_Roles] (id_usuario, id_rol) VALUES (@idUsuario, @idRol)`);
+            .query(`INSERT INTO [Usuarios_Roles] (id_usuario, id_rol) VALUES (@idUsuario, @idRol)`);
 
         return result.rowsAffected;
     } catch (error) {

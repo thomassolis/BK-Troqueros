@@ -8,7 +8,7 @@ import {ParseTime } from '../../auxiliary functions/dateConverter.js';
 import { ChangeStructureRequest } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Obtiene la información de una petición
-export const GetRequestByID = async (id) => {
+export const GetRequestByID = async (id, req) => {
     try {
         const result = await pool.request()
             .input("ID", sql.VarChar, id)
@@ -44,11 +44,17 @@ export const GetRequestByID = async (id) => {
                         PS.[num_contenedor] AS numero_contenedor,
                         PS.[size_contenedor],
                         PS.[numero_referencia] AS sh,
-                        CE.[precio] AS costoExtra,
-                        CE.[descripcion],
+                        CE.[precio] AS costoExtra,                        
                         P.[fecha_salida],
                         P.[hora_salida],
-                        P.[numero_factura]
+                        P.[numero_factura],                        
+                        PT.[venta],
+						PT.[costo],
+						PT.[descripcion],
+
+                        PP.montoPagado,
+						pp.descripcionDePago,
+						pp.referenciaBancaria
                     FROM Peticiones P
                     LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
                     LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
@@ -60,12 +66,19 @@ export const GetRequestByID = async (id) => {
                     LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
                     LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]
                     LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
+                    LEFT JOIN pedidoServicio_preciosTotales PS_PT ON PS_PT.id_Pedido_Servicio = PS.id_Pedido_Servicio
+					LEFT JOIN preciosTotales PT ON PT.id_preciosTotales = PS_PT.id_preciosTotales
+                    LEFT JOIN PagosPorPeticion PP ON PP.id_peticion = P.id_peticion
+
+                    --LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
+			        --LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]
+
                     WHERE P.id_peticion = @ID
                 `);                
         // Valida si la consulta tiene datos
         if (result.recordset.length === 0) {
             return [];
-        }
+        }        
 
         let data = result.recordset.map(({fecha_salida, fecha_limite, hora_salida, ...rest}) => ({
             ...rest,
@@ -73,10 +86,12 @@ export const GetRequestByID = async (id) => {
             hora_salida: ParseTime(hora_salida),
             fecha_limite: fecha_limite ? fecha_limite.toISOString().split('T')[0] : null
         }));
+        
 
         return {
-            data: ChangeStructureRequest(data)            
+            data: ChangeStructureRequest(data, req)                        
         };
+        
         
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.GET);

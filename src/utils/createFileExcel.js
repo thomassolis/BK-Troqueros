@@ -5,7 +5,7 @@ import { typeError } from '../dictionary/typeError.js';
 import { HandleError } from './HandleError.js';
 
 // Crea una tabla con los datos de las peticiones
-export const CreateTableExcelRequest = async (dataRequest) => {
+export const CreateTableExcelRequest = async (dataRequest) => {    
     try {
         const workbook = new ExcelJS.Workbook(); // Crea el archivo
         const worksheet = workbook.addWorksheet('Peticiones') // Agrega una nueva hoja de trabajo

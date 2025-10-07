@@ -8,7 +8,7 @@ import { UpdateFile } from '../../fileManager/updateFile.js';
 
 
 // Actualiza la información del cliente
-export const UpdateClient = async (client, files) => {
+export const UpdateClient = async (client, files) => {   
     let transaction = null
     try {        
         // Valida que la información no sea undefined
@@ -44,7 +44,7 @@ export const UpdateClient = async (client, files) => {
             .input("Direccion", sql.VarChar, client.direccion)
             .input("NombreContacto", sql.VarChar, client.nombrePersonaContacto)
             .input("TelContacto", sql.VarChar, client.telPersonaContacto)
-            .input("EmailContacto", sql.VarChar, client.emailContactoFinanciero)
+            .input("EmailContacto", sql.VarChar, client.emailPersonaContacto)
             .input("NumeroCuenta", sql.VarChar, client.numeroCuenta)
             .input("NombreBanco", sql.VarChar, client.nombreBanco)
             .input("TipoCuenta", sql.VarChar, client.tipoCuenta)

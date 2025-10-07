@@ -12,7 +12,7 @@ export const ActivateRutaService = async (service) => {
             .input("ID", sql.Int, service.id_servicio_datos)
             .input("Active", sql.Bit, service.active)
             .query(`
-                    UPDATE [Troqueros].[dbo].[Servicios_datos]
+                    UPDATE [Servicios_datos]
                         SET [active] = @Active
                     WHERE [id_servicio_datos] = @ID
                 `);

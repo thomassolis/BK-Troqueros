@@ -3,15 +3,16 @@ import { typeError } from '../../dictionary/typeError.js';
 import { GetRequests } from '../../querys/requests/getRequests.js'
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
-
+import agruparYSumarServicios from './AgregarYSumarServicios.js';
 
 
 export const Ctr_GetRequests = async (req, res) => {
-    try {
+    try {        
         const filters = req.query; // Obtiene los filtros
 
-        const requests = await GetRequests(filters); // Obtiene las peticiones del sistema
+        const requests = await GetRequests(filters); // Obtiene las peticiones del sistema  
         
+        // const requestData = agruparYSumarServicios(requests.data);        
         // Valida que las peticiones no sean undefined
         if (!requests) {
             return res.status(200).json({success: false, message: 'No se encontraron resultados.'});

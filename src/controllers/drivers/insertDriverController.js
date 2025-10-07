@@ -9,8 +9,7 @@ export const Ctr_InsertDriver = async (req, res) => {
     try {
         const newDriver = req.body; // Obtenemos los datos del conductor
         const files = req.files; // Obtenemos los archivos del conductor        
-        const created = await InsertDriver(newDriver, files);
-
+        const created = await InsertDriver(newDriver, files);        
         if (!created) {
             return res.status(401).json({ success: false, message: 'No se pudo crear el conductor' })
         }
