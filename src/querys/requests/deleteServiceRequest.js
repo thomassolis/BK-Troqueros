@@ -23,6 +23,11 @@ export const DeleteServiceRequest = async (idService) => {
             return false;
         }
 
+        //Borra los costos de los servicios
+        await request
+            .input('IDServicio0', sql.Int, idService)
+            .query(`DELETE FROM [pedidoServicio_preciosTotales] WHERE [id_Pedido_Servicio] = @IDServicio`);
+
         // Borra costos extras si existen
         await request
             .input('IDServicio1', sql.Int, idService)

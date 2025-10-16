@@ -7,8 +7,7 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_DeleteServiceRequest = async (req, res) => {
     try {
-        const idService = req.params.id; // Obtiene el ID del servicio a eliminar
-
+        const idService = req.params.id; // Obtiene el ID del servicio a eliminar        
         if (!idService) {
             return res.status(401).json({ success: false, message: 'El identificador del servicio es requerido.' });
         }

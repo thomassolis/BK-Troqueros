@@ -8,7 +8,8 @@ import { HandleError } from '../../utils/HandleError.js';
 export const Ctr_InsertRequest = async (req, res) => {
     try {
         const request = req.body; // Obtiene la data de la petición 
-        const files = req.files;                
+        const files = req.files;        
+        
         if (request.servicios && typeof request.servicios === "string") {  
             try{
                 request.servicios = JSON.parse(request.servicios);
@@ -25,8 +26,7 @@ export const Ctr_InsertRequest = async (req, res) => {
                 request.paymentData = [];
             }                        
         }
-
-
+        
         const createdRequest = await InsertNewRequest(request, files); // Crea la petición
         // Valida que se haya creado la petición en el sistema
         if (!createdRequest) {

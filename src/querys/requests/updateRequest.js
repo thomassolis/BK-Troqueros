@@ -69,8 +69,7 @@ export const UpdateRequest = async (request, idRequest, files) => {
 
         await transaction.rollback();
         return false;
-    } catch (error) {
-        console.log(error)
+    } catch (error) {        
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
         HandleError(code, error.message, 'querys/requests/updateRequest/UpdateRequest', error);
 
