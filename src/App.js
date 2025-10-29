@@ -20,6 +20,7 @@ import drivers from './routes/drivers.route.js';
 import services from './routes/services.route.js';
 import requests from './routes/requests.route.js';
 import agenda from './routes/agenda.route.js';
+import reports from './routes/reports.route.js';
 import { decodeFileNames } from './middlewares/decodeFileNames.js';
 
 const app = express();
@@ -50,5 +51,6 @@ app.use('/api/drivers', drivers);
 app.use('/api/services', services);
 app.use('/api/requests', requests);
 app.use('/api/agenda', agenda);
+app.use('/api/reports', reports);
 
 export default app;
