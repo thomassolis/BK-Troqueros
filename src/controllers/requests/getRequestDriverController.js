@@ -15,7 +15,8 @@ export const Ctr_GetRequestsDrivers = async (req, res) => {
             return res.status(403).json({ success: false, message: isValid.msg });
         }
         
-        const drivers = await GetRequestDrivers(filters); // Obtiene los conductores        
+        const drivers = await GetRequestDrivers(filters); // Obtiene los conductores    
+        console.log('drivers', drivers)    
         // Valida que conductores no sean undefined
         if (!drivers) {
             return res.status(404).json({ success: false, message: 'Conductor no encontrado. Inténtelo más tarde.' });
