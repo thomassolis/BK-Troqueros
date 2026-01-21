@@ -9,8 +9,7 @@ import { GroupAndSumByService } from './GroupAndSumByService.js';
 export const Ctr_DownloadFileRequest = async (req, res) => {
     try {
         const filters = req.query; // Obtiene los filtros        
-        const requests = await GetRequestsExcel(filters) // Obtiene las peticiones del sistema
-
+        const requests = await GetRequestsExcel(filters) // Obtiene las peticiones del sistema        
         // Valida que las peticiones no sean undefined
         if (!requests || requests.length === 0) {
             return res.status(404).json({success: false, message: 'No se encontraron resultados.'});

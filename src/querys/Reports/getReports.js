@@ -170,9 +170,7 @@ const parseDMY = (dateStr) => {
 
 const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime());
 
-export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, statusSelected, dates) => {
-  console.log('driverSearch: ', driverSearch)
-  console.log('getReportsTeam Page: ', dates)
+export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, statusSelected, dates) => {  
   // ✅ Blindaje básico
   const safePage = Number.isFinite(Number(page)) && Number(page) > 0 ? Number(page) : 1;
   const safePageSize = Number.isFinite(Number(pageSize)) && Number(pageSize) > 0 ? Number(pageSize) : 10;
@@ -182,12 +180,10 @@ export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, s
 
   const start = parseDMY(dates?.startDate);
   const end = parseDMY(dates?.endDate);
-
-  console.log('LOGS: ', { safePage, safePageSize, safeSearch, safeDriver, safeStatus });
+  
 
   try {
-    const offset = (safePage - 1) * safePageSize;
-    console.log('OFFSET calculado:', offset); 
+    const offset = (safePage - 1) * safePageSize;    
     // ========== QUERIES SIN PARÁMETROS (3 instancias separadas) ==========
     
     const queryConductores = `
@@ -324,7 +320,7 @@ export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, s
         CASE
           WHEN ISNULL(P.tiempoExcedido, 0) > 0 THEN 'excedido'
           WHEN P.fecha_salida IS NULL OR SD.tiempo_estimado IS NULL THEN 'en_tiempo'
-          WHEN (DATEDIFF(MINUTE, P.fecha_salida, COALESCE(P.fecha_finalizacion, GETDATE())) / 60.0) > SD.tiempo_estimado THEN 'excedido'
+          --WHEN (DATEDIFF(MINUTE, P.fecha_salida, COALESCE(P.fecha_finalizacion, GETDATE())) / 60.0) > SD.tiempo_estimado THEN 'excedido'
           ELSE 'en_tiempo'
         END AS status
       FROM Peticiones P
@@ -345,9 +341,6 @@ export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, s
       ORDER BY P.fecha_salida DESC, P.id_peticion DESC
       OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY;
     `;
-
-    console.log('QueryCompleta: ', queryDataCompleta)
-    console.log('safeDriver: ', safeDriver)
 
     // ========== CREAR INSTANCIAS SEPARADAS DE REQUEST ==========
     

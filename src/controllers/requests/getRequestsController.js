@@ -8,10 +8,8 @@ import agruparYSumarServicios from './AgregarYSumarServicios.js';
 
 export const Ctr_GetRequests = async (req, res) => {
     try {        
-        const filters = req.query; // Obtiene los filtros
-
-        const requests = await GetRequests(filters); // Obtiene las peticiones del sistema  
-        
+        const filters = req.query; // Obtiene los filtros        
+        const requests = await GetRequests(filters); // Obtiene las peticiones del sistema          
         // const requestData = agruparYSumarServicios(requests.data);        
         // Valida que las peticiones no sean undefined
         if (!requests) {

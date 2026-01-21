@@ -1,3 +1,4 @@
+import { GetSessionUserInfo } from '../../contexts/sessionContext.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { InsertNewRequest } from '../../querys/requests/insertRequest.js';
@@ -7,6 +8,7 @@ import { HandleError } from '../../utils/HandleError.js';
 
 export const Ctr_InsertRequest = async (req, res) => {
     try {
+        const userData = GetSessionUserInfo()        
         const request = req.body; // Obtiene la data de la petición 
         const files = req.files;        
         
@@ -27,7 +29,7 @@ export const Ctr_InsertRequest = async (req, res) => {
             }                        
         }
         
-        const createdRequest = await InsertNewRequest(request, files); // Crea la petición
+        const createdRequest = await InsertNewRequest(request, files, userData); // Crea la petición
         // Valida que se haya creado la petición en el sistema
         if (!createdRequest) {
             return res.status(400).json({success: false, message: 'No se pudo crear la petición.'});

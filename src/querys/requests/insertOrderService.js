@@ -30,12 +30,14 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
             entrega_vacio, fecha_limite, comentario,
             num_contenedor, size_contenedor, numero_referencia
           )
-          OUTPUT INSERTED.id_Pedido_Servicio AS id
           VALUES (
             @id_servicio_datos, @id_peticion, @id_conductor, @id_chasis, @id_cabezal, @id_furgon,
             @entrega_vacio, @fecha_limite, @comentario,
             @num_contenedor, @size_contenedor, @numero_referencia
           )
+
+          -- Obtener el ID insertado
+          SELECT SCOPE_IDENTITY() AS id;
         `);
 
       const idPedidoServicio = psResult.recordset[0].id;
@@ -47,9 +49,11 @@ export const InsertOrderServices = async (transaction, services, idRequest) => {
           .input("venta", sql.Float, tarifa.venta || 0)
           .input("descripcion", sql.VarChar, tarifa.descripcion || '')
           .query(`
+            DECLARE @out TABLE (id INT);
             INSERT INTO preciosTotales (costo, venta, descripcion)
-            OUTPUT INSERTED.id_preciosTotales AS id
-            VALUES (@costo, @venta, @descripcion)
+            OUTPUT INSERTED.id_preciosTotales INTO @out(id)
+            VALUES (@costo, @venta, @descripcion);
+            SELECT id FROM @out;
           `);
 
         const idPrecio = ptResult.recordset[0].id;

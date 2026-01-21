@@ -10,12 +10,26 @@ import { GetTime } from '../../auxiliary functions/dateConverter.js';
 import { RefreshPaymentsRequest } from './updatePaymentsRequest.js';
 import { InsertPaymentFiles } from './insertPaymentFiles.js';
 // Actualiza la información de una petición
-export const UpdateRequest = async (request, idRequest, files) => {        
+export const UpdateRequest = async (request, idRequest, files, userData) => {            
     let transaction = null
     try {
         request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
         transaction = new sql.Transaction(pool); // Instanciamos un objeto Transaction
-        await transaction.begin(); // Iniciamos la transaction
+
+        await transaction.begin();
+
+        const batchId = crypto.randomUUID();        
+        await transaction.request()
+        .input("UserId", sql.Int, userData.id_usuario)
+        .input("BatchId", sql.UniqueIdentifier, batchId)
+        .query(`
+            EXEC sys.sp_set_session_context @key=N'UserId',  @value=@UserId;
+            EXEC sys.sp_set_session_context @key=N'BatchId', @value=@BatchId;
+        `);
+
+
+
+        // await transaction.begin(); // Iniciamos la transaction
                 
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)

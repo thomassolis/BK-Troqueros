@@ -3,18 +3,19 @@ import { typeError } from '../../dictionary/typeError.js';
 import { UpdateStatusRequest } from '../../querys/requests/updStatusRequest.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
-
+import { GetSessionUserInfo } from '../../contexts/sessionContext.js';
 
 export const Ctr_UpdateStatusRequest = async (req, res) => {
     try {
         const request = req.body; // Obtiene la data
+        const userData = GetSessionUserInfo();
 
         // Validamos que peticion no sea undefined
         if (!request || !Object.keys(request).length) {
             return res.status(400).json({ success: false, message: 'Status no proporcionado' });
         }
 
-        const updatedStatus = await UpdateStatusRequest(request); // Actualiza la petición
+        const updatedStatus = await UpdateStatusRequest(request, userData); // Actualiza la petición
 
         // Valida que se haya actualizado el estado de la petición
         if (!updatedStatus) {

@@ -6,7 +6,7 @@ import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 // Obtiene los datos a insertar en el archivo Excel
-export const GetRequestsExcel = async (filters) => {
+export const GetRequestsExcel = async (filters) => {    
     try {
         const idPeticion = filters.idPeticion ? filters.idPeticion : null;
         const nameService = filters.nameService ? filters.nameService : null;
@@ -14,7 +14,8 @@ export const GetRequestsExcel = async (filters) => {
         const nameCustomer = filters.nameCustomer ? filters.nameCustomer : null;
         const status = filters.status ? filters.status : null;
         const startDate = filters.startDate ? filters.startDate : null;
-        let endDate = (filters.endDate && startDate) ? filters.endDate : null;
+        const withInvoice = filters.withInvoice ? filters.withInvoice : null;
+        const withoutInvoice = filters.withoutInvoice ? filters.withoutInvoice : null;
 
         // Valida si la fecha startDate tiene fecha y si endDate es undefined
         if (startDate && !endDate) {
@@ -49,6 +50,7 @@ export const GetRequestsExcel = async (filters) => {
                 pt.costo,
 			    pt.venta,
                 PS.[id_Pedido_Servicio],
+                u.[nombre] + ' ' + u.[apellido] as creadoPor,
                 P.[status]                
             FROM Peticiones P
             LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
@@ -60,7 +62,7 @@ export const GetRequestsExcel = async (filters) => {
             LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
             LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]      
 			LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]   
-            
+            LEFT JOIN Usuarios         U   ON U.[id_usuario]         = P.[creadoPor]
             LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
 		    LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]            
         `;
@@ -99,6 +101,14 @@ export const GetRequestsExcel = async (filters) => {
             conditions.push(`P.[fecha_salida] BETWEEN @StartDate AND @EndDate`);
         }
 
+        if (withInvoice === 'true' && withoutInvoice !== 'true') {
+            // Solo con factura
+            conditions.push(`P.[numero_factura] IS NOT NULL AND P.[numero_factura] != ''`);
+        } else if (withoutInvoice === 'true' && withInvoice !== 'true') {
+            // Solo sin factura
+            conditions.push(`(P.[numero_factura] IS NULL OR P.[numero_factura] = '')`);
+        }
+
         // Construye las condiciones de la consulta
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
@@ -110,6 +120,7 @@ export const GetRequestsExcel = async (filters) => {
             return [];
         }
         
+// Después del query, antes del map
 
         const data = result.recordset.map(({...rest}) => ({
             ...rest,            
@@ -118,6 +129,7 @@ export const GetRequestsExcel = async (filters) => {
 
         return data;
     } catch (error) {
+        console.log('error al descargar', error)
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.GET);
         HandleError(code, error.message, 'querys/requests/getRequestsExcel/GetRequestsExcel', error);
         throw new Error('Ha ocurrido un error al obtener las peticiones');

@@ -20,8 +20,6 @@ import { getReportsTeam } from "../../querys/Reports/getReports.js";
     export const getTeamReports = async (req, res) => {
         try{
             const { page, pageSize, searchTerm, driverSearch, statusSelected, dates } = req.query;
-            console.log('page', page, 'pageSize: ', pageSize);
-            console.log('searchTerm', searchTerm, 'driver:', driverSearch, 'status:', statusSelected);
             const response = await getReportsTeam(page, pageSize, searchTerm, driverSearch, statusSelected, dates);
 
             return res.status(200).json({success:true, message: 'data enviada', data: response});

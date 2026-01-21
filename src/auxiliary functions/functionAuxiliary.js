@@ -24,6 +24,7 @@ export const GroupServicesByRequets = (rows) => {
           fecha_salida: r.fecha_salida ?? null,
           hora_salida: r.hora_salida ?? null,
           numero_factura: r.numero_factura ?? null,
+          createdBy: r.createdBy ?? null,
           status: r.status ?? null,
           services: [],
           paymentData: [],

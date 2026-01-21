@@ -8,15 +8,25 @@ import { InsertOrderServices } from './insertOrderService.js';
 import { GetTime } from '../../auxiliary functions/dateConverter.js';
 import { InsertPaymentData } from './insertPaymentData.js';
 import { InsertPaymentFiles } from './insertPaymentFiles.js';
+
 // Crea una nueva petición
-export const InsertNewRequest = async (request, files) => {        
-    
+export const InsertNewRequest = async (request, files, userData) => {            
     let transaction = null; // Declaramos transaction null
     try {
         request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
-        
         transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
         await transaction.begin() // Iniciamos la transaction
+
+        //BATCHID es el id de cada update que se realice
+        const batchId = crypto.randomUUID();         
+        await transaction.request()
+        .input("UserId", sql.Int, userData.id_usuario)
+        .input("BatchId", sql.UniqueIdentifier, batchId)
+        .query(`
+            EXEC sp_set_session_context @key = N'UserId', @value = @UserId;
+            EXEC sp_set_session_context @key = N'BatchId', @value = @BatchId;
+        `);
+
 
         // Generamos el ID de la petición antes del INSERT
         const idResult = await transaction.request()
@@ -29,13 +39,9 @@ export const InsertNewRequest = async (request, files) => {
         // validamos que id de la petición exista
         if (!idRequest) {
             throw new Error('Ha ocurrido un error al crear la petición');
-        }
-                //* ALL OK HERE
-    //Flag#1: Posible descarte  let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto total de los servicios
+        }        
         let profit = 0 // Declaramos el profit con valor inicial de 0
-            //* ALL OK HERE #2
-        // Valida si la petición es por proveedor
-        // Calcula el profit        
+        
         if (request?.precio_proveedor) {            
             profit = request.servicios[0].tarifa - request.precio_proveedor;
         }        
@@ -48,14 +54,16 @@ export const InsertNewRequest = async (request, files) => {
             .input("HoraSalida", sql.Time, request.hora_salida)
             .input("Status", sql.VarChar, request.status || 'En espera')
             .input("Numero_factura", sql.VarChar, request.numero_factura || null)
+            .input("creadoPor", sql.Int, userData.id_usuario||null)
             .query(`
                     INSERT INTO [Peticiones] ([id_peticion], [cliente_id], 
-                    [proveedor_id], [precio_proveedor], [fecha_salida], [hora_salida], [status], [numero_factura])
-                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @FechaSalida, @HoraSalida, @Status, @Numero_factura)
+                    [proveedor_id], [precio_proveedor], [fecha_salida], [hora_salida], [status], [numero_factura], [creadoPor])
+                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @FechaSalida, @HoraSalida, @Status, @Numero_factura, @creadoPor)
                 `);
          //* ALL OK HERE #3
         // Valida si se hizo el insert        
         if (result.rowsAffected > 0) {
+                
             // Agrega los servicios de la petición
             const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
 
@@ -71,7 +79,7 @@ export const InsertNewRequest = async (request, files) => {
             // Valida si se agregaron los servicios de la petición
             // Valida si se actualizó el status del conductor y vehículo
             if (addedServices) {
-                await transaction.commit();
+                await transaction.commit();                
                 return true;
             }
         }

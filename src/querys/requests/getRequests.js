@@ -21,6 +21,8 @@ export const GetRequests = async (filters) => {
     const sh            = filters.sh            ?? null;
     const num_contenedor= filters.num_contenedor?? null;
     const numero_factura= filters.numero_factura?? null;
+    const withInvoice = filters.withInvoice?? null;    
+    const withoutInvoice = filters.withoutInvoice?? null;    
     let   endDate       = (filters.endDate && startDate) ? filters.endDate : null;
 
     if (startDate && !endDate) {
@@ -72,6 +74,7 @@ export const GetRequests = async (filters) => {
 
           pt.costo,
 			    pt.venta,
+          u.[nombre] + ' ' + u.[apellido] as createdBy,
 				PS.id_Pedido_Servicio as 'Servicios_Unicos'
         FROM Peticiones P
         LEFT JOIN Pedido_Servicio  PS  ON PS.[id_peticion]       = P.[id_peticion]
@@ -83,12 +86,22 @@ export const GetRequests = async (filters) => {
         LEFT JOIN Furgon           F   ON F.[id_furgon]          = PS.[id_furgon]
         LEFT JOIN Clientes         C   ON C.[id_cliente]         = P.[cliente_id]
         LEFT JOIN Proveedores      PR  ON PR.[id_proveedor]      = P.[proveedor_id]
-
+        LEFT JOIN Usuarios         U   ON U.[id_usuario]         = P.[creadoPor]
         LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
 		    LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]			
     `;
 
-    const conditions = [];    
+    const conditions = [];
+    
+    // ✅ LÓGICA CLAVE: Excluir "Cancelado" por defecto, a menos que se filtre explícitamente
+    if (status) {
+      request.input('Status', sql.VarChar, status);
+      conditions.push(`P.[status] = @Status`);
+    } else {
+      // Si NO se especifica status, excluir "Cancelado"
+      conditions.push(`P.[status] != 'Cancelado'`);
+    }
+    
     if (idPeticion) {
       request.input('IdPeticion', sql.VarChar, idPeticion);
       conditions.push(`P.[id_peticion] LIKE '%' + @IdPeticion + '%'`);
@@ -101,18 +114,12 @@ export const GetRequests = async (filters) => {
 
     if (nameDriver) {
       request.input('NameDriver', sql.VarChar, nameDriver);
-      // Buscar en nombre + apellido (coincide con el SELECT)
       conditions.push(`(CO.[nombre] + ' ' + CO.[apellido]) LIKE '%' + @NameDriver + '%'`);
     }
 
     if (nameCustomer) {
       request.input('NameCustomer', sql.VarChar, nameCustomer);
       conditions.push(`C.[nombre] LIKE '%' + @NameCustomer + '%'`);
-    }
-
-    if (status) {
-      request.input('Status', sql.VarChar, status);
-      conditions.push(`P.[status] = @Status`);
     }
 
     if (sh) {
@@ -135,6 +142,17 @@ export const GetRequests = async (filters) => {
       request.input('EndDate',   sql.Date, endDate);
       conditions.push(`P.[fecha_salida] BETWEEN @StartDate AND @EndDate`);
     }
+
+    // Lógica para withInvoice y withoutInvoice
+    // Lógica para withInvoice y withoutInvoice
+    if (withInvoice === 'true' && withoutInvoice !== 'true') {
+      // Solo con factura
+      conditions.push(`P.[numero_factura] IS NOT NULL AND P.[numero_factura] != ''`);
+    } else if (withoutInvoice === 'true' && withInvoice !== 'true') {
+      // Solo sin factura
+      conditions.push(`(P.[numero_factura] IS NULL OR P.[numero_factura] = '')`);
+    }
+// Si ambos están marcados o ninguno está marcado, no se agrega condición (muestra todos)
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -172,7 +190,6 @@ export const GetRequests = async (filters) => {
 
     const result = await request.query(query);    
 
-    // Consistencia de shape de respuesta
     if (result.recordset.length === 0) {
       return {
         data: [],
@@ -181,6 +198,7 @@ export const GetRequests = async (filters) => {
         limite: PAGE_SIZE
       };
     }
+    // Después del query, antes del map
 
     const data = result.recordset.map(({ totalRegistros, fecha_creacion, fecha_salida, hora_salida, fecha_finalizacion, ...rest }) => ({
       ...rest,
@@ -192,7 +210,7 @@ export const GetRequests = async (filters) => {
     
 
     return {
-      data: GroupServicesByRequets(data), // ojo con el nombre de la función
+      data: GroupServicesByRequets(data),
       paginaActual: page,
       totalRegistros: result.recordset[0].totalRegistros,
       limite: PAGE_SIZE

@@ -3,13 +3,13 @@ import { typeError } from '../../dictionary/typeError.js';
 import { UpdateRequest } from '../../querys/requests/updateRequest.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
-
+import { GetSessionUserInfo } from '../../contexts/sessionContext.js';
 
 export const Ctr_UpdRequest = async (req, res) => {
     try {        
         let request = req.body; // Obtiene la información de la petición
         const files = req.files; // Archivos enviados
-                
+        const userData = GetSessionUserInfo()     
 
         const idRequest = request.id_peticion[0];
 
@@ -45,7 +45,7 @@ export const Ctr_UpdRequest = async (req, res) => {
         // Verifica que los archivos sean enviados correctamente                            
 
         // Realizar la actualización de la petición
-        const updatedRequest = await UpdateRequest(request, idRequest, files); // Actualiza los datos de la petición        
+        const updatedRequest = await UpdateRequest(request, idRequest, files, userData); // Actualiza los datos de la petición        
         // Valida que se haya actualizado la petición
         if (!updatedRequest) {
             return res.status(404).json({ success: false, message: 'Petición no actualizada.' });

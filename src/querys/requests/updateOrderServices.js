@@ -7,7 +7,7 @@ import { UpdExtraCostsRequest } from './updateExtraCosts.js';
 import { AddNewExtraCostsOrderSrvices } from './addExtraCost.js';
 
 // Actualiza os datos de la petición
-export const UpdOrderServiceRequest = async (transaction, services) => {    
+export const UpdOrderServiceRequest = async (transaction, services) => {        
   try {
     const request = await transaction.request();
     let query = '';
@@ -71,7 +71,7 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
               SELECT 1 FROM pedidoServicio_preciosTotales rel2
               WHERE rel2.id_preciosTotales = pt.id_preciosTotales
             );
-        `);      
+        `);                    
       // 3. Insertar tarifas nuevas      
       for (const tarifa of service.tarifa || []) {
         const ptResult = await transaction.request()
@@ -79,12 +79,15 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
           .input("venta", sql.Float, tarifa.venta || 0)
           .input("descripcion", sql.VarChar, tarifa.descripcion || '')
           .query(`
-            INSERT INTO preciosTotales (costo, venta, descripcion)
-            OUTPUT INSERTED.id_preciosTotales AS id
-            VALUES (@costo, @venta, @descripcion)
-          `);          
-        const idPrecio = ptResult.recordset[0].id;
+            DECLARE @out TABLE (id INT);
 
+            INSERT INTO preciosTotales (costo, venta, descripcion)
+            OUTPUT INSERTED.id_preciosTotales INTO @out(id)
+            VALUES (@costo, @venta, @descripcion);
+
+            SELECT id FROM @out;
+          `);          
+        const idPrecio = ptResult.recordset[0].id;      
         await transaction.request()
           .input("idPS", sql.Int, idPedidoServicio)
           .input("idPT", sql.Int, idPrecio)
@@ -93,10 +96,11 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
             VALUES (@idPS, @idPT)
           `);
       }
-    }    
+    }        
     return true;
   } catch (error) {
     const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
+    console.error(error)
     HandleError(code, error.message, 'querys/requests/updateOrderServices/UpdOrderServiceRequest', error);
     throw new Error("Ha ocurrido un error al actualizar la información de los servicios");
   }

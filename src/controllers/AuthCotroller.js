@@ -12,8 +12,7 @@ import { typeError } from '../dictionary/typeError.js';
 
 export const ctrAuthentication = async (req, res) => {
     try {
-        const { email, pass } = req.body;
-        console.log(req.body);
+        const { email, pass } = req.body;        
         //Verifica que las credenciales del usuario
         if (!email || !pass) {
             return res.status(400).json({ success: false, message: 'Los campos están vacíos.' });
