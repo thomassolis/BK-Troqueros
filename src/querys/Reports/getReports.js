@@ -4,7 +4,6 @@ import { GenerateCodeError } from "../../utils/getCodeError.js";
 import { HandleError } from "../../utils/HandleError.js";
 import { modules } from "../../dictionary/modules.js";
 import { typeError } from "../../dictionary/typeError.js";
-import { useEffect } from "react";
 
 
 export const getReports = async(filters) => {    
