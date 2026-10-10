@@ -1,5 +1,5 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -16,14 +16,14 @@ export const GetServices = async (filters) => {
                 SELECT
                     S.[id_servicio],
                     S.[nombre],
-                    CEILING(COUNT(*) OVER()) AS totalRegistros
+                    CEILING(COUNT(*) OVER()) AS "totalRegistros"
                 FROM Servicios S
                 WHERE 
         `;
 
         // Valida si esta filtrando por el nombre del servicio
         if (filters.search) {
-            query += `S.[nombre] LIKE '%' + @Search + '%' AND `
+            query += `S.[nombre] ILIKE CONCAT('%', @Search, '%') AND `
         }
 
         query += `
@@ -35,20 +35,20 @@ export const GetServices = async (filters) => {
             SELECT
                 SP.[id_servicio],
                 SP.[nombre],
-                JSON_QUERY(
-                    (
-                        SELECT
-                            SD.[id_servicio_datos],
-                            SD.[lugar_origen],
-                            SD.[lugar_destino],
-                            SD.[tarifa],
-                            SD.[tiempo_estimado]
-                        FROM [Servicios_datos] SD
-                        WHERE SD.[id_servicio] = SP.[id_servicio] AND [active] = @Active
-                        FOR JSON PATH
-                    )
+                (
+                    SELECT COALESCE(json_agg(
+                        json_build_object(
+                            'id_servicio_datos', SD.id_servicio_datos,
+                            'lugar_origen', SD.lugar_origen,
+                            'lugar_destino', SD.lugar_destino,
+                            'tarifa', SD.tarifa,
+                            'tiempo_estimado', SD.tiempo_estimado
+                        )
+                    ), '[]'::json)
+                    FROM Servicios_datos SD
+                    WHERE SD.id_servicio = SP.id_servicio AND SD.active = @Active
                 ) AS pedidos,
-                SP.totalRegistros
+                SP."totalRegistros"
             FROM ServiciosPaginados SP
         `;
 
@@ -66,15 +66,22 @@ export const GetServices = async (filters) => {
 
         return {
             data: result.recordset.map(row => {
-                const { totalRegistros, pedidos, ...rest } = row;
+                const { totalRegistros, totalregistros, pedidos, ...rest } = row;
+
+                let parsedPedidos = [];
+                if (Array.isArray(pedidos)) {
+                    parsedPedidos = pedidos;
+                } else if (typeof pedidos === 'string') {
+                    try { parsedPedidos = JSON.parse(pedidos); } catch (e) { parsedPedidos = []; }
+                }
 
                 return {
                     ...rest,
-                    pedidos: pedidos ? JSON.parse(pedidos) : [] // convierte pedidos a JSON o [] si está vacío
+                    pedidos: parsedPedidos
                 };
             }),
             paginaActual: parseInt(filters.page) || 1,
-            totalRegistros: result.recordset[0].totalRegistros,
+            totalRegistros: Number(result.recordset[0]?.totalRegistros ?? result.recordset[0]?.totalregistros ?? 0),
             limite: PAGE_SIZE
         };
     } catch (error) {

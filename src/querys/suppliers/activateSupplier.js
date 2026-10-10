@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -14,7 +14,7 @@ export const ActivateSupplier = async (supplier) => {
             .query(`
                     UPDATE [Proveedores]
                         SET [active] = @Active,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE [id_proveedor] = @ID
                 `)
 
@@ -28,6 +28,6 @@ export const ActivateSupplier = async (supplier) => {
         const code = GenerateCodeError(modules.SUPPLIERS, typeError.SUPPLIERS.PATCH);
         HandleError(code, error.message, 'querys/suppliers/activateSupplier/ActivateSupplier', error);
         throw new Error(
-            chassis.active ? 'Ha ocurrido un error al habilitar el proveedor' : 'Ha ocurrido un error al deshabilitar el proveedor');        
+            chassis.active ? 'Ha ocurrido un error al habilitar el proveedor' : 'Ha ocurrido un error al deshabilitar el proveedor');
     }
 }

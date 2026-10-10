@@ -1,10 +1,11 @@
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
+import crypto from 'crypto';
 
 
 export const InsertDriver = async (driver, files) => {
@@ -19,18 +20,13 @@ export const InsertDriver = async (driver, files) => {
         transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
         await transaction.begin() // Iniciamos la transaction
 
-        //Generamos el ID del chasis antes del INSERT
-        const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(7);
-                    EXEC Prc_GenerarIDConductores @NuevoID OUTPUT;
-                    SELECT @NuevoID AS [id_conductor];`);
-        
-        //obtenemos el id del chasis
-        const idDriver = idResult.recordset[0]?.id_conductor;
+        // Generamos el ID del conductor localmente (simulando CHAR(7))
+        // Ya que Postgres no soporta DECLARE @Variable ni el procedimiento Prc_GenerarIDConductores
+        const idDriver = crypto.randomUUID().slice(0, 7);
 
-        //validamos que id del chasis exista
+        //validamos que id del conductor exista
         if (!idDriver) {
-            throw new Error('No se pudo generar el ID del chasis.');
+            throw new Error('No se pudo generar el ID del conductor.');
         }
 
         //construimos la ruta de las carpetas
@@ -51,12 +47,12 @@ export const InsertDriver = async (driver, files) => {
             .input("Tipo_licencia", sql.Char, driver.tipo_licencia)
             .query(`
                     INSERT INTO [Conductores] ([id_conductor], [cedula], [nombre], [apellido],
-                        [email], [contraseña], [telefono], [foto_licencia], [foto_PazYSalvo],
+                        [email], [contrasena], [telefono], [foto_licencia], [foto_paz_y_salvo],
                         [foto_record_policivo], [foto_Pasaporte], [status], [tipo_licencia])
                         VALUES ('${idDriver}', @Cedula, @Nombre, @Apellido, @Email, @Contra, @Telefono, 
                             '${rutaLicencia}', '${rutaPazSalvo}', '${rutaRecordPolicivo}', '${rutaPasaporte}', @Status, @Tipo_licencia)                        
                 `)
-        
+
         //guardamos el archivo
         const fileSaved = files && files.licencia ? await SaveFile(rutaLicencia, files.licencia) : true;
         const fileSaved2 = files && files.pazSalvo ? await SaveFile(rutaPazSalvo, files.pazSalvo) : true;
@@ -71,11 +67,11 @@ export const InsertDriver = async (driver, files) => {
 
         // Valida que se haya hecho el insert
         if (result.rowsAffected > 0) {
-            await transaction.commit();        
+            await transaction.commit();
             return true;
         }
 
-        await transaction.rollback();        
+        await transaction.rollback();
         return false;
     } catch (error) {
         // En caso de error revierte la transaction
@@ -87,7 +83,7 @@ export const InsertDriver = async (driver, files) => {
 
         // Valida si el error ha sido por primary key o unique key
         if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo insertar el chasis, ${error.message}`);
+            let MyThrow = new Error(`No se pudo insertar el chasis, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('PK_')) {
@@ -98,7 +94,7 @@ export const InsertDriver = async (driver, files) => {
             HandleError(code, error.message, 'querys/drivers/insertDriver/InsertDriver', error);
             throw MyThrow
         }
-        
+
         HandleError(code, error.message, 'querys/drivers/insertDriver/InsertDriver', error);
         throw new Error('Ha ocurrido un error al crear el conductor');
     }

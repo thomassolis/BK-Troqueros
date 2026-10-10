@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -7,7 +7,7 @@ import { UpdExtraCostsRequest } from './updateExtraCosts.js';
 import { AddNewExtraCostsOrderSrvices } from './addExtraCost.js';
 
 // Actualiza os datos de la petición
-export const UpdOrderServiceRequest = async (transaction, services) => {        
+export const UpdOrderServiceRequest = async (transaction, services) => {
   try {
     const request = await transaction.request();
     let query = '';
@@ -45,7 +45,7 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
       `;
     });
 
-    await request.query(query);    
+    await request.query(query);
     // Paso 2 y 3: Refrescar tarifas
     for (const service of services) {
       const idPedidoServicio = service.id_pedidoServicio;
@@ -57,21 +57,21 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
           DECLARE @PT_BORRAR TABLE (id INT PRIMARY KEY);
 
           INSERT INTO @PT_BORRAR(id)
-          SELECT rel.id_preciosTotales
-          FROM pedidoServicio_preciosTotales rel
+          SELECT rel.id_precios_totales
+          FROM pedido_servicio_precios_totales rel
           WHERE rel.id_Pedido_Servicio = @idPS;
 
-          DELETE FROM pedidoServicio_preciosTotales
+          DELETE FROM pedido_servicio_precios_totales
           WHERE id_Pedido_Servicio = @idPS;
 
           DELETE pt
-          FROM preciosTotales pt
-          WHERE pt.id_preciosTotales IN (SELECT id FROM @PT_BORRAR)
+          FROM precios_totales pt
+          WHERE pt.id_precios_totales IN (SELECT id FROM @PT_BORRAR)
             AND NOT EXISTS (
-              SELECT 1 FROM pedidoServicio_preciosTotales rel2
-              WHERE rel2.id_preciosTotales = pt.id_preciosTotales
+              SELECT 1 FROM pedido_servicio_precios_totales rel2
+              WHERE rel2.id_precios_totales = pt.id_precios_totales
             );
-        `);                    
+        `);
       // 3. Insertar tarifas nuevas      
       for (const tarifa of service.tarifa || []) {
         const ptResult = await transaction.request()
@@ -81,22 +81,22 @@ export const UpdOrderServiceRequest = async (transaction, services) => {
           .query(`
             DECLARE @out TABLE (id INT);
 
-            INSERT INTO preciosTotales (costo, venta, descripcion)
-            OUTPUT INSERTED.id_preciosTotales INTO @out(id)
+            INSERT INTO precios_totales (costo, venta, descripcion)
+            OUTPUT INSERTED.id_precios_totales INTO @out(id)
             VALUES (@costo, @venta, @descripcion);
 
             SELECT id FROM @out;
-          `);          
-        const idPrecio = ptResult.recordset[0].id;      
+          `);
+        const idPrecio = ptResult.recordset[0].id;
         await transaction.request()
           .input("idPS", sql.Int, idPedidoServicio)
           .input("idPT", sql.Int, idPrecio)
           .query(`
-            INSERT INTO pedidoServicio_preciosTotales (id_Pedido_Servicio, id_preciosTotales)
+            INSERT INTO pedido_servicio_precios_totales (id_Pedido_Servicio, id_precios_totales)
             VALUES (@idPS, @idPT)
           `);
       }
-    }        
+    }
     return true;
   } catch (error) {
     const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);

@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -14,7 +14,7 @@ export const ActivateTruckHead = async (truckHead) => {
             .query(`
                     UPDATE [Cabezal]
                         SET [active] = @Active,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE [id_cabezal] = @ID
                 `)
 

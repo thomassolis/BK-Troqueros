@@ -1,12 +1,12 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 // Actualiza el status del chasis
-export const UpdateStatusChassis= async (chassis) => {
+export const UpdateStatusChassis = async (chassis) => {
     try {
         const result = await pool.request()
             .input("ID", sql.VarChar, chassis.id)
@@ -14,7 +14,7 @@ export const UpdateStatusChassis= async (chassis) => {
             .query(`
                     UPDATE Chasis
                         SET status = @Status,
-                            fecha_modificación = GETDATE()
+                            fecha_modificacion = GETDATE()
                     WHERE id_chasis = @ID
                 `)
 
@@ -27,6 +27,6 @@ export const UpdateStatusChassis= async (chassis) => {
     } catch (error) {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
         HandleError(code, error.message, 'querys/Chassis/updateStatus/UpdateStatusChassis', error);
-        throw new Error('Ha ocurrido un error al actualizar el status del chasis');        
+        throw new Error('Ha ocurrido un error al actualizar el status del chasis');
     }
 }

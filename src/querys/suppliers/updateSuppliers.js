@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -9,17 +9,17 @@ import { typeError } from '../../dictionary/typeError.js';
 export const UpdateSuppliers = async (supplier) => {
     try {
         const result = await pool.request()
-                                .input("IdProveedor", sql.VarChar, supplier.id_proveedor)
-                                .input("Nombre", sql.VarChar, supplier.nombre)
-                                .input("PersonaContacto", sql.VarChar, supplier.personaContacto)
-                                .input("Celular", sql.VarChar, supplier.celular)
-                                .input("Telefono", sql.VarChar, supplier.telefono)
-                                .input("Email", sql.VarChar, supplier.email)
-                                .input("NumeroYappy", sql.VarChar, supplier.numeroYappy)
-                                .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
-                                .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
-                                .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
-                                .query(`UPDATE [Proveedores]
+            .input("IdProveedor", sql.VarChar, supplier.id_proveedor)
+            .input("Nombre", sql.VarChar, supplier.nombre)
+            .input("PersonaContacto", sql.VarChar, supplier.personaContacto)
+            .input("Celular", sql.VarChar, supplier.celular)
+            .input("Telefono", sql.VarChar, supplier.telefono)
+            .input("Email", sql.VarChar, supplier.email)
+            .input("NumeroYappy", sql.VarChar, supplier.numeroYappy)
+            .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
+            .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
+            .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
+            .query(`UPDATE [Proveedores]
                                             SET [id_proveedor] = @IdProveedor,
                                                 [nombre] = @Nombre,
                                                 [persona_contacto] = @PersonaContacto,
@@ -30,7 +30,7 @@ export const UpdateSuppliers = async (supplier) => {
                                                 [nombre_cuenta] = @NumeroCuenta,
                                                 [numero_cuenta] = @NumeroCuenta,
                                                 [tipo_Banco] = @TipoBanco,
-                                                [fecha_modificación] = GETDATE()
+                                                [fecha_modificacion] = GETDATE()
                                         WHERE [id_proveedor] = @IdProveedor`);
 
         return result.rowsAffected[0];

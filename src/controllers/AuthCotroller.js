@@ -12,24 +12,28 @@ import { typeError } from '../dictionary/typeError.js';
 
 export const ctrAuthentication = async (req, res) => {
     try {
-        const { email, pass } = req.body;        
+        const { email, pass } = req.body;
         //Verifica que las credenciales del usuario
         if (!email || !pass) {
             return res.status(400).json({ success: false, message: 'Los campos están vacíos.' });
         }
 
         //Obtiene los datos del usuario
+        console.log('email', email);
+        console.log('pass', pass);
         const user = await ValidateUser(email);
+        console.log('user', user);
         //Valida que el usuario exista
         if (!user) {
+            console.log('test')
             await InsertUserBan(email); //Sino existe, lo crea y lo guarda en la tabla de usuarios baneados
-            return res.status(404).json({success: false, message: 'Credenciales incorrectas. Te quedan 4 intentos'});
+            return res.status(404).json({ success: false, message: 'Credenciales incorrectas. Te quedan 4 intentos--' });
         }
 
         //verifica que el usuario no este baneado y a su vez que este no sea de la tabla de usuarios baneados
         if (user.suspendido === '1' && user.user_ban) {
-            return res.status(403).json({success: false, message: 'Tu cuenta ha sido suspendida. Contáctese con servicio técnico'});
-        }     
+            return res.status(403).json({ success: false, message: 'Tu cuenta ha sido suspendida. Contáctese con servicio técnico' });
+        }
 
         //verifica si el usuario ha sido baneado y que sea de la tabla usuarios
         if (user.suspendido === '1' && !user.user_ban) {
@@ -37,38 +41,39 @@ export const ctrAuthentication = async (req, res) => {
 
             //valida que el tiempo sea mayor de 0 y le muestra cuanto tiempo le hace falta
             if (time > 0) {
-                return res.status(403).json({success: false, message: `Has sido baneado. Tiempo restante ${time}`});
+                return res.status(403).json({ success: false, message: `Has sido baneado. Tiempo restante ${time}` });
             }
-            
+
             await UnBan(user.email); // De lo contrario desbanea al usuario
-            return res.status(200).json({success: false, message: 'Tienes 5 intentos'});
+            return res.status(200).json({ success: false, message: 'Tienes 5 intentos' });
         }
 
         //Valida que la contraseña sea correcta
         const dataUser = await VerifyPassword(pass, user);
-
         //Sino es correcta si le indica el numero de intentos que le queda
+        console.log('dataUser', dataUser);
         if (!dataUser) {
             const ban = await NumeroMaxIntentos(user.email, parseInt(user.max_intento), parseInt(user.user_ban))
-            
+
             //Valida el número de intentos por parte del usuario
             if (ban.success) {
-                return res.status(403).json({success: false, message: ban.msg});
+                return res.status(403).json({ success: false, message: ban.msg });
             }
 
             if (Boolean(ban.userB)) {
                 await Banned(email, 'Usuarios_Baneados');
-                return res.status(403).json({success: false, message: 'Has alcanzado el número máximo de intentos. Tu cuenta ha sido baneada.' });
+                return res.status(403).json({ success: false, message: 'Has alcanzado el número máximo de intentos. Tu cuenta ha sido baneada.' });
             }
 
             await Banned(email, 'Usuarios');
-            return res.status(403).json({success: false, message: ban.msg });
+            return res.status(403).json({ success: false, message: ban.msg });
         }
 
         // Codificando el token
+        console.log('dataUser', dataUser);
         const token = codificarToken(dataUser);
-
-        if (!token){
+        console.log('token', token);
+        if (!token) {
             return res.status(400).json({ success: false, message: 'Error al generar el token.' });
         }
 
@@ -83,8 +88,9 @@ export const ctrAuthentication = async (req, res) => {
         //Actualiza el numero de intentos
         await UpdateIntents(dataUser.email);
 
-        return res.status(200).json({ success: true, message: 'Login exitoso', data: dataUser});
+        return res.status(200).json({ success: true, message: 'Login exitoso', data: dataUser });
     } catch (error) {
+        console.error(error);
         const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoAutenticado); //generar codigo del error
         HandleError(code, error.message, 'controller/AuthController/ctrAuthentication', error);
         return res.status(500).json({ success: false, message: 'Error interno del servidor' });

@@ -1,10 +1,11 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
+import crypto from 'crypto';
 
 //inserta un cabezal
 export const InsertTruckHead = async (truckHead, file) => {
@@ -19,14 +20,9 @@ export const InsertTruckHead = async (truckHead, file) => {
         transaction = new sql.Transaction(pool); // Instanciamos un objecto Transaction
         await transaction.begin(); // Comienza la transacción
 
-        //Generamos el ID del cabezal antes del INSERT
-        const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(7);
-                    EXEC Prc_GenerarIDCabezal @NuevoID OUTPUT;
-                    SELECT @NuevoID AS id_cabezal;`);
-        
-        //obtenemos el id del cabezal
-        const idCabezal = idResult.recordset[0].id_cabezal;
+        // Generamos el ID del cabezal localmente (simulando CHAR(7))
+        // Ya que Postgres no soporta DECLARE @Variable ni el procedimiento Prc_GenerarIDCabezal
+        const idCabezal = crypto.randomUUID().slice(0, 7);
 
         //validamos que id del cabezal exista
         if (!idCabezal) {

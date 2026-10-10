@@ -4,22 +4,22 @@ import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
-
 // Obtiene los proveedores activos del sistema
 export const GetRequestSuppliers = async () => {
     try {
-        const result = await pool.request()
-            .query(`
-                    SELECT 
-                        [id_proveedor],
-                        [nombre]
-                    FROM [Proveedores]
-                    WHERE [active] = 1
-                `);
+        const query = `
+      SELECT 
+        id_proveedor,
+        nombre
+      FROM Proveedores
+      WHERE active = true
+    `;
 
-        // Valida si la consulta arrojo datos
-        if (result.recordset.length > 0) {
-            return result.recordset;
+        const result = await pool.query(query);
+
+        // Valida si la consulta arrojó datos
+        if (result.rows.length > 0) {
+            return result.rows;
         }
 
         return null;
@@ -28,4 +28,4 @@ export const GetRequestSuppliers = async () => {
         HandleError(code, error.message, 'querys/requests/getRequestSuppliers/GetRequestSuppliers', error);
         throw new Error('Ha ocurrido un error al obtener los proveedores en peticiones');
     }
-}
+};

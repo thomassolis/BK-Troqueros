@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool, ConnectDB } from '../../db/db.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
@@ -16,16 +16,16 @@ export const CreateUser = async (data) => {
             .input("Apellido", sql.VarChar, data.apellido)
             .input("Email", sql.VarChar, data.email)
             .input("Pass", sql.VarChar, data.pass)
-            .query(`INSERT INTO [Usuarios] (nombre, apellido, email, contraseña) 
+            .query(`INSERT INTO [Usuarios] (nombre, apellido, email, contrasena) 
                 OUTPUT INSERTED.id_usuario
                 VALUES (@Nombre, @Apellido, @Email, @Pass)`);
 
-                
+
         //Valida que al momento de insertar el usuario este retorne el Id del usuario registrado
         const idUser = Number(result.recordset[0].id_usuario, 10);
-        
+
         //valida que el usuario se haya insertado correctamente
-        if (!idUser){
+        if (!idUser) {
             await transaction.rollback();
             return false;
         }
@@ -59,7 +59,7 @@ export const ValidateEmail = async (email) => {
             .query(`SELECT email FROM [Usuarios] WHERE [email] = @Email`);
 
         return result.recordset[0];
-        
+
     } catch (error) {
         console.error(error);
         const code = GenerateCodeError(modules.USUARIOS, typeError.validarCorreo);

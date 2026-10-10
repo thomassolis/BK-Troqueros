@@ -1,7 +1,6 @@
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
 import { SaveFile } from '../../fileManager/saveFile.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -9,7 +8,7 @@ import { modules } from '../../dictionary/modules.js';
 
 // Agrega un nuevo cliente
 export const InsertClient = async (data, files) => {    
-    let transaction = null
+    let client = null;
     try {
         // Valida que la información no sea undefined
         if (!data) {
@@ -21,38 +20,48 @@ export const InsertClient = async (data, files) => {
             files = Object.assign({}, files);
         }
 
-        transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
-        await transaction.begin() // Iniciamos la transaction
+        client = await pool.connect();
+        await client.query('BEGIN'); // Iniciamos la transaction
 
-        const id = await CreateIDClient(data.nombre) // Crea el ID del cliente
+        const id = await CreateIDClient(client, data.nombre) // Crea el ID del cliente
 
         //construimos la ruta de las carpetas
         const rutaCed = `clientes/${id}/cedula_representante_legal`;
         const rutaAvisoOpe = `clientes/${id}/aviso_operaciones`;
         const rutaCedPerNatural = `clientes/${id}/cedula_persona_natural`;
 
-        const result = await transaction.request()
-            .input("ID", sql.VarChar, id)
-            .input("Nombre", sql.VarChar, data.nombre)
-            .input("Ruc", sql.VarChar, data.ruc)
-            .input("DV", sql.Int, data.dv)
-            .input("Direccion", sql.VarChar, data.direccion)
-            .input("NombreContacto", sql.VarChar, data.nombrePersonaContacto)
-            .input("TelContacto", sql.VarChar, data.telPersonaContacto)
-            .input("EmailContacto", sql.VarChar, data.emailPersonaContacto)
-            .input("NumeroCuenta", sql.VarChar, data.numeroCuenta)
-            .input("NombreBanco", sql.VarChar, data.nombreBanco)
-            .input("TipoCuenta", sql.VarChar, data.tipoCuenta)
-            .input("NombreCuenta", sql.VarChar, data.nombreCuenta)
-            .query(`
-                    INSERT INTO Clientes ([id_cliente], [nombre], [nombre_persona_contacto], [email_persona_contacto],
-                        [telefono_persona_contacto], [ruc_empresa], [DV], [direccion], [numero_cuenta],
-                        [nombre_banco], [tipo_cuenta], [nombre_cuenta], [copia_cedula_representante_legal], 
-                        [copia_aviso_operaciones], [cedula_persona_natural]
-                    )
-                        VALUES(@ID, @Nombre, @NombreContacto, @EmailContacto, @TelContacto, @Ruc, @DV,
-                            @Direccion, @NumeroCuenta, @NombreBanco, @TipoCuenta, @NombreCuenta, '${rutaCed}', '${rutaAvisoOpe}', '${rutaCedPerNatural}')
-                `)                
+        const insertQuery = `
+            INSERT INTO Clientes (
+                id_cliente, nombre, nombre_persona_contacto, email_persona_contacto,
+                telefono_persona_contacto, ruc_empresa, DV, direccion, numero_cuenta,
+                nombre_banco, tipo_cuenta, nombre_cuenta, copia_cedula_representante_legal, 
+                copia_aviso_operaciones, cedula_persona_natural
+            )
+            VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+            )
+        `;
+
+        const values = [
+            id,
+            data.nombre,
+            data.nombrePersonaContacto,
+            data.emailPersonaContacto,
+            data.telPersonaContacto,
+            data.ruc,
+            data.dv,
+            data.direccion,
+            data.numeroCuenta,
+            data.nombreBanco,
+            data.tipoCuenta,
+            data.nombreCuenta,
+            rutaCed,
+            rutaAvisoOpe,
+            rutaCedPerNatural
+        ];
+
+        const result = await client.query(insertQuery, values);
+                
          //guardamos el archivo
         const fileSaved = files && files.cedRepresentanteLegal ? await SaveFile(rutaCed, files.cedRepresentanteLegal) : true;
         const fileSaved2 = files && files.avisoOperaciones ? await SaveFile(rutaAvisoOpe, files.avisoOperaciones) : true;
@@ -60,44 +69,45 @@ export const InsertClient = async (data, files) => {
 
         //Valida que se haya guardado los archivos
         if (!fileSaved || !fileSaved2 || !fileSaved3) {
-            await transaction.rollback();
+            await client.query('ROLLBACK');
             throw new Error('Error al guardar los archivos. Se revirtió la transacción.');
         }
         
         // Valida que se haya hecho el insert
-        if (result.rowsAffected > 0) {
-            await transaction.commit()
+        if (result.rowCount > 0) {
+            await client.query('COMMIT');
             return true
         }
 
-        await transaction.rollback()
+        await client.query('ROLLBACK');
         return false
     } catch (error) {
+        // En caso de error revierte la transaction
+        if (client) {
+            await client.query('ROLLBACK');
+        }
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.POST);
         HandleError(code, error.message, 'querys/Clients/insertClient/InsertClient', error);
-
-        // En caso de error revierte la transaction
-        if (transaction) {
-            await transaction.rollback();
-        }
-
         throw new Error('Ha ocurrido un error al crear al cliente');
+    } finally {
+        if (client) {
+            client.release();
+        }
     }
 }
 
 
 // Obtiene el ultimo ID relacionado
-const GetLastID = async (idClient) => {
+const GetLastID = async (client, idClient) => {
     try {
-        const result = await pool.request()
-            .input("ID", sql.VarChar, idClient)
-            .query(`
-                    SELECT TOP 1 id_cliente FROM Clientes
-                    WHERE id_cliente LIKE @ID + '%'
-                    ORDER BY fecha_creacion DESC
-                `)
-
-        return result.recordset[0]?.id_cliente
+        const query = `
+            SELECT id_cliente FROM Clientes
+            WHERE id_cliente LIKE $1 || '%'
+            ORDER BY fecha_creacion DESC
+            LIMIT 1
+        `;
+        const result = await client.query(query, [idClient]);
+        return result.rows[0]?.id_cliente
     } catch (error) {
         throw new Error(`Error en al obtener el último ID, ${error.message}`);
     }
@@ -105,7 +115,7 @@ const GetLastID = async (idClient) => {
 
 
 // Crea el ID del cliente
-const CreateIDClient = async (nameClient) => {
+const CreateIDClient = async (client, nameClient) => {
     try {
         const listWords = nameClient.split(' ');
         let id = '' // Inicializamos el ID con una cadena vacía
@@ -119,7 +129,7 @@ const CreateIDClient = async (nameClient) => {
             throw new Error('ID no creado');            
         }
 
-        const lastID = await GetLastID(id) // Obtenemos el ultimo ID
+        const lastID = await GetLastID(client, id) // Obtenemos el ultimo ID
 
         if (!lastID) {
             return id

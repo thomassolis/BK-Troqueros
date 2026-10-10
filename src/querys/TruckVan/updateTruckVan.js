@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
@@ -10,7 +10,7 @@ import { typeError } from '../../dictionary/typeError.js';
 export const UpdateTruckVan = async (truckVan, files) => {
     // Iniciar transacción
     let transaction = null;
-    
+
     try {
         const cleanFiles = {}; // Instanciamos un nuevo objeto
 
@@ -34,15 +34,15 @@ export const UpdateTruckVan = async (truckVan, files) => {
         const rutaRevisado = `furgon/${truckVan.id}/revisado`;
 
         const result = await pool.request()
-                                .input("IdTruckVan", sql.VarChar, truckVan.id)
-                                .input("Placa", sql.VarChar, truckVan.placa)
-                                .input("Status", sql.VarChar, truckVan.status)
-                                .input("NumPoliza", sql.VarChar, truckVan.numPoliza)
-                                .input("FechaExpedicion", sql.Date, truckVan.fechaExpedicion)
-                                .input("FechaCaducidad", sql.Date, truckVan.fechaCaducidad)
-                                .input("FechaRenovacion", sql.Date, truckVan.fechaRenovacion)
-                                .input("FechaUltRevisado", sql.Date, truckVan.fechaUltRevisado)
-                                .query(`UPDATE [Furgon]
+            .input("IdTruckVan", sql.VarChar, truckVan.id)
+            .input("Placa", sql.VarChar, truckVan.placa)
+            .input("Status", sql.VarChar, truckVan.status)
+            .input("NumPoliza", sql.VarChar, truckVan.numPoliza)
+            .input("FechaExpedicion", sql.Date, truckVan.fechaExpedicion)
+            .input("FechaCaducidad", sql.Date, truckVan.fechaCaducidad)
+            .input("FechaRenovacion", sql.Date, truckVan.fechaRenovacion)
+            .input("FechaUltRevisado", sql.Date, truckVan.fechaUltRevisado)
+            .query(`UPDATE [Furgon]
                                             SET placa = @Placa,
                                                 status = @Status,
                                                 numero_poliza = @NumPoliza,
@@ -50,9 +50,9 @@ export const UpdateTruckVan = async (truckVan, files) => {
                                                 fecha_caducidad_poliza = @FechaCaducidad,
                                                 fecha_renovacion_revisado = @FechaRenovacion,
                                                 fecha_ultimo_revisado = @FechaUltRevisado,
-                                                fecha_modificación = GETDATE()
+                                                fecha_modificacion = GETDATE()
                                         WHERE id_furgon = @IdTruckVan`);
-        
+
         //valida que los archivos exista
         //actualiza los archivos del furgon
         const fileUpdated = cleanFiles && cleanFiles.foto_poliza ? await UpdateFile(rutaPoliza, cleanFiles.foto_poliza) : await UpdateFile(rutaPoliza, null);
@@ -63,18 +63,18 @@ export const UpdateTruckVan = async (truckVan, files) => {
             await transaction.rollback();
             throw new Error('Error al eliminar los archivos. Se revirtió la transacción.');
         }
-        
+
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
             // Si todo está bien, se realiza un commit y se hace el update
             await transaction.commit();
-            
+
             return true;
         }
-        
+
         // Revierte la transaction
         await transaction.rollback();
-        
+
         return false;
     } catch (error) {
         //revierte la actualización del furgon
@@ -85,7 +85,7 @@ export const UpdateTruckVan = async (truckVan, files) => {
         const code = GenerateCodeError(modules.FURGONES, typeError.FURGONES.PUT);
 
         if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo actualizar el furgon, ${error.message}`);
+            let MyThrow = new Error(`No se pudo actualizar el furgon, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('UQ_')) {
@@ -97,7 +97,7 @@ export const UpdateTruckVan = async (truckVan, files) => {
             HandleError(code, error.message, 'querys/TruckVan/updateTruckVan/UpdateTruckVan', error);
             throw MyThrow;
         }
-        
+
         HandleError(code, error.message, 'querys/TruckVan/updateTruckVan/UpdateTruckVan', error);
         throw new Error('Ha ocurrido un error al actualizar la información del furgon');
     }

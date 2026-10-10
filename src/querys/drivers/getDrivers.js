@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -16,12 +16,12 @@ export const GetAllDrivers = async (page) => {
             .input("PageSize", sql.Int, PAGE_SIZE)
             .query(`SELECT
                         id_conductor,
-                        nombre + ' ' + apellido AS nombreCompleto,
+                        CONCAT(nombre, ' ', apellido) AS "nombreCompleto",
                         cedula,
                         email,
                         telefono,
                         status,
-                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                        CEILING(COUNT(*) OVER()) AS "totalRegistros"
                     FROM [Conductores]
                     ORDER BY fecha_creacion DESC
                     OFFSET (@Page - 1) * @PageSize ROWS
@@ -32,10 +32,13 @@ export const GetAllDrivers = async (page) => {
             return []
         }
 
+        const firstRow = result.recordset[0];
+        const total = firstRow.totalRegistros ?? firstRow.totalregistros;
+
         return {
-            data: result.recordset.map(({ totalRegistros, ...rest }) => rest), // Excluir totalRegistros del array de datos
+            data: result.recordset.map(({ totalRegistros, totalregistros, ...rest }) => rest),
             paginaActual: page,
-            totalRegistros: result.recordset[0].totalRegistros,
+            totalRegistros: Number(total || 0),
             limite: PAGE_SIZE
         };
     } catch (error) {
@@ -58,12 +61,12 @@ export const GetDriversByFilter = async (page, search) => {
             .input("PageSize", sql.Int, PAGE_SIZE)
             .query(`SELECT
                         id_conductor,
-                        nombre + ' ' + apellido AS nombreCompleto,
+                        CONCAT(nombre, ' ', apellido) AS "nombreCompleto",
                         cedula,
                         email,
                         telefono,
                         status,
-                        CEILING(COUNT(*) OVER()) AS totalRegistros
+                        CEILING(COUNT(*) OVER()) AS "totalRegistros"
                     FROM [Conductores]
                     WHERE nombre LIKE @Search
                     ORDER BY fecha_creacion DESC
@@ -75,10 +78,13 @@ export const GetDriversByFilter = async (page, search) => {
             return []
         }
 
+        const firstRow = result.recordset[0];
+        const total = firstRow.totalRegistros ?? firstRow.totalregistros;
+
         return {
-            data: result.recordset.map(({ totalRegistros, ...rest }) => rest), // Excluir totalRegistros del array de datos
+            data: result.recordset.map(({ totalRegistros, totalregistros, ...rest }) => rest),
             paginaActual: page,
-            totalRegistros: result.recordset[0].totalRegistros,
+            totalRegistros: Number(total || 0),
             limite: PAGE_SIZE
         };
     } catch (error) {

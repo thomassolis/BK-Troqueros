@@ -1,5 +1,5 @@
 import { HandleError } from '../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../db/db.js';
 import { pool } from '../db/db.js';
 import dotenv from 'dotenv';
 import { GenerateCodeError } from '../utils/getCodeError.js';
@@ -13,15 +13,14 @@ export const VerifyPermission = async (module, action, rol) => {
         const result = await pool.request()
             .input("Module", sql.VarChar, module)
             .input("Rol", sql.Char(3), rol)
-            .query(`SELECT
-				P.[${action}]
-                FROM 
-                [Permisos] P 
-                JOIN 
-                [Modulos] M
-                ON
-                P.[id_permiso] = M.[id_permiso]
-                WHERE P.[id_rol] = @Rol AND M.[tabla_relacionada] = @Module AND P.[${action}] = 1`);
+            .query(`
+                SELECT P.${action}
+                FROM Permisos P 
+                JOIN Modulos M ON P.id_permiso = M.id_permiso
+                WHERE TRIM(P.id_rol) = TRIM(@Rol) 
+                  AND LOWER(M.tabla_relacionada) = LOWER(@Module) 
+                  AND P.${action} = true
+            `);
 
         return result.recordset[0];
     } catch (error) {

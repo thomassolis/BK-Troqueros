@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
@@ -10,7 +10,7 @@ import { GetTime } from '../../auxiliary functions/dateConverter.js';
 import { RefreshPaymentsRequest } from './updatePaymentsRequest.js';
 import { InsertPaymentFiles } from './insertPaymentFiles.js';
 // Actualiza la información de una petición
-export const UpdateRequest = async (request, idRequest, files, userData) => {            
+export const UpdateRequest = async (request, idRequest, files, userData) => {
     let transaction = null
     try {
         request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
@@ -18,11 +18,11 @@ export const UpdateRequest = async (request, idRequest, files, userData) => {
 
         await transaction.begin();
 
-        const batchId = crypto.randomUUID();        
+        const batchId = crypto.randomUUID();
         await transaction.request()
-        .input("UserId", sql.Int, userData.id_usuario)
-        .input("BatchId", sql.UniqueIdentifier, batchId)
-        .query(`
+            .input("UserId", sql.Int, userData.id_usuario)
+            .input("BatchId", sql.UniqueIdentifier, batchId)
+            .query(`
             EXEC sys.sp_set_session_context @key=N'UserId',  @value=@UserId;
             EXEC sys.sp_set_session_context @key=N'BatchId', @value=@BatchId;
         `);
@@ -30,7 +30,7 @@ export const UpdateRequest = async (request, idRequest, files, userData) => {
 
 
         // await transaction.begin(); // Iniciamos la transaction
-                
+
         const result = await transaction.request()
             .input("ID", sql.VarChar, idRequest)
             .input("Cliente", sql.VarChar, request.id_cliente)
@@ -46,34 +46,34 @@ export const UpdateRequest = async (request, idRequest, files, userData) => {
                             [precio_proveedor] = @PrecioProveedor,
                             [fecha_salida] = @FechaSalida,
                             [hora_salida] = @HoraSalida,
-                            [fecha_modificación] = GETDATE(),
+                            [fecha_modificacion] = GETDATE(),
                             [numero_factura] = @Numero_factura
                     WHERE [id_peticion] = @ID
                 `);
-        
+
         // Valida que se haya actualizado la petición
         if (result.rowsAffected > 0) {
             // Actualiza los servicios
             // Valida si los servicios estan vacíos
             const updatedServices = request.servicios && request.servicios.length > 0
                 ? await UpdOrderServiceRequest(transaction, request.servicios)
-                : true;            
+                : true;
             // Agrega los nuevos servicios de la petición
             // Valida si los nuevos servicios estan vacíos
-            const addedServices = request.nuevos_servicios && request.nuevos_servicios.length > 0 
-                ? await InsertOrderServices(transaction, request.nuevos_servicios, request.id_peticion) 
-                : true ;
+            const addedServices = request.nuevos_servicios && request.nuevos_servicios.length > 0
+                ? await InsertOrderServices(transaction, request.nuevos_servicios, request.id_peticion)
+                : true;
 
             const paymentsRefreshed = await RefreshPaymentsRequest(
                 transaction,
                 idRequest,
                 request.paymentData || []
-            );       
-                        
+            );
 
-            if(files?.paymentFiles){                
+
+            if (files?.paymentFiles) {
                 await InsertPaymentFiles(transaction, files.paymentFiles, idRequest);
-            }            
+            }
 
             if (updatedServices && addedServices && paymentsRefreshed) {
                 await transaction.commit();
@@ -83,15 +83,15 @@ export const UpdateRequest = async (request, idRequest, files, userData) => {
 
         await transaction.rollback();
         return false;
-    } catch (error) {        
+    } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PUT);
         HandleError(code, error.message, 'querys/requests/updateRequest/UpdateRequest', error);
 
         // En caso de error, revierte la transaction
         if (transaction) {
-           await transaction.rollback();
+            await transaction.rollback();
         }
 
-        throw new Error('Ha ocurrido un error al actualizar la información de la petición');        
+        throw new Error('Ha ocurrido un error al actualizar la información de la petición');
     }
 }

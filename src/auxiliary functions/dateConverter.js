@@ -4,7 +4,7 @@ import { HandleError } from '../utils/HandleError.js';
 
 //Convierte la fecha en formato (DD-MM-YYYY)
 export const DateConverter = (date) => {
-    try {        
+    try {
         if (!date) return null;
 
         const fechaObj = new Date(date);
@@ -18,7 +18,7 @@ export const DateConverter = (date) => {
         const mes = fechaObj.getUTCMonth() + 1;
         const anio = fechaObj.getUTCFullYear();
 
-        const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;        
+        const fechaFormateada = `${dia.toString().padStart(2, "0")}/${mes.toString().padStart(2, "0")}/${anio}`;
 
         return fechaFormateada;
 
@@ -55,26 +55,33 @@ export const DateConverterSQL = (date) => {
         return null;
     } catch (error) {
         throw new Error('Error al convertir la fecha al formato (YYYY-MM-DD) de SQL');
-    }    
+    }
 }
 
 // Obtiene la hora de la petición en Objeto Date
 export const GetTime = (time) => {
-    // Crear un objeto Date con solo la parte de la hora
-    const horaDate = new Date();
-
-    // Valida si la hora es undefined o vacia
+    // Si no se pasa hora, por defecto 09:00:00
     if (!time) {
-        horaDate.setUTCHours(9, 0, 0, 0);
-        return horaDate;
+        return "09:00:00";
     }
-    
-    // Separa la hora en: horas, minutos y segundos
-    const [hours, minutes, seconds] = time.split(':').map(Number);    
-    horaDate.setUTCHours(hours, minutes, seconds, 0);
 
-    return horaDate;
-}
+    // Si ya es un objeto Date
+    if (time instanceof Date) {
+        const hours = String(time.getHours()).padStart(2, '0');
+        const minutes = String(time.getMinutes()).padStart(2, '0');
+        const seconds = String(time.getSeconds()).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Si viene como string tipo "HH:MM:SS" o "HH:MM"
+    const parts = String(time).split(':').map(Number);
+    const hours = String(parts[0] || 0).padStart(2, '0');
+    const minutes = String(parts[1] || 0).padStart(2, '0');
+    const seconds = String(parts[2] || 0).padStart(2, '0');
+
+    return `${hours}:${minutes}:${seconds}`;
+};
+
 
 // Valida que la fecha sea una fecha valida
 // Valida que la fecha cumpla el formato (YYYY-MM-DD)
@@ -99,9 +106,14 @@ export const ValidateDate = (dateTime) => {
 
 // Convierte la hora a string
 export const ParseTime = (time) => {
-    const horas = String(time.getUTCHours()).padStart(2, '0');
-    const minutos = String(time.getUTCMinutes()).padStart(2, '0');
-    const segundos = String(time.getUTCSeconds()).padStart(2, '0');
+    if (!time) return null;
+    if (typeof time === 'string') return time;
+    if (time && typeof time.getUTCHours === 'function') {
+        const horas = String(time.getUTCHours()).padStart(2, '0');
+        const minutos = String(time.getUTCMinutes()).padStart(2, '0');
+        const segundos = String(time.getUTCSeconds()).padStart(2, '0');
 
-    return `${horas}:${minutos}:${segundos}`;
+        return `${horas}:${minutos}:${segundos}`;
+    }
+    return String(time);
 }

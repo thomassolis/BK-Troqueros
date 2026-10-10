@@ -1,6 +1,6 @@
 
 import { pool } from "../../db/db.js";
-import sql from 'mssql';
+import sql from '../../db/db.js';
 export const PostVacioEntregado = async(data) => {    
     try{
         const result = await pool.request()

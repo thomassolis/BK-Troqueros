@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -14,7 +14,7 @@ export const ActivateChassis = async (chassis) => {
             .query(`
                     UPDATE [Chasis]
                         SET [active] = @Active,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE [id_chasis] = @ID
                 `)
 
@@ -28,6 +28,6 @@ export const ActivateChassis = async (chassis) => {
         const code = GenerateCodeError(modules.CHASISES, typeError.CHASISES.PATCH);
         HandleError(code, error.message, 'querys/Chassis/activateChassis/ActivateChassis', error);
         throw new Error(
-            chassis.active ? 'Ha ocurrido un error al habilitar el chasis' : 'Ha ocurrido un error al deshabilitar el chasis');        
+            chassis.active ? 'Ha ocurrido un error al habilitar el chasis' : 'Ha ocurrido un error al deshabilitar el chasis');
     }
 }

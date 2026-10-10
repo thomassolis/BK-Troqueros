@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
@@ -45,13 +45,13 @@ export const UpdateDriverInfo = async (driver, files) => {
                             [nombre] = @Nombre,
                             [apellido] = @Apellido,
                             [email] = @Email,
-                            [contraseña] = @Contra,
+                            [contrasena] = @Contra,
                             [telefono] = @Telefono,
                             [tipo_licencia] = @Tipo_licencia,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE [id_conductor] = @ID
                 `)
-        
+
         // Valida que los archivos exista
         // Actualiza los archivos del conductor
         const fileUpdated = cleanFiles && cleanFiles.licencia ? await UpdateFile(rutaLicencia, cleanFiles.licencia) : await UpdateFile(rutaLicencia, null);
@@ -66,12 +66,12 @@ export const UpdateDriverInfo = async (driver, files) => {
 
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
-            await transaction.commit();            
+            await transaction.commit();
             return true;
         }
-        
+
         // Revierte la transaction
-        await transaction.rollback();        
+        await transaction.rollback();
         return false;
     } catch (error) {
         //revierte la actualización del chasis
@@ -83,7 +83,7 @@ export const UpdateDriverInfo = async (driver, files) => {
 
         // Valida si el error ha sido por primary key o unique key
         if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo actualizar el conductor, ${error.message}`);
+            let MyThrow = new Error(`No se pudo actualizar el conductor, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('UQ_')) {
@@ -95,8 +95,8 @@ export const UpdateDriverInfo = async (driver, files) => {
             HandleError(code, error.message, 'querys/drivers/updateDriver/UpdateDriverInfo', error);
             throw MyThrow;
         }
-        
+
         HandleError(code, error.message, 'querys/drivers/updateDriver/UpdateDriverInfo', error);
-        throw new Error('Ha ocurrido un error al actualizar la información del conductor');  
+        throw new Error('Ha ocurrido un error al actualizar la información del conductor');
     }
 }

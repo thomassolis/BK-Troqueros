@@ -1,5 +1,5 @@
 import { pool } from "../../db/db.js";
-import sql from 'mssql'
+import sql from '../../db/db.js';
 import { GenerateCodeError } from "../../utils/getCodeError.js";
 import { HandleError } from "../../utils/HandleError.js";
 import { modules } from "../../dictionary/modules.js";
@@ -51,9 +51,9 @@ export const getReports = async(filters) => {
 
         //Costo total de las peticiones
         const query2 = `select sum (pt.costo) as costototal
-                            from preciosTotales pt
-                            left join pedidoServicio_preciosTotales pp on pp.id_preciosTotales = pt.id_preciosTotales
-                            left join Pedido_Servicio ps on ps.id_Pedido_Servicio = pp.id_Pedido_Servicio
+                            from precios_totales pt
+                            left join pedido_servicio_precios_totales pp on pp.id_precios_totales = pt.id_precios_totales
+                            left join Pedido_Servicio ps on ps.id_pedido_servicio = pp.id_pedido_servicio
                             left join Peticiones P on P.id_peticion = ps.id_peticion
                             left join Servicios_datos sd on sd.id_servicio_datos = ps.id_servicio_datos
                             ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
@@ -64,9 +64,9 @@ export const getReports = async(filters) => {
 
         const query3 = `select 
                             sum (pt.venta) as ventatotal
-                            from preciosTotales pt
-                            left join pedidoServicio_preciosTotales pp on pp.id_preciosTotales = pt.id_preciosTotales
-                            left join Pedido_Servicio ps on ps.id_Pedido_Servicio = pp.id_Pedido_Servicio
+                            from precios_totales pt
+                            left join pedido_servicio_precios_totales pp on pp.id_precios_totales = pt.id_precios_totales
+                            left join Pedido_Servicio ps on ps.id_pedido_servicio = pp.id_pedido_servicio
                             left join Peticiones P on P.id_peticion = ps.id_peticion
                             left join Servicios_datos sd on sd.id_servicio_datos = ps.id_servicio_datos
                             ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
@@ -79,7 +79,7 @@ export const getReports = async(filters) => {
         const query4 = `	
             SELECT 
                 COUNT(P.id_peticion) as peticiones,
-                c.nombre as 'Nombre_de_cliente'
+                c.nombre as "Nombre_de_cliente"
             FROM Peticiones P
             INNER JOIN Clientes c ON c.id_cliente = P.cliente_id
             LEFT JOIN Pedido_Servicio ps ON ps.id_peticion = P.id_peticion
@@ -92,23 +92,24 @@ export const getReports = async(filters) => {
 
         // Consulta para obtener las rutas y ventas
         const query5 = `
-            SELECT TOP (5)     
+            SELECT     
                 sd.[lugar_origen],
                 sd.[lugar_destino],          
                 SUM(pt.venta) as total_venta,
-                COUNT(DISTINCT ps.id_Pedido_Servicio) as total_pedidos
-            FROM [TroquerosProduccion].[dbo].[Servicios_datos] sd
+                COUNT(DISTINCT ps.id_pedido_servicio) as total_pedidos
+            FROM [Servicios_datos] sd
                 LEFT JOIN Pedido_Servicio ps ON ps.id_servicio_datos = sd.id_servicio_datos
                 left join Peticiones P on P.id_peticion = ps.id_peticion
-                LEFT JOIN pedidoServicio_preciosTotales PSPT ON PSPT.id_Pedido_Servicio = ps.id_Pedido_Servicio
-                LEFT JOIN preciosTotales PT ON PT.id_preciosTotales = PSPT.id_preciosTotales
+                LEFT JOIN pedido_servicio_precios_totales PSPT ON PSPT.id_pedido_servicio = ps.id_pedido_servicio
+                LEFT JOIN precios_totales PT ON PT.id_precios_totales = PSPT.id_precios_totales
                 ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
             GROUP BY 
                 sd.id_servicio_datos,
                 sd.id_servicio,
                 sd.lugar_origen,
                 sd.lugar_destino
-            ORDER BY total_venta DESC;
+            ORDER BY total_venta DESC
+            LIMIT 5;
         `;
 
         const result5 = await reports.query(query5);
@@ -117,7 +118,7 @@ export const getReports = async(filters) => {
         const reportsData = {
             bestCustomers: result4.recordset.map(row => ({
                 peticiones: row.peticiones,
-                nombreDeCliente: row.Nombre_de_cliente,
+                nombreDeCliente: row.Nombre_de_cliente ?? row.nombre_de_cliente,
             })),
             bestRoutes: result5.recordset.map(row => ({
                 lugar_origen: row.lugar_origen,
@@ -288,8 +289,8 @@ export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, s
         LEFT JOIN Cabezal CA ON CA.id_cabezal = PS.id_cabezal
         LEFT JOIN Furgon F ON F.id_furgon = PS.id_furgon
         LEFT JOIN Clientes C ON C.id_cliente = P.cliente_id
-        LEFT JOIN pedidoServicio_preciosTotales PSPT ON PSPT.id_Pedido_Servicio = PS.id_Pedido_Servicio
-        LEFT JOIN preciosTotales PT ON PT.id_preciosTotales = PSPT.id_preciosTotales
+        LEFT JOIN pedido_servicio_precios_totales PSPT ON PSPT.id_pedido_servicio = PS.id_pedido_servicio
+        LEFT JOIN precios_totales PT ON PT.id_precios_totales = PSPT.id_precios_totales
         ${whereFilters}
         GROUP BY P.id_peticion
       ) X;
@@ -330,8 +331,8 @@ export const getReportsTeam = async (page, pageSize, searchTerm, driverSearch, s
       LEFT JOIN Cabezal CA ON CA.id_cabezal = PS.id_cabezal
       LEFT JOIN Furgon F ON F.id_furgon = PS.id_furgon
       LEFT JOIN Clientes C ON C.id_cliente = P.cliente_id
-      LEFT JOIN pedidoServicio_preciosTotales PSPT ON PSPT.id_Pedido_Servicio = PS.id_Pedido_Servicio
-      LEFT JOIN preciosTotales PT ON PT.id_preciosTotales = PSPT.id_preciosTotales
+      LEFT JOIN pedido_servicio_precios_totales PSPT ON PSPT.id_pedido_servicio = PS.id_pedido_servicio
+      LEFT JOIN precios_totales PT ON PT.id_precios_totales = PSPT.id_precios_totales
       ${whereFilters}
       GROUP BY
         P.id_peticion, C.nombre, CO.nombre, CO.apellido, CH.placa, CA.placa, F.placa,

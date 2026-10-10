@@ -14,7 +14,7 @@ export const GetRequestServices = async () => {
                         [id_servicio],
                         [nombre]
                     FROM [Servicios]
-                    WHERE [active] = 1
+                    WHERE [active] = true
                 `);
 
         // Valida si la consulta arrojo datos

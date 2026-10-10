@@ -1,7 +1,7 @@
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 
@@ -15,15 +15,15 @@ export const ActivateClient = async (client) => {
             .query(`
                     UPDATE [Clientes]
                         SET [active] = @Active,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE [id_cliente] = @ID
                 `);
 
         // Valida que se haya hecho la activado/desactivado el cliente
-        if (result.rowsAffected > 0) {           
+        if (result.rowsAffected > 0) {
             return true;
         }
-               
+
         return false;
     } catch (error) {
         const code = GenerateCodeError(modules.CLIENTS, typeError.CLIENTS.PATCH);

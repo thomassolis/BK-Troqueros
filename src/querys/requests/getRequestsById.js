@@ -1,10 +1,10 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
-import {ParseTime } from '../../auxiliary functions/dateConverter.js';
+import { ParseTime } from '../../auxiliary functions/dateConverter.js';
 import { ChangeStructureRequest } from '../../auxiliary functions/functionAuxiliary.js';
 
 // Obtiene la información de una petición
@@ -14,85 +14,81 @@ export const GetRequestByID = async (id, req) => {
             .input("ID", sql.VarChar, id)
             .query(`
                     SELECT
-                        P.[id_peticion],
-                        PS.[id_Pedido_Servicio],
-                        SD.[id_servicio_datos],
-                        CE.[id_Costos_Extras],
-                        PR.[id_proveedor],
-                        C.[id_cliente],
-                        S.[id_servicio],
-                        CO.[id_conductor],
-                        CH.[id_chasis],
-                        CA.[id_cabezal],
-                        F.[id_furgon],
-                        C.[nombre] AS cliente,
-                        PR.[nombre] AS proveedor,
-                        S.[nombre] AS servicio,
-                        CO.[nombre] + ' ' + CO.[apellido] AS conductor,
-                        CH.[placa] AS chasis,
-                        CA.[placa] AS cabezal,
-                        F.[placa] AS furgon,
-                        P.[precio_total] AS monto,
-                        P.[precio_proveedor],
-                        P.[profit],
-                        SD.[lugar_origen],
-                        SD.[lugar_destino],
-                        PS.[monto] as tarifa,
-                        PS.[entrega_vacio],
-                        PS.[fecha_limite],
-                        PS.[comentario],
-                        PS.[num_contenedor] AS numero_contenedor,
-                        PS.[size_contenedor],
-                        PS.[numero_referencia] AS sh,
-                        CE.[precio] AS costoExtra,                        
-                        P.[fecha_salida],
-                        P.[hora_salida],
-                        P.[numero_factura],                        
-                        PT.[venta],
-						PT.[costo],
-						PT.[descripcion],
-
-                        PP.montoPagado,
-						pp.descripcionDePago,
-						pp.referenciaBancaria
+                        P.id_peticion,
+                        PS.id_Pedido_Servicio,
+                        SD.id_servicio_datos,
+                        CE.id_Costos_Extras,
+                        PR.id_proveedor,
+                        C.id_cliente,
+                        S.id_servicio,
+                        CO.id_conductor,
+                        CH.id_chasis,
+                        CA.id_cabezal,
+                        F.id_furgon,
+                        C.nombre AS cliente,
+                        PR.nombre AS proveedor,
+                        S.nombre AS servicio,
+                        CONCAT(CO.nombre, ' ', CO.apellido) AS conductor,
+                        CH.placa AS chasis,
+                        CA.placa AS cabezal,
+                        F.placa AS furgon,
+                        P.precio_total AS monto,
+                        P.precio_proveedor,
+                        P.profit,
+                        SD.lugar_origen,
+                        SD.lugar_destino,
+                        PS.monto as tarifa,
+                        PS.entrega_vacio,
+                        PS.fecha_limite,
+                        PS.comentario,
+                        PS.num_contenedor AS numero_contenedor,
+                        PS.size_contenedor,
+                        PS.numero_referencia AS sh,
+                        CE.precio AS costoExtra,                        
+                        P.fecha_salida,
+                        P.hora_salida,
+                        P.numero_factura,                        
+                        PT.venta,
+						PT.costo,
+						PT.descripcion,
+                        PP.monto_pagado,
+						pp.descripcion_de_pago,
+						pp.referencia_bancaria
                     FROM Peticiones P
-                    LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
-                    LEFT JOIN Servicios_datos SD ON SD.[id_servicio_datos] = PS.[id_servicio_datos]
-                    LEFT JOIN Servicios S ON S.[id_servicio] = SD.[id_servicio]
-                    LEFT JOIN Conductores CO ON CO.[id_conductor] = PS.[id_conductor]
-                    LEFT JOIN Chasis CH ON CH.[id_chasis] = PS.[id_chasis]
-                    LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
-                    LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]
-                    LEFT JOIN Clientes C ON C.[id_cliente] = P.[cliente_id]
-                    LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]
-                    LEFT JOIN Costos_Extras CE ON CE.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
-                    LEFT JOIN pedidoServicio_preciosTotales PS_PT ON PS_PT.id_Pedido_Servicio = PS.id_Pedido_Servicio
-					LEFT JOIN preciosTotales PT ON PT.id_preciosTotales = PS_PT.id_preciosTotales
-                    LEFT JOIN PagosPorPeticion PP ON PP.id_peticion = P.id_peticion
+                    LEFT JOIN Pedido_Servicio PS ON PS.id_peticion = P.id_peticion
+                    LEFT JOIN Servicios_datos SD ON SD.id_servicio_datos = PS.id_servicio_datos
+                    LEFT JOIN Servicios S ON S.id_servicio = SD.id_servicio
+                    LEFT JOIN Conductores CO ON CO.id_conductor = PS.id_conductor
+                    LEFT JOIN Chasis CH ON CH.id_chasis = PS.id_chasis
+                    LEFT JOIN Cabezal CA ON CA.id_cabezal = PS.id_cabezal
+                    LEFT JOIN Furgon F ON F.id_furgon = PS.id_furgon
+                    LEFT JOIN Clientes C ON C.id_cliente = P.cliente_id
+                    LEFT JOIN Proveedores PR ON PR.id_proveedor = P.proveedor_id
+                    LEFT JOIN Costos_Extras CE ON CE.id_Pedido_Servicio = PS.id_Pedido_Servicio
+                    LEFT JOIN pedido_servicio_precios_totales PS_PT ON PS_PT.id_pedido_servicio = PS.id_pedido_servicio
+					LEFT JOIN precios_totales PT ON PT.id_precios_totales = PS_PT.id_precios_totales
+                    LEFT JOIN pagos_por_peticion PP ON PP.id_peticion = P.id_peticion
 
-                    --LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
-			        --LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]
-
-                    WHERE P.id_peticion = @ID
-                `);                
+                    WHERE CAST(P.id_peticion AS TEXT) = CAST(@ID AS TEXT)
+                `);
         // Valida si la consulta tiene datos
         if (result.recordset.length === 0) {
             return [];
-        }        
+        }
 
-        let data = result.recordset.map(({fecha_salida, fecha_limite, hora_salida, ...rest}) => ({
+        let data = result.recordset.map(({ fecha_salida, fecha_limite, hora_salida, ...rest }) => ({
             ...rest,
             fecha_salida: fecha_salida.toISOString().split('T')[0], // Obtine la fecha (YYYY-MM-DD)
             hora_salida: ParseTime(hora_salida),
             fecha_limite: fecha_limite ? fecha_limite.toISOString().split('T')[0] : null
         }));
-        
+
 
         return {
-            data: ChangeStructureRequest(data, req)                        
+            data: ChangeStructureRequest(data, req)
         };
-        
-        
+
+
     } catch (error) {
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.GET);
         HandleError(code, error.message, 'querys/requests/getRequestsById/GetRequestByID', error);

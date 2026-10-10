@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -19,9 +19,9 @@ export const GetDriverByID = async (id) => {
                         [email],
                         [telefono],
                         [foto_licencia] AS licencia,
-                        [foto_PazYSalvo] AS pazSalvo,
+                        [foto_paz_y_salvo] AS pazSalvo,
                         [foto_record_policivo] AS record_policivo,
-                        [foto_Pasaporte] AS pasaporte,
+                        [foto_pasaporte] AS pasaporte,
                         [status],
                         [tipo_licencia]
                     FROM [Conductores]

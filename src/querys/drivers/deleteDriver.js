@@ -1,5 +1,5 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { DeleteFile } from '../../fileManager/deleteFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';

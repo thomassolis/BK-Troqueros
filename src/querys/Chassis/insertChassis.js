@@ -1,10 +1,11 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
+import crypto from 'crypto';
 
 //Inserta un chasis
 export const InsertChassis = async (chassis, file) => {
@@ -20,14 +21,9 @@ export const InsertChassis = async (chassis, file) => {
         // Comienza la transacción
         await transaction.begin();
 
-        //Generamos el ID del chasis antes del INSERT
-        const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(7);
-                    EXEC Prc_GenerarIDChasis @NuevoID OUTPUT;
-                    SELECT @NuevoID AS id_chasis;`);
-        
-        //obtenemos el id del chasis
-        const idChasis = idResult.recordset[0].id_chasis;
+        // Generamos el ID del chasis localmente (simulando CHAR(7))
+        // Ya que Postgres no soporta DECLARE @Variable ni el procedimiento Prc_GenerarIDChasis
+        const idChasis = crypto.randomUUID().slice(0, 7);
 
         //validamos que id del chasis exista
         if (!idChasis) {

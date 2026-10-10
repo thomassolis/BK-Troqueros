@@ -1,12 +1,12 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
 
 // Obtiene los datos a insertar en el archivo Excel
-export const GetRequestsExcel = async (filters) => {    
+export const GetRequestsExcel = async (filters) => {
     try {
         const idPeticion = filters.idPeticion ? filters.idPeticion : null;
         const nameService = filters.nameService ? filters.nameService : null;
@@ -50,7 +50,7 @@ export const GetRequestsExcel = async (filters) => {
                 pt.costo,
 			    pt.venta,
                 PS.[id_Pedido_Servicio],
-                u.[nombre] + ' ' + u.[apellido] as creadoPor,
+                u.[nombre] + ' ' + u.[apellido] as creado_por,
                 P.[status]                
             FROM Peticiones P
             LEFT JOIN Pedido_Servicio PS ON PS.[id_peticion] = P.[id_peticion]
@@ -62,9 +62,9 @@ export const GetRequestsExcel = async (filters) => {
             LEFT JOIN Cabezal CA ON CA.[id_cabezal] = PS.[id_cabezal]
             LEFT JOIN Furgon F ON F.[id_furgon] = PS.[id_furgon]      
 			LEFT JOIN Proveedores PR ON PR.[id_proveedor] = P.[proveedor_id]   
-            LEFT JOIN Usuarios         U   ON U.[id_usuario]         = P.[creadoPor]
-            LEFT JOIN pedidoServicio_preciosTotales AS PSPT ON PSPT.[id_Pedido_Servicio] = PS.[id_Pedido_Servicio]
-		    LEFT JOIN preciosTotales AS PT ON PT.[id_preciosTotales] = PSPT.[id_preciosTotales]            
+            LEFT JOIN Usuarios         U   ON U.[id_usuario]         = P.[creado_por]
+            LEFT JOIN pedido_servicio_precios_totales AS PSPT ON PSPT.[id_pedido_servicio] = PS.[id_pedido_servicio]
+		    LEFT JOIN precios_totales AS PT ON PT.[id_precios_totales] = PSPT.[id_precios_totales]            
         `;
 
         const conditions = [];
@@ -112,19 +112,19 @@ export const GetRequestsExcel = async (filters) => {
         // Construye las condiciones de la consulta
         if (conditions.length > 0) {
             query += ' WHERE ' + conditions.join(' AND ');
-        }                
+        }
         const result = await request.query(query);
 
         // Valida si la consulta tiene datos
         if (result.recordset.length === 0) {
             return [];
         }
-        
-// Después del query, antes del map
 
-        const data = result.recordset.map(({...rest}) => ({
-            ...rest,            
-        }));        
+        // Después del query, antes del map
+
+        const data = result.recordset.map(({ ...rest }) => ({
+            ...rest,
+        }));
 
 
         return data;

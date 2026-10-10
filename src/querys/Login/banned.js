@@ -1,5 +1,5 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -10,14 +10,14 @@ export const Banned = async (email, tableName) => {
     try {
         //Actualiza los datos del usuario que ha sido baneado
         await pool.request()
-                .input("Email", sql.VarChar, email)
-                .query(`UPDATE [${tableName}] 
+            .input("Email", sql.VarChar, email)
+            .query(`UPDATE [${tableName}] 
                         SET 
                             [suspendido] = 1,
-                            [fecha_suspencion] = DATEADD(MINUTE, 10, GETDATE())
+                            [fecha_suspension] = DATEADD(MINUTE, 10, GETDATE())
                         WHERE 
                             [email] = @Email`);
-        
+
     } catch (error) {
         const code = GenerateCodeError(modules.LOGIN, typeError.usuarioNoAutenticado); //generar codigo del error
         HandleError(code, error.message, 'querys/login/banned/Banned', error);
@@ -29,11 +29,11 @@ export const Banned = async (email, tableName) => {
 export const UnBan = async (email) => {
     try {
         await pool.request()
-                .input("Email", sql.VarChar, email)
-                .query(`UPDATE [Usuarios] 
+            .input("Email", sql.VarChar, email)
+            .query(`UPDATE [Usuarios] 
                         SET 
                             [suspendido] = 0,
-                            [fecha_suspencion] = NULL,
+                            [fecha_suspension] = NULL,
                             [max_intento] = 0
                         WHERE 
                             [email] = @Email`);

@@ -1,14 +1,18 @@
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
+import crypto from 'crypto';
 
 //Inserta un proveedor
 export const InsertSupplier = async (supplier) => {
     try {
+        const idProveedor = crypto.randomUUID().slice(0, 7);
+
         const result = await pool.request()
+            .input("ID", sql.VarChar, idProveedor)
             .input("Nombre", sql.VarChar, supplier.nombre)
             .input("PersonaContacto", sql.VarChar, supplier.personaContacto)
             .input("Celular", sql.VarChar, supplier.celular)
@@ -18,12 +22,9 @@ export const InsertSupplier = async (supplier) => {
             .input("NombreCuenta", sql.VarChar, supplier.nombreCuenta)
             .input("NumeroCuenta", sql.VarChar, supplier.numeroCuenta)
             .input("TipoBanco", sql.VarChar, supplier.tipoBanco)
-            .query(`DECLARE @NuevoID CHAR(7);
-                    EXEC Prc_GenerarIDProveedor @NuevoID OUTPUT
-                    
-                    INSERT INTO [Proveedores] ([id_proveedor], [nombre], [persona_contacto], 
+            .query(`INSERT INTO [Proveedores] ([id_proveedor], [nombre], [persona_contacto], 
                         [celular], [telefono], [email], [numero_yappy], [nombre_cuenta], [numero_cuenta], [tipo_Banco])
-                    VALUES (@NuevoID, @Nombre, @PersonaContacto, @Celular, @Telefono,
+                    VALUES (@ID, @Nombre, @PersonaContacto, @Celular, @Telefono,
                         @Email, @NumeroYappy, @NombreCuenta, @NumeroCuenta, @TipoBanco)`);
         
         return result.rowsAffected[0];  

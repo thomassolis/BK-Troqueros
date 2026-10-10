@@ -1,5 +1,4 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { modules } from '../../dictionary/modules.js';
@@ -8,93 +7,85 @@ import { InsertOrderServices } from './insertOrderService.js';
 import { GetTime } from '../../auxiliary functions/dateConverter.js';
 import { InsertPaymentData } from './insertPaymentData.js';
 import { InsertPaymentFiles } from './insertPaymentFiles.js';
+import { GetTotalPricePerService } from '../../auxiliary functions/functionAuxiliary.js';
+import crypto from 'crypto';
 
 // Crea una nueva petición
-export const InsertNewRequest = async (request, files, userData) => {            
-    let transaction = null; // Declaramos transaction null
+export const InsertNewRequest = async (request, files, userData) => {
+    const client = await pool.connect(); // obtenemos un cliente de pg
     try {
-        request.hora_salida = GetTime(request.hora_salida); // Obtenemos la hora de salida en formato Time
-        transaction = new sql.Transaction(pool) // Instanciamos un objeto Transaction
-        await transaction.begin() // Iniciamos la transaction
+        request.hora_salida = GetTime(request.hora_salida); // "HH:MM:SS"
 
-        //BATCHID es el id de cada update que se realice
-        const batchId = crypto.randomUUID();         
-        await transaction.request()
-        .input("UserId", sql.Int, userData.id_usuario)
-        .input("BatchId", sql.UniqueIdentifier, batchId)
-        .query(`
-            EXEC sp_set_session_context @key = N'UserId', @value = @UserId;
-            EXEC sp_set_session_context @key = N'BatchId', @value = @BatchId;
-        `);
+        await client.query('BEGIN'); // iniciamos transacción
 
+        // Generamos el ID de la petición (en PostgreSQL puedes usar un sequence o uuid)
+        const idRequest = crypto.randomUUID().slice(0, 9); // ejemplo: simular CHAR(9)
 
-        // Generamos el ID de la petición antes del INSERT
-        const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(9);
-                    EXEC Prc_GenerarIDPeticion @NuevoID OUTPUT;
-                    SELECT @NuevoID AS [id_peticion];`);
-
-        const idRequest = idResult.recordset[0]?.id_peticion;           
-        
-        // validamos que id de la petición exista
         if (!idRequest) {
             throw new Error('Ha ocurrido un error al crear la petición');
-        }        
-        let profit = 0 // Declaramos el profit con valor inicial de 0
-        
-        if (request?.precio_proveedor) {            
+        }
+
+        let monto = GetTotalPricePerService(request.servicios || []); // Obtiene el monto total de los servicios
+        let profit = 0; // Declaramos el profit con valor inicial de 0
+
+        // Valida si la petición es por proveedor
+        // Calcula el profit
+        if (request?.precio_proveedor) {
             profit = request.servicios[0].tarifa - request.precio_proveedor;
-        }        
-        const result = await transaction.request()
-            .input("ID", sql.VarChar, idRequest)
-            .input("Cliente", sql.VarChar, request.id_cliente)
-            .input("Proveedor", sql.VarChar, request.id_proveedor || null)
-            .input("PrecioProveedor", sql.Float, request.precio_proveedor || 0)
-            .input("FechaSalida", sql.Date, request.fecha_salida)
-            .input("HoraSalida", sql.Time, request.hora_salida)
-            .input("Status", sql.VarChar, request.status || 'En espera')
-            .input("Numero_factura", sql.VarChar, request.numero_factura || null)
-            .input("creadoPor", sql.Int, userData.id_usuario||null)
-            .query(`
-                    INSERT INTO [Peticiones] ([id_peticion], [cliente_id], 
-                    [proveedor_id], [precio_proveedor], [fecha_salida], [hora_salida], [status], [numero_factura], [creadoPor])
-                        VALUES (@ID, @Cliente, @Proveedor, @PrecioProveedor, @FechaSalida, @HoraSalida, @Status, @Numero_factura, @creadoPor)
-                `);
-         //* ALL OK HERE #3
-        // Valida si se hizo el insert        
-        if (result.rowsAffected > 0) {
-                
+        }
+
+        const insertQuery = `
+      INSERT INTO Peticiones (
+        id_peticion, cliente_id, proveedor_id, precio_proveedor, profit, precio_total,
+        fecha_salida, hora_salida, status, numero_factura, creado_por
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8::time, $9, $10, $11)
+    `;
+
+        const values = [
+            idRequest,
+            request.id_cliente,
+            request.id_proveedor || null,
+            request.precio_proveedor || 0,
+            profit,
+            monto,
+            request.fecha_salida,
+            request.hora_salida,
+            request.status || 'En espera',
+            request.numero_factura || null,
+            userData.id_usuario || null
+        ];
+
+        const result = await client.query(insertQuery, values);
+
+        if (result.rowCount > 0) {
             // Agrega los servicios de la petición
-            const addedServices = await InsertOrderServices(transaction, request.servicios, idRequest);
+            const addedServices = await InsertOrderServices(client, request.servicios, idRequest);
 
             if (Array.isArray(request.paymentData) && request.paymentData.length > 0) {
-                await InsertPaymentData(transaction, request.paymentData, idRequest);
-            }            
-        
-            if (files?.paymentFiles) {                 
-                await InsertPaymentFiles(transaction, files.paymentFiles, idRequest);
-            }            
+                await InsertPaymentData(client, request.paymentData, idRequest);
+            }
 
+            if (files?.paymentFiles) {
+                await InsertPaymentFiles(client, files.paymentFiles, idRequest);
+            }
 
-            // Valida si se agregaron los servicios de la petición
-            // Valida si se actualizó el status del conductor y vehículo
             if (addedServices) {
-                await transaction.commit();                
+                await client.query('COMMIT');
                 return true;
             }
         }
 
-        await transaction.rollback();
+        await client.query('ROLLBACK');
         return false;
     } catch (error) {
-        console.error('error en InsertNewRequest',error)
+        console.error('error en InsertNewRequest', error);
         const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.POST);
         HandleError(code, error.message, 'querys/requests/insertRequests/InsertNewRequest', error);
 
-        // En caso de error revertimos la transaction
-        if (transaction) {
-            await transaction.rollback();
-        }
+        await client.query('ROLLBACK');
         throw new Error('Ha ocurrido un error al crear una nueva petición');
+    } finally {
+        client.release(); // liberamos el cliente
     }
-}
+};

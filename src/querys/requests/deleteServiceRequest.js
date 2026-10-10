@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { modules } from '../../dictionary/modules.js'
 import { typeError } from '../../dictionary/typeError.js'
@@ -26,7 +26,7 @@ export const DeleteServiceRequest = async (idService) => {
         //Borra los costos de los servicios
         await request
             .input('IDServicio0', sql.Int, idService)
-            .query(`DELETE FROM [pedidoServicio_preciosTotales] WHERE [id_Pedido_Servicio] = @IDServicio`);
+            .query(`DELETE FROM [pedido_servicio_precios_totales] WHERE [id_Pedido_Servicio] = @IDServicio`);
 
         // Borra costos extras si existen
         await request
@@ -54,6 +54,6 @@ export const DeleteServiceRequest = async (idService) => {
         if (transaction) {
             await transaction.rollback();
         }
-        throw new Error('Ha ocurrido un error al eliminar el servicio');        
+        throw new Error('Ha ocurrido un error al eliminar el servicio');
     }
 }

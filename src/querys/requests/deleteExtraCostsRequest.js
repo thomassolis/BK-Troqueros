@@ -1,4 +1,4 @@
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { modules } from '../../dictionary/modules.js'
 import { typeError } from '../../dictionary/typeError.js'

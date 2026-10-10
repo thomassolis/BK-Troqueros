@@ -1,11 +1,12 @@
 import { v1 } from 'uuid';
 import { HandleError } from '../../utils/HandleError.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { pool } from '../../db/db.js';
 import { SaveFile } from '../../fileManager/saveFile.js';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { typeError } from '../../dictionary/typeError.js';
+import crypto from 'crypto';
 
 //Inserta un furgon
 export const InsertTruckVan = async (truckVan, file) => {
@@ -20,14 +21,9 @@ export const InsertTruckVan = async (truckVan, file) => {
         transaction = new sql.Transaction(pool); // Instanciamos un objecto Transaction
         await transaction.begin(); // Comienza la transacción
 
-        //Generamos el ID del furgon antes del INSERT
-        const idResult = await transaction.request()
-            .query(`DECLARE @NuevoID CHAR(7);
-                    EXEC Prc_GenerarIDFurgon @NuevoID OUTPUT;
-                    SELECT @NuevoID AS id_furgon;`);
-        
-        //obtenemos el id del furgon
-        const idFurgon = idResult.recordset[0].id_furgon;
+        // Generamos el ID del furgon localmente (simulando CHAR(7))
+        // Ya que Postgres no soporta DECLARE @Variable ni el procedimiento Prc_GenerarIDFurgon
+        const idFurgon = crypto.randomUUID().slice(0, 7);
 
         //validamos que id del furgon exista
         if (!idFurgon) {

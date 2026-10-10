@@ -14,7 +14,7 @@ export const GetRequestClients = async () => {
                         [id_cliente],
                         [nombre]
                     FROM [Clientes]
-                    WHERE [active] = 1
+                    WHERE [active] = true
                 `);
 
         // Valida si la consulta arrojo datos

@@ -1,16 +1,16 @@
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import { typeError } from '../../dictionary/typeError.js';
 import { modules } from '../../dictionary/modules.js';
 import { UpdateFile } from '../../fileManager/updateFile.js';
 
 
 // Actualiza la información del cliente
-export const UpdateClient = async (client, files) => {   
+export const UpdateClient = async (client, files) => {
     let transaction = null
-    try {        
+    try {
         // Valida que la información no sea undefined
         if (!client) {
             return null
@@ -62,7 +62,7 @@ export const UpdateClient = async (client, files) => {
                             [nombre_banco] = @NombreBanco,
                             [tipo_cuenta] = @TipoCuenta,
                             [nombre_cuenta] = @NombreCuenta,
-                            [fecha_modificación] = GETDATE()
+                            [fecha_modificacion] = GETDATE()
                     WHERE id_cliente = @ID
                 `)
 
@@ -80,12 +80,12 @@ export const UpdateClient = async (client, files) => {
 
         // Valida que se haya hecho la actualización
         if (result.rowsAffected > 0) {
-            await transaction.commit();            
+            await transaction.commit();
             return true;
         }
-        
+
         // Revierte la transaction
-        await transaction.rollback();        
+        await transaction.rollback();
         return false;
     } catch (error) {
         // En caso de error revierte la transaction
@@ -97,7 +97,7 @@ export const UpdateClient = async (client, files) => {
 
         // Valida si el error es por violación a la Unique Key (RUC)
         if (error.number === 2627) {
-            let MyThrow =  new Error(`No se pudo actualizar la información del cliente, ${error.message}`);
+            let MyThrow = new Error(`No se pudo actualizar la información del cliente, ${error.message}`);
             MyThrow.ErrorCode = 2627;
 
             if (error.message.includes('UQ_')) {
@@ -105,11 +105,11 @@ export const UpdateClient = async (client, files) => {
             } else {
                 MyThrow.message = 'Ha ocurrido un error al actualizar la información del cliente';
             }
-            
+
             HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
             throw MyThrow;
         }
-        
+
         HandleError(code, error.message, 'querys/clients/updateClient/UpdateClient', error);
         throw new Error('Ha ocurrido un error al actualizar la información del cliente');
     }

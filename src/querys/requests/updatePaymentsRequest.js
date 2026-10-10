@@ -1,5 +1,5 @@
 // querys/requests/updateRequest/refreshPayments.js
-import sql from "mssql";
+import sql from '../../db/db.js';
 
 /**
  * Refresca (DELETE + INSERT) los pagos de una petición.

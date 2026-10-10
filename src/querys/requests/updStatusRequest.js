@@ -1,5 +1,5 @@
 import { pool } from '../../db/db.js';
-import sql from 'mssql';
+import sql from '../../db/db.js';
 import crypto from 'crypto';
 import { GenerateCodeError } from '../../utils/getCodeError.js';
 import { HandleError } from '../../utils/HandleError.js';
@@ -13,7 +13,7 @@ export const UpdateStatusRequest = async (request, userData) => {
     let query = `
       UPDATE [Peticiones]
       SET [status] = @Status,
-          [fecha_modificación] = GETDATE()
+          [fecha_modificacion] = GETDATE()
     `;
 
     if (request.status === 'Completado') {
@@ -52,7 +52,7 @@ export const UpdateStatusRequest = async (request, userData) => {
 
   } catch (error) {
     if (transaction) {
-      try { await transaction.rollback(); } catch {}
+      try { await transaction.rollback(); } catch { }
     }
     const code = GenerateCodeError(modules.REQUESTS, typeError.REQUESTS.PATCH);
     HandleError(code, error.message, 'querys/requests/UpdateStatusRequest', error);

@@ -1,22 +1,25 @@
-import sql from 'mssql';
+import { pool } from '../../db/db.js';
 
-export const InsertPaymentData = async(transaction, paymentData, idRequest) => {        
-    try{
-        for(const payment of paymentData){
-            const result = await transaction.request()
-            .input("descripcion", sql.VarChar(50), payment.descripcion || '')
-            .input('montoPagado', sql.Float, payment.montoPagado || 0)
-            .input('referenciaBancaria', sql.VarChar(80), payment.comprobante)
-            .input('id_peticion', sql.VarChar, idRequest)
-            .query(`
-                INSERT INTO [PagosPorPeticion] (
-                    descripcion, montoPagado, referenciaBancaria, id_peticion
-                ) VALUES (
-                    @descripcion, @montoPagado, @referenciaBancaria, @id_peticion
-                )
-            `)
+export const InsertPaymentData = async (client, paymentData, idRequest) => {
+    try {
+        for (const payment of paymentData) {
+            const query = `
+        INSERT INTO PagosPorPeticion (
+          descripcion, montoPagado, referenciaBancaria, id_peticion
+        ) VALUES ($1, $2, $3, $4)
+      `;
+
+            const values = [
+                payment.descripcion || '',
+                payment.montoPagado || 0,
+                payment.comprobante || null,
+                idRequest
+            ];
+
+            await client.query(query, values);
         }
-    }catch(error){
+    } catch (error) {
         console.error('Error insertando payment Data: ', error);
+        throw error;
     }
-}
+};
