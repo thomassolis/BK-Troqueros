@@ -3,7 +3,6 @@ import sql from '../db/db.js';
 import { pool } from '../db/db.js';
 import dotenv from 'dotenv';
 import { GenerateCodeError } from '../utils/getCodeError.js';
-import { modules } from '../dictionary/modules.js';
 import { typeError } from '../dictionary/typeError.js';
 
 dotenv.config();
@@ -25,7 +24,7 @@ export const VerifyPermission = async (module, action, rol) => {
         return result.recordset[0];
     } catch (error) {
         module = 'E' + module.substring(0, 2).toUpperCase();
-        
+
         const code = GenerateCodeError(module, typeError.permisoDenegado);
         HandleError(code, error.message, 'querys/verifyPermission/VerifyPermission', error);
         throw new Error('Ha ocurrido un error al validar los permisos');
