@@ -25,6 +25,10 @@ import { decodeFileNames } from './middlewares/decodeFileNames.js';
 
 const app = express();
 
+// CORS debe ir primero para manejar preflight OPTIONS antes que cualquier otro middleware
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // habilita preflight para todas las rutas
+
 app.use(morgan('dev'));
 
 app.use(express.json());
@@ -34,7 +38,6 @@ app.use(decodeFileNames);
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use(cookieParser());
-app.use(cors(corsOptions));
 app.use(session(sessionConfig));
 app.use(sessionMiddleware);
 
