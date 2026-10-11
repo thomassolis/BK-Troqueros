@@ -5,7 +5,7 @@ const allowedOrigins = [
     'http://localhost:8081',
     'http://192.168.9.112:8081',
     'https://localhost:5173',
-    process.env.FRONTEND_URL, // URL del frontend en producción (ej: https://tu-app.onrender.com)
+    'https://produccion.d3jb7p8g13dpgi.amplifyapp.com',
 ].filter(Boolean); // elimina valores undefined si la variable no está definida
 
 export const corsOptions = {
