@@ -82,7 +82,7 @@ export const ctrAuthentication = async (req, res) => {
         res.cookie('Troquero-Token', token, {
             httpOnly: true,                                    // La cookie no puede ser accedida por JavaScript
             secure: isProduction,                              // Solo HTTPS en producción; HTTP permitido en desarrollo
-            sameSite: isProduction ? 'Strict' : 'Lax',        // Lax en dev para permitir mismo dominio con distinto puerto
+            sameSite: isProduction ? 'None' : 'Lax',          // 'None' en producción para permitir cookies cross-site (frontend y backend en dominios distintos)
             maxAge: 32400000                                   // La cookie expirará en 9 horas
         });
 
