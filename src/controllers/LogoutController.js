@@ -5,10 +5,11 @@ import { typeError } from '../dictionary/typeError.js';
 
 export const CtrLogout = (req, res) => {
     try {
+        const isProduction = process.env.NODE_ENV === 'production';
         res.clearCookie('Troquero-Token', { 
             httpOnly: true, 
-            secure: true, 
-            sameSite: 'strict' 
+            secure: isProduction, 
+            sameSite: isProduction ? 'None' : 'Lax'
         });
         
         res.status(200).json({ success: true, message: 'Logout exitoso' });
@@ -17,4 +18,4 @@ export const CtrLogout = (req, res) => {
         HandleError(code, error.message, 'controllers/LogoutController/CtrLogout', error);
         return res.status(500).json({success: false, message: 'Error al cerrar sessión'});
     }
-} 
+} 
